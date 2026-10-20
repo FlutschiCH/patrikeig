@@ -32,10 +32,23 @@ echo [*] Building Production Frontend Assets...
 call npm run build
 
 echo.
-echo [*] Installing / Updating Backend Dependencies...
-if exist "backend\requirements.txt" (
-    python -m pip install -r backend\requirements.txt --quiet
+echo [*] Checking Backend requirements.txt...
+if not exist "backend\requirements.txt" (
+    echo [*] requirements.txt not found. Generating default requirements...
+    (
+        echo flask
+        echo flask-cors
+        echo gevent
+        echo requests
+        echo mysql-connector-python
+        echo beautifulsoup4
+        echo lxml
+        echo pysnmp-lextudio
+    ) > "backend\requirements.txt"
 )
+
+echo [*] Installing / Updating Backend Dependencies...
+python -m pip install -r "backend\requirements.txt"
 
 echo.
 echo =======================================================
