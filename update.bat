@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo =======================================================
-echo          PATRIKEIG SYSTEM AUTO-UPDATER
+echo          PATRIKEIG SYSTEM AUTO-UPDATER & LAUNCHER
 echo =======================================================
 echo.
 
@@ -39,6 +39,14 @@ if exist "backend\requirements.txt" (
 
 echo.
 echo =======================================================
-echo     [SUCCESS] Repository and build updated cleanly!
+echo     [SUCCESS] Update completed! Launching app.py...
 echo =======================================================
-timeout /t 5
+echo.
+
+cd /d "%~dp0backend"
+python app.py
+
+if errorlevel 1 (
+    echo [!] Application exited with error code %errorlevel%.
+    pause
+)
