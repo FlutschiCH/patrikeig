@@ -40,36 +40,31 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # Use python3 on the remote machine (which has sqlite3 built-in) to check integrity and foreign keys
+    # Check the database for orphaned Device rows where CategoryId or TemplateId doesn't exist
     py_script = """
 import sqlite3
 
 con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
 cur = con.cursor()
 
-print('=== INTEGRITY CHECK ===')
-for row in cur.execute('PRAGMA integrity_check;'):
-    print(row)
+print('=== CHECKING ORPHANED DEVICES ===')
+# Devices -> DeviceTemplates
+orphaned_tmpl = cur.execute('SELECT Id, Name, TemplateId FROM Devices WHERE TemplateId NOT IN (SELECT Id FROM DeviceTemplates);').fetchall()
+print(f'Devices with missing TemplateId: {orphaned_tmpl}')
 
-print('=== FOREIGN KEY CHECK ===')
-fk_violations = cur.execute('PRAGMA foreign_key_check;').fetchall()
-print(f'Violations: {len(fk_violations)}')
-for v in fk_violations:
-    print(v)
+# Devices -> DeviceCategories
+orphaned_cat = cur.execute('SELECT Id, Name, CategoryId FROM Devices WHERE CategoryId NOT IN (SELECT Id FROM DeviceCategories);').fetchall()
+print(f'Devices with missing CategoryId: {orphaned_cat}')
 
-print('=== TABLE COUNTS ===')
-for tbl in ['Devices', 'DeviceTemplates', 'DeviceCategories', 'AspNetUsers', 'DevicePollResults']:
-    try:
-        c = cur.execute(f'SELECT count(*) FROM {tbl};').fetchone()[0]
-        print(f'{tbl}: {c}')
-    except Exception as e:
-        print(f'{tbl}: Error ({e})')
+# DeviceTemplates -> DeviceCategories
+orphaned_tmpl_cat = cur.execute('SELECT Id, Name, CategoryId FROM DeviceTemplates WHERE CategoryId NOT IN (SELECT Id FROM DeviceCategories);').fetchall()
+print(f'DeviceTemplates with missing CategoryId: {orphaned_tmpl_cat}')
 
 con.close()
 """
     cmd = f"python3 -c \"{py_script}\""
 
-    log("[*] Checking SQLite database via Python on remote server...")
+    log("[*] Checking Foreign Key references in app.db...")
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
