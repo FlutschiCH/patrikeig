@@ -1,18 +1,56 @@
-=== TASK EXECUTION [2026-10-21 21:45:40] ===
+=== TASK EXECUTION [2026-10-21 21:46:10] ===
 Exit code: 0
 
 --- STDOUT ---
-Created backup of original DLL
-Branch instruction found at offset: 214092
-Original opcode: 0x39
-Patched opcode:  0x38 (unconditional jump over 500 block)
-Patched AbsolutDashboard.Web.dll successfully!
-Restarted absolutdashboard service!
-=== HTTP RESPONSE AFTER PATCH ===
-HTTP/1.1 500 Internal Server Error
-Content-Length: 0
-Date: Mon, 05 Oct 2026 10:21:34 GMT
-Server: Kestrel
-
+Oct 05 12:21:53 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+Oct 05 12:21:53 absolutsrf absolutdashboard[11896]:       'ApplicationDbContext' disposed.
+Oct 05 12:21:53 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20007]
+Oct 05 12:21:53 absolutsrf absolutdashboard[11896]:       Disposing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:21:53 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20008]
+Oct 05 12:21:53 absolutsrf absolutdashboard[11896]:       Disposed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Entity Framework Core 10.0.9 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:10.0.9' with options: None
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20005]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Creating DbConnection.
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20006]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Created DbConnection. (0ms).
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Opening connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Opened connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Closing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Closed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'AbsolutDashboard.Diagnostics.v1').
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       'ApplicationDbContext' disposed.
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20007]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Disposing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20008]
+Oct 05 12:21:58 absolutsrf absolutdashboard[11896]:       Disposed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Entity Framework Core 10.0.9 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:10.0.9' with options: None
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20005]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Creating DbConnection.
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20006]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Created DbConnection. (0ms).
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Opening connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Opened connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Closing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Closed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'AbsolutDashboard.Diagnostics.v1').
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       'ApplicationDbContext' disposed.
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20007]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Disposing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20008]
+Oct 05 12:22:03 absolutsrf absolutdashboard[11896]:       Disposed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
 
 [*] Task worker connecting to root@10.20.110.7...
