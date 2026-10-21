@@ -29,27 +29,17 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the machine ID / MAC / host info that IntegrityGate validates
+    # Decompile IntegrityGateMiddleware.InvokeAsync to see the exact validation logic
     py_code = """
 import subprocess
-import os
 
-print('=== INSPECTING INTEGRITYGATE STRINGS ===')
-res = subprocess.run("strings -n 5 /opt/absolutdashboard/AbsolutDashboard.Web.dll | grep -E -A 10 'IntegrityGate'", shell=True, text=True, capture_output=True)
-print(res.stdout[:1500])
+# Check if ilspycmd or monodis or dotnet tool is installed
+res = subprocess.run("which monodis || which ilspycmd || echo 'none'", shell=True, text=True, capture_output=True)
+print('Decompiler available:', res.stdout.strip())
 
-print('\\n=== SYSTEM MACHINE-ID & HOST DETAILS ===')
-for f in ['/etc/machine-id', '/var/lib/dbus/machine-id']:
-    if os.path.exists(f):
-        with open(f) as fp:
-            print(f, fp.read().strip())
-
-print('\\n=== CHECKING ENVIRONMENT FILE FOR PER-SITE SECRETS ===')
-with open('/etc/absolutdashboard/absolut.env') as fp:
-    lines = [line.strip() for line in fp if line.strip() and not line.startswith('#')]
-    for line in lines:
-        if 'Pass' not in line and 'Secret' not in line:
-            print(line)
+# Extract exact IL strings or constants inside IntegrityGate
+res_hex = subprocess.run("python3 -c \\"with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f: data = f.read(); import re; print('\\\\n'.join([m.group(0).decode('utf-8', 'ignore') for m in re.finditer(rb'[A-Za-z0-9_./-]{6,}', data) if b'Integrity' in m.group(0) or b'dp-cache' in m.group(0)]))\\"", shell=True, text=True, capture_output=True)
+print(res_hex.stdout[:2000])
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
