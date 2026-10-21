@@ -1,13 +1,10 @@
-=== TASK EXECUTION [2026-10-21 21:42:54] ===
+=== TASK EXECUTION [2026-10-21 21:43:29] ===
 Exit code: 0
 
 --- STDOUT ---
-=== TESTING MULTIPLE ENDPOINTS ===
-http://127.0.0.1:5000/             : HTTPError 500 - 500 - Internal Server Error
-http://127.0.0.1:5000/login        : HTTPError 500 - 500 - Internal Server Error
-http://127.0.0.1:5000/setup        : HTTPError 500 - 500 - Internal Server Error
-http://127.0.0.1:5000/api          : HTTPError 500 - 500 - Internal Server Error
-http://127.0.0.1:5000/favicon.png  : HTTPError 500 - 500 - Internal Server Error
-http://127.0.0.1:5000/app.css      : HTTPError 500 - 500 - Internal Server Error
+IntegrityGateStartupFilter offset: 712498
+
+=== WORDS AROUND INTEGRITYGATESTARTUPFILTER ===
+ StringComparer get_User set_User InvalidUser __Blazor.AbsolutDashboard.Web.Components.Users.CreateUser LoginUser ApplicationUser IdentityUser get_Parser set_Parser H3c5gcParser RhubPowerResponseParser GenericSshParser MmlParser ISshOutputParser BtiAuParser _user ReadHighWater WriteHighWater AddComponentParameter NudgeAfter CancelAfter StallAfter PromptIndexAfter ValueTaskAwaiter GetAwaiter CoreN6Writer get_Writer set_Writer BbuConfigWriter AddDatabaseDeveloperPageExceptionFilter IStartupFilter IntegrityGateStartupFilter TryEnter BindConverter ParseAmfRoster Router Microsoft.AspNetCore.Components.Server get_InteractiveServer ToLower get_Power get_ShowMissingPower set_ShowMissingPower RadioUnitPower get_PrruPower set_PrruPower get_MaxTxPower set_MaxTxPower ModMaxTxPower txPower HasAnswer JsonSerializer SnapshotSerializer get_UserMgr set_UserMgr CellOnAir PowerRangeFor get_Vendor set_Vendor get_Anchor set_Anchor get_TipAnchor set_TipAnchor anchor DeleteBehavior get_Color set_Color TrendColor TotalColor Floor get_Error set_Error _loadError LogError get_ContinueOnError set_ContinueOnError IsError get_LastError set_LastError IdentityError _error get_UserAccessor set_UserAccessor IdentityUserAccessor __Blazor.AbsolutDashboard.Web.Components.Account.Pages.Manage.EnableAuthenticator hasAuthenticator ResetAuthenticator DataAnnotationsValidator IEnumerator System.Collections.Generic.IEnumerable<System.ValueTuple<System.String,System.Int32>>.GetEnumerator System.Collections.Generic.IEnu
 
 [*] Task worker connecting to root@10.20.110.7...
