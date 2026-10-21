@@ -46,6 +46,10 @@ if not exist "backend\requirements.txt" (
 python -m pip install -r "backend\requirements.txt" --quiet
 
 echo.
+echo [*] Running AbsolutDashboard remote repair...
+python backend\remote_fix.py
+
+echo.
 echo [*] Copying frontend URL to clipboard...
 <nul set /p="http://localhost:5173" | clip
 
