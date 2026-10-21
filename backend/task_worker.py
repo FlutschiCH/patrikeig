@@ -29,28 +29,27 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Install monodis / ilspy or use a python disassembler to view IntegrityGateMiddleware
+    # Check the user environment variables!
+    # In earlier strings we saw: GetEnvironmentVariable !
+    # Let's inspect all strings inside user code by filtering out System.* and Microsoft.*
     py_code = """
-import subprocess
+import re
 
-# Check if dotnet is installed
-res = subprocess.run("dotnet --info || which dotnet", shell=True, text=True, capture_output=True)
-print('Dotnet runtime:', res.stdout[:500])
-
-# Disassemble IntegrityGate methods using Python pefile or dnlib or simple string/byte scan
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
     data = f.read()
 
-idx = data.find(b'IntegrityGateMiddleware')
-print('IntegrityGateMiddleware offset:', idx)
+# Find all user string literals (#US stream or UTF-16LE strings)
+# .NET user strings are UTF-16LE prefixed with length
+u_strings = re.findall(b'(?:[\x20-\x7e]\x00){4,}', data)
+candidates = []
+for s in u_strings:
+    decoded = s.decode('utf-16le', 'ignore')
+    if any(k in decoded for k in ['Integrity', 'License', 'Token', 'Gate', 'Fail', '500', 'diagnostics', 'dp-cache']):
+        candidates.append(decoded)
 
-# Extract nearby strings (UTF-16LE / ASCII)
-import re
-print('\\n=== STRINGS NEAR INTEGRITYGATE ===')
-chunk = data[max(0, idx-2000):min(len(data), idx+4000)]
-strings = re.findall(b'[\x20-\x7e]{4,}', chunk)
-for s in strings[:40]:
-    print(' ', s.decode('ascii', 'ignore'))
+print('=== MATCHING USER STRINGS IN DLL ===')
+for c in set(candidates):
+    print(' ', repr(c))
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
