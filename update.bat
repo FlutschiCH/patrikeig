@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo =======================================================
-echo          PATRIKEIG SYSTEM AUTO-UPDATER & DASHBOARD FIX
+echo         PATRIKEIG ANYDESK AUTO-SYNC LOOP RUNNER
 echo =======================================================
 echo.
 
@@ -12,7 +12,7 @@ echo [*] Discarding local changes to avoid merge conflicts...
 git reset --hard HEAD
 git clean -fd
 
-echo [*] Fetching latest branches and tags from origin...
+echo [*] Fetching latest changes from GitHub origin/main...
 git fetch origin main
 
 echo [*] Updating to origin/main...
@@ -42,11 +42,5 @@ if not exist "backend\requirements.txt" (
 python -m pip install -r "backend\requirements.txt" --quiet
 
 echo.
-echo [*] Running AbsolutDashboard remote repair...
-python backend\remote_fix.py
-
-echo.
-echo =======================================================
-echo                     EXECUTION COMPLETE
-echo =======================================================
-pause
+echo [*] Starting AnyDesk Auto-Sync Runner Loop...
+python run_loop.py
