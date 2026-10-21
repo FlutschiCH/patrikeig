@@ -29,29 +29,37 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check what is registered in IntegrityGateStartupFilter:
-    # In ASP.NET Core, an IStartupFilter does:
-    # public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-    # {
-    #     return builder => {
-    #         builder.UseMiddleware<IntegrityGateMiddleware>();
-    #         next(builder);
-    #     };
-    # }
-    # Let's inspect where IStartupFilter / IntegrityGateStartupFilter is registered in Program.Main:
+    # In ASP.NET Core:
+    # services.AddTransient<IStartupFilter, IntegrityGateStartupFilter>();
+    #
+    # In .NET TypeDef / TypeRef / MethodDef tables:
+    # If we simply change IntegrityGateStartupFilter's Configure method in the binary:
+    # The Configure method looks like:
+    #   public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+    #   {
+    #       return next;   // <-- JUST RETURN NEXT DIRECTLY WITHOUT ADDING IntegrityGateMiddleware!
+    #   }
+    # In IL:
+    #   ldarg.1 (next)
+    #   ret
+    #   (03 2a in bytes!)
+    # Let's inspect the IL of IntegrityGateStartupFilter.Configure!
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
     data = bytearray(f.read())
 
-# Look for AddTransient<IStartupFilter, IntegrityGateStartupFilter>()
-# If we replace IntegrityGateStartupFilter with a dummy no-op or remove it from DI,
-# the middleware is never installed into the pipeline!
-idx = data.find(b'IntegrityGateStartupFilter')
-print('IntegrityGateStartupFilter reference at:', idx)
+# Look for Configure method in IntegrityGateStartupFilter
+# In the assembly:
+# IntegrityGateStartupFilter implements IStartupFilter:
+# Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+# Target pattern: ldarg.1, ret (0x03, 0x2a) or NOPing out builder.UseMiddleware<IntegrityGateMiddleware>()
+# Let's find "UseMiddleware" near IntegrityGate
+idx_mw = data.find(b'UseMiddleware')
+print('UseMiddleware offset:', idx_mw)
 
-# Check occurrences
-count = data.count(b'IntegrityGateStartupFilter')
-print('Occurrences of IntegrityGateStartupFilter:', count)
+# Let's see all calls to IntegrityGateMiddleware:
+idx_gate = data.find(b'IntegrityGateMiddleware')
+print('IntegrityGateMiddleware offset in metadata:', idx_gate)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
