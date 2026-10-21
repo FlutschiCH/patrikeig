@@ -29,34 +29,21 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the exact Devices table and inspect parents / foreign relations
+    # Check the exact encrypted fields: SnmpCommunityEnc, SshPasswordEnc
+    # When DataProtection keys were restored, can these fields actually be decrypted?
     py_code = """
 import sqlite3
 
 con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
 cur = con.cursor()
 
-print('=== DEVICES COLUMNS ===')
-cols = [c[1] for c in cur.execute('PRAGMA table_info(Devices);').fetchall()]
-print(cols)
-
-print('\\n=== CHECKING ParentDeviceId RELATIONSHIPS ===')
-# Are there any devices whose ParentDeviceId points to a non-existent device?
-if 'ParentDeviceId' in cols:
-    bad_parents = cur.execute('SELECT Id, Name, ParentDeviceId FROM Devices WHERE ParentDeviceId IS NOT NULL AND ParentDeviceId NOT IN (SELECT Id FROM Devices);').fetchall()
-    print('Devices with non-existent ParentDeviceId:', bad_parents)
-
-# Are there any Devices with NULL or invalid CategoryId?
-bad_cats = cur.execute('SELECT Id, Name, CategoryId FROM Devices WHERE CategoryId IS NULL OR CategoryId NOT IN (SELECT Id FROM DeviceCategories);').fetchall()
-print('Devices with invalid CategoryId:', bad_cats)
-
-# Are there any Devices with NULL or invalid TemplateId?
-bad_tmpls = cur.execute('SELECT Id, Name, TemplateId FROM Devices WHERE TemplateId IS NULL OR TemplateId NOT IN (SELECT Id FROM DeviceTemplates);').fetchall()
-print('Devices with invalid TemplateId:', bad_tmpls)
-
-print('\\n=== TOTAL DEVICES DETAILS ===')
-for d in cur.execute('SELECT Id, Name, CategoryId, TemplateId, Enabled FROM Devices;').fetchall():
-    print(' ', d)
+print('=== ENCRYPTED CREDENTIALS CHECK ===')
+devices_with_creds = cur.execute('SELECT Id, Name, SshUsername, SshPasswordEnc, SnmpCommunityEnc FROM Devices WHERE SshPasswordEnc IS NOT NULL OR SnmpCommunityEnc IS NOT NULL;').fetchall()
+print(f'Devices with encrypted creds: {len(devices_with_creds)}')
+for d in devices_with_creds[:5]:
+    pwd_len = len(d[3]) if d[3] else 0
+    snmp_len = len(d[4]) if d[4] else 0
+    print(f'  Device {d[0]} ({d[1]}): SshUser={d[2]}, PwdLen={pwd_len}, SnmpLen={snmp_len}')
 
 con.close()
 """
