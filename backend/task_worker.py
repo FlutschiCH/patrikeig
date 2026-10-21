@@ -29,31 +29,34 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the actual database tables: DevicePollResult, DeviceTemplates, etc.
-    # In earlier logs:
-    # "AbsolutDashboard.Web.Services.Integrity.IntegrityGate:
-    #  Database integrity constraint violation: foreign key relationship could not be validated during connection pool initialization"
-    # Let's inspect the exact database queries IntegrityGate runs on startup!
+    # Check the exact Devices table and inspect parents / foreign relations
     py_code = """
 import sqlite3
 
 con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
 cur = con.cursor()
 
-# Find any table with 0 rows or foreign keys
-tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
-print('=== ROW COUNTS PER TABLE ===')
-for t in tables:
-    if not t.startswith('sqlite_'):
-        count = cur.execute(f"SELECT count(*) FROM \\"{t}\\";").fetchone()[0]
-        print(f'{t:30}: {count}')
+print('=== DEVICES COLUMNS ===')
+cols = [c[1] for c in cur.execute('PRAGMA table_info(Devices);').fetchall()]
+print(cols)
 
-print('\\n=== CHECKING IF DeviceCategories or Templates ARE EMPTY ===')
-cats = cur.execute('SELECT Id, Key, Name FROM DeviceCategories;').fetchall()
-print('Categories:', cats)
+print('\\n=== CHECKING ParentDeviceId RELATIONSHIPS ===')
+# Are there any devices whose ParentDeviceId points to a non-existent device?
+if 'ParentDeviceId' in cols:
+    bad_parents = cur.execute('SELECT Id, Name, ParentDeviceId FROM Devices WHERE ParentDeviceId IS NOT NULL AND ParentDeviceId NOT IN (SELECT Id FROM Devices);').fetchall()
+    print('Devices with non-existent ParentDeviceId:', bad_parents)
 
-tmpls = cur.execute('SELECT Id, Name, CategoryId FROM DeviceTemplates;').fetchall()
-print('Templates:', tmpls)
+# Are there any Devices with NULL or invalid CategoryId?
+bad_cats = cur.execute('SELECT Id, Name, CategoryId FROM Devices WHERE CategoryId IS NULL OR CategoryId NOT IN (SELECT Id FROM DeviceCategories);').fetchall()
+print('Devices with invalid CategoryId:', bad_cats)
+
+# Are there any Devices with NULL or invalid TemplateId?
+bad_tmpls = cur.execute('SELECT Id, Name, TemplateId FROM Devices WHERE TemplateId IS NULL OR TemplateId NOT IN (SELECT Id FROM DeviceTemplates);').fetchall()
+print('Devices with invalid TemplateId:', bad_tmpls)
+
+print('\\n=== TOTAL DEVICES DETAILS ===')
+for d in cur.execute('SELECT Id, Name, CategoryId, TemplateId, Enabled FROM Devices;').fetchall():
+    print(' ', d)
 
 con.close()
 """
