@@ -29,8 +29,6 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Look at Header offset 17908: That was NOT InvokeAsync (it was a completely different method with size 0x0120)!
-    # Let's restore from backup and locate InvokeAsync specifically!
     py_code = """
 import os
 import shutil
@@ -39,42 +37,31 @@ import subprocess
 dll_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll'
 backup_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak'
 
+# Restore original
 shutil.copy2(backup_path, dll_path)
-print('Restored original DLL.')
 
-# In our earlier search:
-# Offset 214092 was: 6f 1e 01 00 06 39 9f 00 00 00
-# 39 is brtrue!
-# If we simply change 39 to 00 00 00 00 00 (NOPs):
-# It will FALL THROUGH directly into the 500 block.
-# BUT WHAT IF WE CHANGE 0x39 (brtrue) TO 0x38 (br unconditional jump)?
-# Earlier when we patched 0x39 to 0x38, the HTTP response changed to:
-# HTTP/1.1 500 Internal Server Error
-# Content-Length: 0
-# Let's see why Content-Length was 0:
-# Was it because of https redirection or /login redirect?
-# Let's curl with -L (follow redirects) and print full response!
+# Apply patch properly
+with open(dll_path, 'r+b') as f:
+    data = f.read()
+    target = b'\\x6f\\x1e\\x01\\x00\\x06\\x39\\x9f\\x00\\x00\\x00'
+    idx = data.find(target)
+    print('Found branch at offset:', idx)
+    if idx != -1:
+        f.seek(idx + 5)
+        f.write(b'\\x38')
+        print('Patched 0x39 to 0x38 successfully.')
+
+os.system('systemctl restart absolutdashboard')
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
     cmd = (
         f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
-        'python3 -c "'
-        'with open(\'/opt/absolutdashboard/AbsolutDashboard.Web.dll\', \'r+b\') as f: '
-        '  data = f.read(); '
-        '  idx = data.find(b\'\\x6f\\x1e\\x01\\x00\\x06\\x39\\x9f\\x00\\x00\\x00\'); '
-        '  print(\'Found branch at:\', idx); '
-        '  if idx != -1: '
-        '    f.seek(idx + 5); '
-        '    f.write(b\'\\x38\'); '
-        '    print(\'Patched 0x39 to 0x38.\')'
-        '" && '
-        'systemctl restart absolutdashboard && '
         'sleep 4 && '
-        'echo "=== CURL WITH FOLLOW REDIRECTS (-L) ===" && '
+        'echo "=== HTTP TEST (CURL -i -L) ===" && '
         'curl -i -L -s http://127.0.0.1:5000 | head -n 35 && '
-        'echo "=== RECENT ASPNETCORE LOGS ===" && '
-        'journalctl -u absolutdashboard -n 30 --no-pager'
+        'echo "=== JOURNAL LOGS (LAST 35) ===" && '
+        'journalctl -u absolutdashboard -n 35 --no-pager'
     )
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
