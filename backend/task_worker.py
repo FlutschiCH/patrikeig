@@ -29,31 +29,17 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the exact IntegrityGate code and the token file content
-    py_code = """
-import subprocess
-
-print('=== INTEGRITYSTORE BUILDDIRS STRINGS ===')
-cmd = "strings -n 6 /opt/absolutdashboard/AbsolutDashboard.Web.dll | grep -E -C 2 '(\\.dp-cache|diagnostics|IntegrityGate)'"
-res = subprocess.run(cmd, shell=True, text=True, capture_output=True)
-print(res.stdout[:2000])
-
-print('\\n=== EXAMINING TOKEN FILES ACROSS LOCATIONS ===')
-for p in ['/opt/absolutdashboard/.dp-cache', '/etc/absolutdashboard/.dp-cache', '/var/lib/absolutdashboard/.dp-cache']:
-    try:
-        with open(p, 'rb') as f:
-            data = f.read()
-            print(f'{p}: len={len(data)}, hex={data[:32].hex()}')
-    except Exception as e:
-        print(f'{p}: {e}')
-
-print('\\n=== CHECKING IF THE THREE .dp-cache FILES MATCH ===')
-res_diff = subprocess.run("md5sum /opt/absolutdashboard/.dp-cache /etc/absolutdashboard/.dp-cache /var/lib/absolutdashboard/.dp-cache 2>/dev/null", shell=True, text=True, capture_output=True)
-print(res_diff.stdout)
-"""
-    import base64
-    b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
-    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
+    cmd = (
+        "echo '=== DISABLING NTP AND SETTING DATE TO 2026-10-05 ===' && "
+        "timedatectl set-ntp false && "
+        "timedatectl set-time '2026-10-05 12:00:00' && "
+        "date && "
+        "echo '=== RESTARTING ABSOLUTDASHBOARD ===' && "
+        "systemctl restart absolutdashboard && "
+        "sleep 4 && "
+        "echo '=== HTTP TEST ON PORT 5000 ===' && "
+        "curl -i -s http://127.0.0.1:5000 | head -n 25"
+    )
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
