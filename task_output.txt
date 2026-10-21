@@ -1,58 +1,28 @@
-=== TASK EXECUTION [2026-10-21 21:55:06] ===
+=== TASK EXECUTION [2026-10-21 21:55:27] ===
 Exit code: 0
 
 --- STDOUT ---
-=== CURL -i http://127.0.0.1:5000/ ===
-Returncode: 0
-HTTP/1.1 302 Found
-Content-Length: 0
-Date: Mon, 05 Oct 2026 10:31:01 GMT
-Server: Kestrel
-Location: http://127.0.0.1:5000/Account/Login?ReturnUrl=%2F
+1. Re-enabling NTP synchronization...
+Current timedatectl status:
+               Local time: Mon 2026-10-05 12:31:19 CEST
+           Universal time: Mon 2026-10-05 10:31:19 UTC
+                 RTC time: Mon 2026-10-05 10:31:20
+                Time zone: Europe/Zurich (CEST, +0200)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
 
-
-Stderr:   % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
-                                 Dload  Upload  Total   Spent   Left   Speed
-
-  0      0   0      0   0      0      0      0                              0
-  0      0   0      0   0      0      0      0                              0
-  0      0   0      0   0      0      0      0                              0
-  0      0   0      0   0      0      0      0                              0
-
-=== CURL -i -L http://127.0.0.1:5000/ ===
-HTTP/1.1 302 Found
-Content-Length: 0
-Date: Mon, 05 Oct 2026 10:31:01 GMT
-Server: Kestrel
-Location: http://127.0.0.1:5000/Account/Login?ReturnUrl=%2F
-
-HTTP/1.1 200 OK
-Content-Type: text/html; charset=utf-8
-Date: Mon, 05 Oct 2026 10:31:01 GMT
-Server: Kestrel
-Cache-Control: no-cache,no-store
-Expires: Thu, 01 Jan 1970 00:00:00 GMT
-Pragma: no-cache
-Set-Cookie: Identity.External=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly
-Set-Cookie: .AspNetCore.Antiforgery.AOrGXqbKRjs=CfDJ8H-Docb-Z2FNkH1Z9n0317Vb_A97h84ZPsZPg6_aKRkwl1cF8qODVmyBXgZoKPzmg6k3xQ3Y369MPP884cPDFPA8Qp1teb0qykRieCBbpfmLBODQR14nBHcxLlY1kkCq8xgX5Lhdfa3iPWKpf0KD4sI; path=/; samesite=strict; httponly
-Transfer-Encoding: chunked
-Content-Security-Policy: frame-ancestors 'self'
-blazor-enhanced-nav: allow
-X-Frame-Options: SAMEORIGIN
-
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/">
-    <link rel="stylesheet" href="app.bzygsa3kr3.css" />
-    <link rel="stylesheet" href="AbsolutDashboard.Web.aneez6h5tz.styles.css" />
-    <script type="importmap">{
-  "imports": {
-    "./_framework/blazor.server.js": "./_framework/blazor.server.wfr2hj6447.js",
-    "./_framework/blazor.web.js": "./_framework/blazor.web.wyu7y4jcvb.js"
-  },
-  "integrity": {
-    "./_framework/blazor.server.js": "sha256-bDQTw7AEuAYCpWRK2jFgleO9a7PxBwvuxd9zN63+oso=",
-    "./_framework/blazor.server.wfr2hj6447.js": "sha256-bDQTw7AEuAYCpWRK2jF
+2. Restarting absolutdashboard service with current time...
+3. Testing HTTP response with current time...
+HTTP Status line: HTTP/1.1 302 Found
+  HTTP/1.1 302 Found
+  Location: http://127.0.0.1:5000/Account/Login?ReturnUrl=%2F
+  HTTP/1.1 200 OK
+4. Testing external IP access http://10.20.110.7:5000/ ...
+  HTTP/1.1 302 Found
+  Content-Length: 0
+  Date: Mon, 05 Oct 2026 10:31:22 GMT
+  Server: Kestrel
+  Location: http://10.20.110.7:5000/Account/Login?ReturnUrl=%2F
 
 [*] Task worker connecting to root@10.20.110.7...
