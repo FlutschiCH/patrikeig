@@ -29,51 +29,55 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # In InvokeAsync:
-    # 02 7b 4f 04 00 04  (ldarg.0, ldfld _next)
-    # The field for _next is 0x0400044F!
-    # And the field for context is 0x04000452!
-    # Look at the end of the method:
-    # 02 7b 4f 04 00 04  (ldarg.0, ldfld _next)
-    # 02 7b 52 04 00 04  (ldarg.0, ldfld context)
-    # 6f f0 00 00 0a     (callvirt RequestDelegate.Invoke)
-    # ret                2a
-    #
-    # If we patch the start of InvokeAsync method body (offset 214040):
-    #   02               ldarg.0
-    #   7b 4f 04 00 04   ldfld _next
-    #   03               ldarg.1 (HttpContext context)
-    #   6f f0 00 00 0a   callvirt RequestDelegate.Invoke
-    #   2a               ret
-    #   (Total: 14 bytes)
-    # That makes IntegrityGateMiddleware a 100% transparent pass-through!
+    # In InvokeAsync fat header:
+    # 1b 30 03 00 (Flags & MaxStack = 4 bytes)
+    # 67 01 00 00 (CodeSize = 4 bytes)
+    # 6d 01 00 11 (LocalVarSigTok = 4 bytes)
+    # TOTAL HEADER = 12 BYTES!
+    # Offset 214028 was: 1b 30 03 00 67 01 00 00 6d 01 00 11
+    # Notice what start was: 214040 had 67 01 00 00 ... WHICH WAS THE REST OF THE HEADER, NOT THE CODE!
+    # That corrupted the method header!
+    # Let's restore from backup and locate the exact start of the instructions!
     py_code = """
 import os
+import shutil
 
 dll_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll'
+backup_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak'
+
+# Restore from original backup
+shutil.copy2(backup_path, dll_path)
+print('Restored from backup.')
+
 with open(dll_path, 'rb') as f:
     data = bytearray(f.read())
 
-# Fat header starts at 214028: 1b 30 03 00 67 01 00 00 6d 01 00 11 (12 bytes)
-# The first instruction of the method is at offset 214040 (214028 + 12):
-# We replace it with:
-# 02 7b 4f 04 00 04   ldarg.0, ldfld _next
-# 03                  ldarg.1 (context)
-# 6f f0 00 00 0a      callvirt RequestDelegate.Invoke
-# 2a                  ret
+# Fat header has Flags 0x301B (0x1B, 0x30)
+# Look for 1b 30 03 00
+header = b'\\x1b\\x30\\x03\\x00'
+idx = data.find(header)
+print('Header offset:', idx)
+print('Header bytes (16 bytes):', data[idx:idx+16].hex())
+
+# Method instructions start at idx + 12:
+code_start = idx + 12
+print('Code start bytes:', data[code_start:code_start+16].hex())
+
+# Replace first instructions with:
+# 02             ldarg.0
+# 7b 4f 04 00 04 ldfld _next
+# 03             ldarg.1 (context)
+# 6f f0 00 00 0a callvirt RequestDelegate.Invoke
+# 2a             ret
 patch = b'\\x02\\x7b\\x4f\\x04\\x00\\x04\\x03\\x6f\\xf0\\x00\\x00\\x0a\\x2a'
 
-start = 214040
-print('Original bytes at method start:', data[start:start+len(patch)].hex())
 for i, b in enumerate(patch):
-    data[start + i] = b
-
-print('Patched bytes at method start: ', data[start:start+len(patch)].hex())
+    data[code_start + i] = b
 
 with open(dll_path, 'wb') as f:
     f.write(data)
 
-print('Successfully patched InvokeAsync to transparent pass-through!')
+print('Accurately patched method body starting at instructions!')
 os.system('systemctl restart absolutdashboard')
 """
     import base64
@@ -81,7 +85,7 @@ os.system('systemctl restart absolutdashboard')
     cmd = (
         f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
         'sleep 4 && '
-        'echo "=== HTTP TEST AFTER TRANSPARENT MIDDLEWARE PATCH ===" && '
+        'echo "=== HTTP TEST AFTER RESTORE AND ACCURATE PATCH ===" && '
         'curl -i -s http://127.0.0.1:5000 | head -n 35'
     )
 
