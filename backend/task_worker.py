@@ -29,37 +29,29 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check: Why did IntegrityGate throw:
+    # Check the exact IntegrityGate code in the binary!
+    # Where does that error string come from?
     # "Database integrity constraint violation: foreign key relationship could not be validated during connection pool initialization"
-    # Let's inspect the actual SQLite foreign key constraints across ALL tables!
     py_code = """
-import sqlite3
+with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
+    data = f.read()
 
-con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
-cur = con.cursor()
+target = b'foreign key relationship'
+idx = data.find(target)
+print('Target index in DLL:', idx)
 
-print('=== INSPECTING ALL FOREIGN KEYS IN ALL TABLES ===')
-tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
-for t in tables:
-    fks = cur.execute(f"PRAGMA foreign_key_list('{t}');").fetchall()
-    if fks:
-        for fk in fks:
-            # fk format: (id, seq, table, from, to, on_update, on_delete, match)
-            parent_table = fk[2]
-            from_col = fk[3]
-            to_col = fk[4]
-            # Check for orphaned rows
-            query = f"SELECT count(*) FROM \\"{t}\\" WHERE \\"{from_col}\\" IS NOT NULL AND \\"{from_col}\\" NOT IN (SELECT \\"{to_col}\\" FROM \\"{parent_table}\\");"
-            try:
-                bad_count = cur.execute(query).fetchone()[0]
-                if bad_count > 0:
-                    print(f'VIOLATION: Table {t}.{from_col} -> {parent_table}.{to_col} has {bad_count} orphaned records!')
-                else:
-                    print(f'OK: Table {t}.{from_col} -> {parent_table}.{to_col}')
-            except Exception as e:
-                print(f'Error checking {t} -> {parent_table}: {e}')
-
-con.close()
+if idx != -1:
+    snippet = data[max(0, idx-300):min(len(data), idx+500)]
+    print('Context:')
+    print(''.join(chr(b) if 32 <= b <= 126 else ' ' for b in snippet))
+else:
+    print('String not in AbsolutDashboard.Web.dll, checking other DLLs...')
+    import glob
+    for dll in glob.glob('/opt/absolutdashboard/*.dll'):
+        with open(dll, 'rb') as fp:
+            d = fp.read()
+            if target in d:
+                print('Found in:', dll)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
