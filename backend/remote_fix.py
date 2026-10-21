@@ -40,20 +40,36 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # 1. Check sqlite foreign keys and integrity
-    # 2. Check schema
-    cmd = (
-        "echo '=== SQLITE INTEGRITY CHECK ===' && "
-        "sqlite3 /var/lib/absolutdashboard/app.db 'PRAGMA integrity_check;' && "
-        "echo '=== SQLITE FOREIGN KEY CHECK ===' && "
-        "sqlite3 /var/lib/absolutdashboard/app.db 'PRAGMA foreign_key_check;' && "
-        "echo '=== SQLITE QUICK CHECK ===' && "
-        "sqlite3 /var/lib/absolutdashboard/app.db 'PRAGMA quick_check;' && "
-        "echo '=== DEVICE TEMPLATES & DEVICES COUNT ===' && "
-        "sqlite3 /var/lib/absolutdashboard/app.db 'SELECT count(*) FROM Devices; SELECT count(*) FROM DeviceTemplates;' "
-    )
+    # Use python3 on the remote machine (which has sqlite3 built-in) to check integrity and foreign keys
+    py_script = """
+import sqlite3
 
-    log("[*] Checking SQLite integrity on remote server...")
+con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
+cur = con.cursor()
+
+print('=== INTEGRITY CHECK ===')
+for row in cur.execute('PRAGMA integrity_check;'):
+    print(row)
+
+print('=== FOREIGN KEY CHECK ===')
+fk_violations = cur.execute('PRAGMA foreign_key_check;').fetchall()
+print(f'Violations: {len(fk_violations)}')
+for v in fk_violations:
+    print(v)
+
+print('=== TABLE COUNTS ===')
+for tbl in ['Devices', 'DeviceTemplates', 'DeviceCategories', 'AspNetUsers', 'DevicePollResults']:
+    try:
+        c = cur.execute(f'SELECT count(*) FROM {tbl};').fetchone()[0]
+        print(f'{tbl}: {c}')
+    except Exception as e:
+        print(f'{tbl}: Error ({e})')
+
+con.close()
+"""
+    cmd = f"python3 -c \"{py_script}\""
+
+    log("[*] Checking SQLite database via Python on remote server...")
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
