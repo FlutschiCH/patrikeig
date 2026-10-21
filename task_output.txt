@@ -1,50 +1,41 @@
-=== TASK EXECUTION [2026-10-21 21:50:06] ===
+=== TASK EXECUTION [2026-10-21 21:50:37] ===
 Exit code: 0
 
 --- STDOUT ---
-Found branch at offset: 214092
-Patched 0x39 to 0x38 successfully.
+Found target at offset: 214092
+Applied stack-preserving true condition patch (pop; ldc.i4.1; nop*3)!
 === HTTP TEST (CURL -i -L) ===
 HTTP/1.1 500 Internal Server Error
-Content-Length: 0
-Date: Mon, 05 Oct 2026 10:26:00 GMT
+Content-Type: text/plain
+Date: Mon, 05 Oct 2026 10:26:31 GMT
 Server: Kestrel
+Transfer-Encoding: chunked
 
-=== JOURNAL LOGS (LAST 35) ===
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]:       Loaded hosting startup assembly AbsolutDashboard.Web
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]: trce: Microsoft.AspNetCore.Http.Connections.Internal.HttpConnectionManager[9]
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]:       Starting connection heartbeat.
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]: info: Microsoft.Hosting.Lifetime[0]
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]:       Application started. Press Ctrl+C to shut down.
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]: info: Microsoft.Hosting.Lifetime[0]
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]:       Hosting environment: Production
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]: info: Microsoft.Hosting.Lifetime[0]
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]:       Content root path: /opt/absolutdashboard
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]: dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
-Oct 05 12:25:59 absolutsrf absolutdashboard[12949]:       Hosting started
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Connection id "0HNP2PC6P64DD" accepted.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Connection id "0HNP2PC6P64DD" started.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Request starting HTTP/1.1 GET http://127.0.0.1:5000/ - - -
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       All hosts are allowed.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: fail: Microsoft.AspNetCore.Server.Kestrel[13]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Connection id "0HNP2PC6P64DD", Request id "0HNP2PC6P64DD:00000001": An unhandled exception was thrown by the application.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       System.InvalidProgramException: Common Language Runtime detected an invalid program.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:          at AbsolutDashboard.Web.Services.Integrity.IntegrityGateMiddleware.InvokeAsync(HttpContext context, IntegrityGate gate)
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:          at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:          at lambda_method340(Closure, Object, HttpContext, IServiceProvider)
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:          at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:          at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Connection id "0HNP2PC6P64DD" completed keep alive response.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Request finished HTTP/1.1 GET http://127.0.0.1:5000/ - 500 0 - 15.2299ms
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[6]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Connection id "0HNP2PC6P64DD" received FIN.
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]: dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[7]
-Oct 05 12:26:01 absolutsrf absolutdashboard[12949]:       Connection id "0HNP2PC6P64DD" sending FIN because: "The Socket transport's send loop completed gracefully."
+500 - Internal Server Error=== JOURNAL LOGS (LAST 25) ===
+Oct 05 12:26:30 absolutsrf absolutdashboard[13071]:       Hosting environment: Production
+Oct 05 12:26:30 absolutsrf absolutdashboard[13071]: info: Microsoft.Hosting.Lifetime[0]
+Oct 05 12:26:30 absolutsrf absolutdashboard[13071]:       Content root path: /opt/absolutdashboard
+Oct 05 12:26:30 absolutsrf absolutdashboard[13071]: dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
+Oct 05 12:26:30 absolutsrf absolutdashboard[13071]:       Hosting started
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" accepted.
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" started.
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Request starting HTTP/1.1 GET http://127.0.0.1:5000/ - - -
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       All hosts are allowed.
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" completed keep alive response.
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[6]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" received FIN.
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[7]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" sending FIN because: "The Socket transport's send loop completed gracefully."
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Request finished HTTP/1.1 GET http://127.0.0.1:5000/ - 500 - text/plain 6.4633ms
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[10]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" disconnecting.
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[2]
+Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" stopped.
 
 [*] Task worker connecting to root@10.20.110.7...
