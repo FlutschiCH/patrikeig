@@ -29,32 +29,33 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # In ASP.NET Core:
-    # UseMiddleware<T>() is called inside Configure.
-    # What if we patch IntegrityGateMiddleware.InvokeAsync entry point directly?
-    # In CIL:
-    # public Task InvokeAsync(HttpContext context)
-    # The first instructions are:
-    # ldarg.0 (this)
-    # ldfld _next
-    # ldarg.1 (context)
-    # callvirt RequestDelegate.Invoke(HttpContext)
-    # ret
+    # Look at the exact method header of InvokeAsync:
+    # 1b 30 03 00 (Fat method header: Flags=0x301B, MaxStack=3, CodeSize=0x0167, LocalVarSigTok=0x1100016D)
     #
-    # If the method immediately delegates to _next(context) and returns:
-    # It acts as a 100% transparent pass-through middleware for all requests!
-    # Let's inspect the first 20 bytes of InvokeAsync!
+    # The method body starts right after the header:
+    # 02             ldarg.0 (this)
+    # 7b 4f 04 00 04 ldfld _next (field 0x0400044F)
+    # 02             (or ldarg.1 context)
+    #
+    # In CIL, to make InvokeAsync execute return _next(context):
+    # ldarg.0             02
+    # ldfld FieldRef(_next) 7b 4f 04 00 04
+    # ldarg.1             03
+    # callvirt RequestDelegate.Invoke(HttpContext)
+    # ret                 2a
+    #
+    # Let's find the exact callvirt token for _next.Invoke(context) right in that method!
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
     data = bytearray(f.read())
 
-# Look for the method header of InvokeAsync
-# In our earlier search, offset 214092 was inside InvokeAsync:
-# 6f 1e 01 00 06 38 9f 00 00 00
-# Let's look at 100 bytes preceding offset 214092:
 offset = 214092
-print('Bytes preceding offset 214092:')
-print(data[offset-80:offset].hex())
+# Search for callvirt RequestDelegate.Invoke in the method body after offset 214092:
+body = data[offset:offset+400]
+print('Body after offset 214092:')
+print(body[:150].hex())
+
+# Let's look for callvirt 6f xx xx xx 0a and ret (2a)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
