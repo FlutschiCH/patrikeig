@@ -1,17 +1,13 @@
-=== TASK EXECUTION [2026-10-21 21:53:34] ===
+=== TASK EXECUTION [2026-10-21 21:54:01] ===
 Exit code: 0
 
 --- STDOUT ---
-Bytes 213980-214040:
-213980: 08 08 00 00 20 00 00 00 24 00 00 01 36 02 7c 3f
-213996: 04 00 04 03 28 2a 06 00 0a 2a 2e 73 de 08 00 06
-214012: 80 4d 04 00 04 2a 1e 02 28 45 00 00 0a 2a 1e 03
-214028: 6f 18 01 00 06 2a 00 00 1b 30 03 00 67 01 00 00
-Field op 0x7b at 213801: token 0x040003f2
-Field op 0x7d at 213837: token 0x0400043e
-Field op 0x7d at 213844: token 0x04000443
-Field op 0x7d at 213867: token 0x0400043e
-Field op 0x7d at 213874: token 0x04000443
-Field op 0x7b at 214049: token 0x0400044f
+Streams: {'#~': '0x60a20', '#Strings': '0xa0cf4', '#US': '0xb244c', '#GUID': '0xdc008', '#Blob': '0xdc018'}
+'InvokeAsync' string index: 21467
+'Configure' string index: 39207
+MethodDef count: 3774
+MethodDef table at 439808, row size 18
+Method 292 [InvokeAsync]: RVA=0x6580, FileOffset=18304
+Method 293 [Configure]: RVA=0x65d3, FileOffset=18387
 
 [*] Task worker connecting to root@10.20.110.7...
