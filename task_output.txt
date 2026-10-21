@@ -1,18 +1,8 @@
-=== TASK EXECUTION [2026-10-21 21:41:25] ===
+=== TASK EXECUTION [2026-10-21 21:41:56] ===
 Exit code: 0
 
 --- STDOUT ---
-=== INSPECTING ALL FOREIGN KEYS IN ALL TABLES ===
-OK: Table AspNetRoleClaims.RoleId -> AspNetRoles.Id
-OK: Table AspNetUserClaims.UserId -> AspNetUsers.Id
-OK: Table AspNetUserLogins.UserId -> AspNetUsers.Id
-OK: Table AspNetUserRoles.UserId -> AspNetUsers.Id
-OK: Table AspNetUserRoles.RoleId -> AspNetRoles.Id
-OK: Table AspNetUserTokens.UserId -> AspNetUsers.Id
-OK: Table DeviceTemplates.CategoryId -> DeviceCategories.Id
-OK: Table DevicePollResults.DeviceId -> Devices.Id
-OK: Table Devices.ParentDeviceId -> Devices.Id
-OK: Table Devices.TemplateId -> DeviceTemplates.Id
-OK: Table Devices.CategoryId -> DeviceCategories.Id
+Target index in DLL: -1
+String not in AbsolutDashboard.Web.dll, checking other DLLs...
 
 [*] Task worker connecting to root@10.20.110.7...
