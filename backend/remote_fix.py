@@ -40,20 +40,17 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # Check the test instance on port 5001 or check if 5001 works
+    # Check the test instance's app.db vs production app.db
     cmd = (
-        "echo '=== CHECKING absolutdashboard-test.service ===' && "
-        "systemctl status absolutdashboard-test --no-pager || true && "
-        "echo '=== TESTING PORT 5001 ===' && "
-        "curl -i -s http://127.0.0.1:5001 | head -n 15 || true && "
-        "echo '=== TESTING APP.DB WITH WAL CHECKPOINT ===' && "
-        "python3 -c \"import sqlite3; con = sqlite3.connect('/var/lib/absolutdashboard/app.db'); con.execute('PRAGMA wal_checkpoint(FULL);'); con.close(); print('WAL Checkpoint complete')\" && "
-        "systemctl restart absolutdashboard && "
+        "echo '=== COMPARING TEST VS PROD APP.DB ===' && "
+        "ls -la /var/lib/absolutdashboard-test/app.db /var/lib/absolutdashboard/app.db && "
+        "echo '=== STARTING TEST SERVICE (PORT 5001) ===' && "
+        "systemctl start absolutdashboard-test && "
         "sleep 4 && "
-        "curl -i -s http://127.0.0.1:5000 | head -n 15"
+        "curl -i -s http://127.0.0.1:5001 | head -n 15"
     )
 
-    log("[*] Performing WAL checkpoint and testing ports...")
+    log("[*] Testing the test instance on port 5001...")
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
