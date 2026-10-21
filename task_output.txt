@@ -1,12 +1,13 @@
-=== TASK EXECUTION [2026-10-21 21:49:00] ===
+=== TASK EXECUTION [2026-10-21 21:49:27] ===
 Exit code: 0
 
 --- STDOUT ---
-Restored from backup.
-Header offset: 17908
-Header bytes (16 bytes): 1b300300200100002b000011027b8700
-Code start bytes: 027b870000040a160b061201284e0100
-Accurately patched method body starting at instructions!
-=== HTTP TEST AFTER RESTORE AND ACCURATE PATCH ===
+Restored original DLL.
 
 [*] Task worker connecting to root@10.20.110.7...
+
+--- STDERR ---
+File "<string>", line 1
+    with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'r+b') as f:   data = f.read();   idx = data.find(b'\x6f\x1e\x01\x00\x06\x39\x9f\x00\x00\x00');   print('Found branch at:', idx);   if idx != -1:     f.seek(idx + 5);     f.write(b'\x38');     print('Patched 0x39 to 0x38.')
+                                                                                                                                                                                                    ^^
+SyntaxError: invalid syntax
