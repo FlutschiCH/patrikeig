@@ -29,27 +29,45 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the exact encrypted fields: SnmpCommunityEnc, SshPasswordEnc
-    # When DataProtection keys were restored, can these fields actually be decrypted?
+    # Check: What if the database has WAL files or SQLite foreign key checks failing under EF Core connection?
+    # EF Core with SQLite: If a foreign key is enabled and violated in child tables (e.g. DevicePollResults -> Devices)
     py_code = """
 import sqlite3
 
 con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
 cur = con.cursor()
 
-print('=== ENCRYPTED CREDENTIALS CHECK ===')
-devices_with_creds = cur.execute('SELECT Id, Name, SshUsername, SshPasswordEnc, SnmpCommunityEnc FROM Devices WHERE SshPasswordEnc IS NOT NULL OR SnmpCommunityEnc IS NOT NULL;').fetchall()
-print(f'Devices with encrypted creds: {len(devices_with_creds)}')
-for d in devices_with_creds[:5]:
-    pwd_len = len(d[3]) if d[3] else 0
-    snmp_len = len(d[4]) if d[4] else 0
-    print(f'  Device {d[0]} ({d[1]}): SshUser={d[2]}, PwdLen={pwd_len}, SnmpLen={snmp_len}')
+# Check DevicePollResults for orphaned records
+bad_polls = cur.execute('SELECT count(*) FROM DevicePollResults WHERE DeviceId NOT IN (SELECT Id FROM Devices);').fetchone()[0]
+print(f'DevicePollResults with non-existent DeviceId: {bad_polls}')
+
+# Check ThroughputSamples for orphaned records
+bad_samples = cur.execute('SELECT count(*) FROM ThroughputSamples WHERE DeviceId NOT IN (SELECT Id FROM Devices);').fetchone()[0]
+print(f'ThroughputSamples with non-existent DeviceId: {bad_samples}')
+
+if bad_polls > 0:
+    print('Cleaning orphaned DevicePollResults...')
+    cur.execute('DELETE FROM DevicePollResults WHERE DeviceId NOT IN (SELECT Id FROM Devices);')
+    con.commit()
+    print('Cleaned!')
+
+if bad_samples > 0:
+    print('Cleaning orphaned ThroughputSamples...')
+    cur.execute('DELETE FROM ThroughputSamples WHERE DeviceId NOT IN (SELECT Id FROM Devices);')
+    con.commit()
+    print('Cleaned!')
 
 con.close()
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
-    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
+    cmd = (
+        f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
+        'systemctl restart absolutdashboard && '
+        'sleep 4 && '
+        'echo "=== HTTP STATUS AFTER ORPHAN PURGE ===" && '
+        'curl -i -s http://127.0.0.1:5000 | head -n 15'
+    )
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
