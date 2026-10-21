@@ -1,15 +1,13 @@
-=== TASK EXECUTION [2026-10-21 21:52:05] ===
+=== TASK EXECUTION [2026-10-21 21:52:28] ===
 Exit code: 0
 
 --- STDOUT ---
-Length of method body to analyze: 600 bytes
-ldc.i4 500 at relative offset 93 (file offset 214113)
-This is MoveNext() of the async state machine struct!
-Offset 98 (file 214118): opcode 0x6f, token 0x0a000634
-Offset 119 (file 214139): opcode 0x6f, token 0x0a000635
-Offset 149 (file 214169): opcode 0x28, token 0x0a000636
-Offset 253 (file 214273): opcode 0x6f, token 0x0a000637
-Branch target if valid: relative 236 (file offset 214256)
-Target bytes: 00 00 0a de 7e 07 7b 8b 00 00 04 02 7b 52 04 00 04 6f 37 06 00 0a 6f f0 00 00 0a 0c 12 02 28 b3 05 00 0a 2d 3c 02 17 25 0a 7d 4f 04 00 04 02 08 7d 54
+IntegrityGateStartupFilter at offset 712498
+IStartupFilter at offset 712483
+Searching for 'Configure' occurrences...
+Configure at 661257: _45_0.<>9__5_0.<get_Configured>b__5_0.<Parse>b__5_0.<ParseSn
+Configure at 662707: nd>b__0.<Tile>b__0.<Configure>b__0.<PickTemplate>b__0.<Label
+Configure at 683679: ired.IsRequired.get_Configured.get_Elapsed.get_Authenticated
+Configure at 697883: tegrityStore._store.Configure.ITrackingConsentFeature.Micros
 
 [*] Task worker connecting to root@10.20.110.7...
