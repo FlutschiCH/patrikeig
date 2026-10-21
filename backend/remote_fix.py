@@ -40,17 +40,10 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # Check the test instance's app.db vs production app.db
-    cmd = (
-        "echo '=== COMPARING TEST VS PROD APP.DB ===' && "
-        "ls -la /var/lib/absolutdashboard-test/app.db /var/lib/absolutdashboard/app.db && "
-        "echo '=== STARTING TEST SERVICE (PORT 5001) ===' && "
-        "systemctl start absolutdashboard-test && "
-        "sleep 4 && "
-        "curl -i -s http://127.0.0.1:5001 | head -n 15"
-    )
+    # Check the logs of absolutdashboard-test
+    cmd = "journalctl -u absolutdashboard-test --since '30 seconds ago' --no-pager"
 
-    log("[*] Testing the test instance on port 5001...")
+    log("[*] Checking logs of test instance on port 5001...")
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
