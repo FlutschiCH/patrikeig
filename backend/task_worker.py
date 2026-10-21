@@ -29,33 +29,18 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Let's restore NTP / current system time and verify the service continues to return 200 OK!
+    # Check systemctl status of absolutdashboard and test login page directly
     py_code = """
 import subprocess
-import time
 
-print("1. Re-enabling NTP synchronization...")
-subprocess.run(['timedatectl', 'set-ntp', 'true'], check=True)
-time.sleep(2)
+print("=== SYSTEMCTL STATUS ===")
+s = subprocess.run(['systemctl', 'is-active', 'absolutdashboard'], capture_output=True, text=True)
+print("absolutdashboard is-active:", s.stdout.strip())
 
-date_r = subprocess.run(['timedatectl', 'status'], capture_output=True, text=True)
-print("Current timedatectl status:")
-print(date_r.stdout)
-
-print("2. Restarting absolutdashboard service with current time...")
-subprocess.run(['systemctl', 'restart', 'absolutdashboard'], check=True)
-time.sleep(3)
-
-print("3. Testing HTTP response with current time...")
-r = subprocess.run(['curl', '-i', '-L', 'http://127.0.0.1:5000/'], capture_output=True, text=True)
-print("HTTP Status line:", r.stdout.splitlines()[0] if r.stdout else "No output")
-for line in r.stdout.splitlines():
-    if "HTTP/" in line or "Location:" in line:
-        print(" ", line)
-
-print("4. Testing external IP access http://10.20.110.7:5000/ ...")
-r_ext = subprocess.run(['curl', '-i', '-s', 'http://10.20.110.7:5000/'], capture_output=True, text=True)
-for line in r_ext.stdout.splitlines()[:5]:
+print("=== CURL LOGIN PAGE ===")
+r = subprocess.run(['curl', '-i', '-s', 'http://10.20.110.7:5000/Account/Login'], capture_output=True, text=True)
+print("Status line:", r.stdout.splitlines()[0] if r.stdout else "Empty")
+for line in r.stdout.splitlines()[:15]:
     print(" ", line)
 """
     import base64
