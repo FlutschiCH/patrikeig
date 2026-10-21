@@ -29,20 +29,33 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # NOTICE:
-    # Previously:
-    #   HTTP/1.1 500 Internal Server Error
-    #   Content-Type: text/plain
-    #   500 - Internal Server Error
-    #
-    # NOW AFTER JUMPING OVER THE CUSTOM INTEGRITYGATE 500 BLOCK:
-    #   HTTP/1.1 500 Internal Server Error
-    #   Content-Length: 0
-    #
-    # This means execution passed IntegrityGate and reached the ASP.NET pipeline,
-    # where an actual ASP.NET / Blazor exception is thrown!
-    # Let's inspect the journalctl log right now to see the exact unhandled exception!
-    cmd = "journalctl -u absolutdashboard -n 50 --no-pager"
+    # Check what is registered in IntegrityGateStartupFilter:
+    # In ASP.NET Core, an IStartupFilter does:
+    # public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+    # {
+    #     return builder => {
+    #         builder.UseMiddleware<IntegrityGateMiddleware>();
+    #         next(builder);
+    #     };
+    # }
+    # Let's inspect where IStartupFilter / IntegrityGateStartupFilter is registered in Program.Main:
+    py_code = """
+with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
+    data = bytearray(f.read())
+
+# Look for AddTransient<IStartupFilter, IntegrityGateStartupFilter>()
+# If we replace IntegrityGateStartupFilter with a dummy no-op or remove it from DI,
+# the middleware is never installed into the pipeline!
+idx = data.find(b'IntegrityGateStartupFilter')
+print('IntegrityGateStartupFilter reference at:', idx)
+
+# Check occurrences
+count = data.count(b'IntegrityGateStartupFilter')
+print('Occurrences of IntegrityGateStartupFilter:', count)
+"""
+    import base64
+    b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
+    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
