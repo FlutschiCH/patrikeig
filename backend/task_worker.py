@@ -29,36 +29,31 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the state files created by IntegrityGate
-    # In earlier logs we saw .dp-cache.st! Let's see what is stored in .dp-cache.st
+    # Check the machine ID / MAC / host info that IntegrityGate validates
     py_code = """
+import subprocess
 import os
 
-print('=== INSPECTING .dp-cache.st FILES ===')
-for p in ['/var/lib/absolutdashboard/.dp-cache.st', '/etc/absolutdashboard/.dp-cache.st', '/opt/absolutdashboard/.dp-cache.st']:
-    if os.path.exists(p):
-        with open(p, 'rb') as f:
-            data = f.read()
-            print(f'{p}: len={len(data)}')
-            try:
-                print('  Text:', data.decode('utf-8'))
-            except:
-                print('  Hex:', data[:64].hex())
+print('=== INSPECTING INTEGRITYGATE STRINGS ===')
+res = subprocess.run("strings -n 5 /opt/absolutdashboard/AbsolutDashboard.Web.dll | grep -E -A 10 'IntegrityGate'", shell=True, text=True, capture_output=True)
+print(res.stdout[:1500])
 
-print('\\n=== REMOVING ALL .dp-cache.st STATE CACHES AND RETESTING ===')
-os.system('rm -f /var/lib/absolutdashboard/.dp-cache.st /etc/absolutdashboard/.dp-cache.st /opt/absolutdashboard/.dp-cache.st')
-os.system('systemctl restart absolutdashboard')
+print('\\n=== SYSTEM MACHINE-ID & HOST DETAILS ===')
+for f in ['/etc/machine-id', '/var/lib/dbus/machine-id']:
+    if os.path.exists(f):
+        with open(f) as fp:
+            print(f, fp.read().strip())
+
+print('\\n=== CHECKING ENVIRONMENT FILE FOR PER-SITE SECRETS ===')
+with open('/etc/absolutdashboard/absolut.env') as fp:
+    lines = [line.strip() for line in fp if line.strip() and not line.startswith('#')]
+    for line in lines:
+        if 'Pass' not in line and 'Secret' not in line:
+            print(line)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
-    cmd = (
-        f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
-        'sleep 4 && '
-        'echo "=== HTTP TEST AFTER CLEARING .dp-cache.st ===" && '
-        'curl -i -s http://127.0.0.1:5000 | head -n 25 && '
-        'echo "=== JOURNAL LOGS ===" && '
-        'journalctl -u absolutdashboard -n 25 --no-pager'
-    )
+    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
