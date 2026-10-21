@@ -8,6 +8,15 @@ TASK_SCRIPT = os.path.join(REPO_DIR, "backend", "task_worker.py")
 OUT_FILE = os.path.join(REPO_DIR, "task_output.txt")
 PYTHON_EXE = sys.executable
 
+def copy_to_clipboard(text):
+    """Copies text to Windows clipboard via clip command."""
+    try:
+        if sys.platform == "win32":
+            p = subprocess.Popen(['clip'], stdin=subprocess.PIPE, close_fds=True)
+            p.communicate(input=text.encode('utf-8', errors='replace'))
+    except Exception as e:
+        print(f"[!] Clipboard error: {e}")
+
 def run_cmd(cmd, cwd=REPO_DIR):
     res = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
     return res.returncode, res.stdout, res.stderr
@@ -47,10 +56,14 @@ while True:
                 with open(OUT_FILE, "w", encoding="utf-8") as f:
                     f.write(output)
 
+                # Always copy to clipboard immediately!
+                copy_to_clipboard(output)
+                print("[*] OUTPUT COPIED TO CLIPBOARD!")
+
+                # Try pushing to git, but don't hang if unauthenticated
                 run_cmd("git add task_output.txt")
                 run_cmd('git commit -m "Auto-report task execution result"')
                 run_cmd("git push origin main")
-                print("[*] Result uploaded to GitHub.")
 
         time.sleep(4)
     except KeyboardInterrupt:
