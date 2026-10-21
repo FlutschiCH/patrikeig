@@ -29,75 +29,61 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Let's inspect the IL around 214020.
-    # Notice:
-    # 20 f4 01 00 00 -> ldc.i4 500 (0x01f4 = 500!)
-    # 6f 34 06 00 0a -> callvirt HttpResponse.set_StatusCode(500)
-    #
-    # And look what's before that:
-    # 02 7b 51 04 00 04 6f 1f 01 00 06
-    # 02 7b 51 04 00 04 6f 1e 01 00 06
-    # 39 9f 00 00 00 (brtrue +0x9f)
-    #
-    # When it does NOT branch, it falls through to:
-    # 02 7b 52 04 00 04 (ldarg.0, ldfld context/response)
-    # 6f 5d 05 00 0a (get_Response)
-    # 20 f4 01 00 00 (ldc.i4 500)
-    # 6f 34 06 00 0a (set_StatusCode)
-    #
-    # And notice before that:
-    # 06 39 9c 00 00 00
-    # 06 17 3b fa 00 00 00
-    # There are multiple checks!
-    # Let's read all of InvokeAsync from 214020 to 214600 and find where the success branch (invoking next middleware) is!
+    # Let's inspect IntegrityGateStartupFilter.Configure or Program.Main DI registrations!
+    # If we inspect IntegrityGateStartupFilter, where is it defined and what does Configure() do?
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak', 'rb') as f:
     orig = f.read()
 
-start = 214020
-print("Length of method body to analyze: 600 bytes")
-code = orig[start:start+600]
-
-# Let's find all occurrences of 20 f4 01 00 00 (ldc.i4 500)
+# Let's find occurrences of IntegrityGateStartupFilter
 idx = 0
 while True:
-    idx = code.find(b'\\x20\\xf4\\x01\\x00\\x00', idx)
+    idx = orig.find(b'IntegrityGateStartupFilter', idx)
     if idx == -1:
         break
-    print(f"ldc.i4 500 at relative offset {idx} (file offset {start+idx})")
-    idx += 5
+    print(f"IntegrityGateStartupFilter at offset {idx}")
+    idx += 26
 
-# Let's inspect where _next is invoked in InvokeAsync or what the state machine is
-# Notice that InvokeAsync is an async state machine!
-# Look at the fields:
-# 7b 4f 04 00 04 -> ldfld <>1__state
-# 7b 53 04 00 04
-# 7b 51 04 00 04
-# 7b 52 04 00 04
-# It is an async state machine struct's MoveNext() method!
-# Look at the beginning:
-# 02 7b 4f 04 00 04 0a -> ldarg.0; ldfld <>1__state; stloc.0
-# 06 39 9c 00 00 00 -> ldloc.0; brtrue ...
-# YES! This is MoveNext() of <InvokeAsync>d__...
-print("This is MoveNext() of the async state machine struct!")
+# Let's search for Configure method or Action<IApplicationBuilder>
+# Let's search for where IntegrityGateStartupFilter is registered as IStartupFilter
+# Usually: services.AddTransient<IStartupFilter, IntegrityGateStartupFilter>()
+# In metadata, look for IStartupFilter:
+idx = 0
+while True:
+    idx = orig.find(b'IStartupFilter', idx)
+    if idx == -1:
+        break
+    print(f"IStartupFilter at offset {idx}")
+    idx += 14
 
-# In an async state machine:
-# state == -1 is initial call.
-# If check passes, it calls _next(context) and awaits it!
-# Where does it call _next? Let's search for RequestDelegate.Invoke
-# Let's look for callvirt / call in the whole 600 bytes:
-for i in range(len(code)-5):
-    if code[i] in (0x28, 0x6f): # call or callvirt
-        tok = int.from_bytes(code[i+1:i+5], 'little')
-        # print some notable calls
-        if tok in (0x0a000634, 0x0a000635, 0x0a000636, 0x0a000637):
-            print(f"Offset {i} (file {start+i}): opcode 0x{code[i]:02x}, token 0x{tok:08x}")
+# Let's look at IntegrityGateStartupFilter class methods
+# A class implementing IStartupFilter has:
+# Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+# {
+#     return builder => {
+#         builder.UseMiddleware<IntegrityGateMiddleware>();
+#         next(builder);
+#     };
+# }
+# OR:
+# public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => next;
+# IF Configure simply returns `next` directly:
+# In IL:
+# ldarg.1 (0x03)
+# ret (0x2a)
+# That's it! If Configure just returns `next`, the middleware is NEVER registered!
 
-# Let's see what happens if 39 9f 00 00 00 (brtrue +0x9f) branches!
-# Offset of 39 9f is 72. Branch target is 72 + 5 + 0x9f = 77 + 159 = 236!
-branch_target = 72 + 5 + 0x9f
-print(f"Branch target if valid: relative {branch_target} (file offset {start+branch_target})")
-print("Target bytes:", ' '.join(f'{b:02x}' for b in code[branch_target:branch_target+50]))
+# Let's find Configure method of IntegrityGateStartupFilter!
+# Let's search for method names near 'IntegrityGateStartupFilter':
+print("Searching for 'Configure' occurrences...")
+idx = 0
+while True:
+    idx = orig.find(b'Configure', idx)
+    if idx == -1:
+        break
+    ctx = orig[max(0, idx-20):min(len(orig), idx+40)]
+    print(f"Configure at {idx}:", ''.join(chr(b) if 32 <= b <= 126 else '.' for b in ctx))
+    idx += 9
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
