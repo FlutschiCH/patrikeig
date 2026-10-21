@@ -1,28 +1,25 @@
-=== TASK EXECUTION [2026-10-21 21:55:27] ===
+=== TASK EXECUTION [2026-10-21 21:55:55] ===
 Exit code: 0
 
 --- STDOUT ---
-1. Re-enabling NTP synchronization...
-Current timedatectl status:
-               Local time: Mon 2026-10-05 12:31:19 CEST
-           Universal time: Mon 2026-10-05 10:31:19 UTC
-                 RTC time: Mon 2026-10-05 10:31:20
-                Time zone: Europe/Zurich (CEST, +0200)
-System clock synchronized: no
-              NTP service: active
-          RTC in local TZ: no
-
-2. Restarting absolutdashboard service with current time...
-3. Testing HTTP response with current time...
-HTTP Status line: HTTP/1.1 302 Found
-  HTTP/1.1 302 Found
-  Location: http://127.0.0.1:5000/Account/Login?ReturnUrl=%2F
+=== SYSTEMCTL STATUS ===
+absolutdashboard is-active: active
+=== CURL LOGIN PAGE ===
+Status line: HTTP/1.1 200 OK
   HTTP/1.1 200 OK
-4. Testing external IP access http://10.20.110.7:5000/ ...
-  HTTP/1.1 302 Found
-  Content-Length: 0
-  Date: Mon, 05 Oct 2026 10:31:22 GMT
+  Content-Type: text/html; charset=utf-8
+  Date: Wed, 21 Oct 2026 19:55:55 GMT
   Server: Kestrel
-  Location: http://10.20.110.7:5000/Account/Login?ReturnUrl=%2F
+  Cache-Control: no-cache,no-store
+  Expires: Thu, 01 Jan 1970 00:00:00 GMT
+  Pragma: no-cache
+  Set-Cookie: Identity.External=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly
+  Set-Cookie: .AspNetCore.Antiforgery.AOrGXqbKRjs=CfDJ8FaNzhkyM2xJvaMbhsnK_IfBmrwfAIbsk4Ob9bAqVwLg_Zg0zGVkv6iH_bRwFxTLTl6kQ4_z1El2VL-TwMkeBk1EZEITRGhExlI_xo-bfA2AdLUWSV5XWDy41tVlzmC8tVydpTm8zHUMNdlzQ3IvDdk; path=/; samesite=strict; httponly
+  Transfer-Encoding: chunked
+  Content-Security-Policy: frame-ancestors 'self'
+  blazor-enhanced-nav: allow
+  X-Frame-Options: SAMEORIGIN
+  
+  <!DOCTYPE html>
 
 [*] Task worker connecting to root@10.20.110.7...
