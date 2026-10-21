@@ -29,30 +29,21 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check what causes Kestrel to return 500 when calling http://127.0.0.1:5000/
-    # Let's test calling other paths: /login, /setup, /api, /_blazor, /health
+    # Even static files (/favicon.png, /app.css) return 500!
+    # That means IntegrityGateStartupFilter installs IntegrityGateMiddleware BEFORE UseStaticFiles()!
+    # Let's inspect IntegrityGateStartupFilter in the DLL!
     py_code = """
-import urllib.request
-import urllib.error
+with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
+    data = f.read()
 
-urls = [
-    'http://127.0.0.1:5000/',
-    'http://127.0.0.1:5000/login',
-    'http://127.0.0.1:5000/setup',
-    'http://127.0.0.1:5000/api',
-    'http://127.0.0.1:5000/favicon.png',
-    'http://127.0.0.1:5000/app.css'
-]
+idx = data.find(b'IntegrityGateStartupFilter')
+print('IntegrityGateStartupFilter offset:', idx)
 
-print('=== TESTING MULTIPLE ENDPOINTS ===')
-for u in urls:
-    try:
-        req = urllib.request.urlopen(u, timeout=3)
-        print(f'{u:35}: Status {req.status}, len={len(req.read())}')
-    except urllib.error.HTTPError as e:
-        print(f'{u:35}: HTTPError {e.code} - {e.read().decode("utf-8", errors="replace").strip()}')
-    except Exception as e:
-        print(f'{u:35}: Error ({e})')
+# Find nearby code and strings
+import re
+print('\\n=== WORDS AROUND INTEGRITYGATESTARTUPFILTER ===')
+snippet = data[max(0, idx-500):min(len(data), idx+1000)]
+print(''.join(chr(b) if 32 <= b <= 126 else ' ' for b in snippet))
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
