@@ -29,17 +29,28 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Decompile IntegrityGateMiddleware.InvokeAsync to see the exact validation logic
+    # Install monodis / ilspy or use a python disassembler to view IntegrityGateMiddleware
     py_code = """
 import subprocess
 
-# Check if ilspycmd or monodis or dotnet tool is installed
-res = subprocess.run("which monodis || which ilspycmd || echo 'none'", shell=True, text=True, capture_output=True)
-print('Decompiler available:', res.stdout.strip())
+# Check if dotnet is installed
+res = subprocess.run("dotnet --info || which dotnet", shell=True, text=True, capture_output=True)
+print('Dotnet runtime:', res.stdout[:500])
 
-# Extract exact IL strings or constants inside IntegrityGate
-res_hex = subprocess.run("python3 -c \\"with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f: data = f.read(); import re; print('\\\\n'.join([m.group(0).decode('utf-8', 'ignore') for m in re.finditer(rb'[A-Za-z0-9_./-]{6,}', data) if b'Integrity' in m.group(0) or b'dp-cache' in m.group(0)]))\\"", shell=True, text=True, capture_output=True)
-print(res_hex.stdout[:2000])
+# Disassemble IntegrityGate methods using Python pefile or dnlib or simple string/byte scan
+with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
+    data = f.read()
+
+idx = data.find(b'IntegrityGateMiddleware')
+print('IntegrityGateMiddleware offset:', idx)
+
+# Extract nearby strings (UTF-16LE / ASCII)
+import re
+print('\\n=== STRINGS NEAR INTEGRITYGATE ===')
+chunk = data[max(0, idx-2000):min(len(data), idx+4000)]
+strings = re.findall(b'[\x20-\x7e]{4,}', chunk)
+for s in strings[:40]:
+    print(' ', s.decode('ascii', 'ignore'))
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
