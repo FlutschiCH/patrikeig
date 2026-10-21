@@ -6,7 +6,7 @@ from ssh_handler import SSHHandler
 class FiveGHandler:
     REMOTE_HOST = os.environ.get("REMOTE_HOST", "10.20.110.7")
     REMOTE_USER = os.environ.get("REMOTE_USER", "root")
-    REMOTE_PASS = os.environ.get("REMOTE_PASS", "Godzilla_12")
+    REMOTE_PASS = os.environ.get("REMOTE_PASS", "Absolut1.")
     REMOTE_DB_PATH = "/var/lib/absolutdashboard-test/app.db"
 
     def execute_remote_sql(self, sql_script):

@@ -7,7 +7,7 @@ from ssh_handler import SSHHandler
 
 TARGET_HOST = "10.20.110.7"
 SSH_USER = "root"
-SSH_PASS = "Godzilla_12"
+SSH_PASS = "Absolut1."
 
 def print_banner(text, accumulator):
     b = "\n" + "=" * 65 + "\n" + f"  {text}\n" + "=" * 65 + "\n"

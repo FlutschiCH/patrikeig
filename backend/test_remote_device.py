@@ -11,7 +11,7 @@ from port_scanner import PortScanner
 TARGET_HOST = "10.20.110.7"
 TARGET_PORT = 5001
 SSH_USER = "root"
-SSH_PASS = "Godzilla_12"
+SSH_PASS = "Absolut1."
 
 def print_banner(text):
     print("\n" + "=" * 65)
