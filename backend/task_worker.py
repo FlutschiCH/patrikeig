@@ -29,27 +29,29 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the user environment variables!
-    # In earlier strings we saw: GetEnvironmentVariable !
-    # Let's inspect all strings inside user code by filtering out System.* and Microsoft.*
+    # Use python file directly on remote without raw null bytes in regex string literal
     py_code = """
-import re
-
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
     data = f.read()
 
-# Find all user string literals (#US stream or UTF-16LE strings)
-# .NET user strings are UTF-16LE prefixed with length
-u_strings = re.findall(b'(?:[\x20-\x7e]\x00){4,}', data)
-candidates = []
-for s in u_strings:
-    decoded = s.decode('utf-16le', 'ignore')
-    if any(k in decoded for k in ['Integrity', 'License', 'Token', 'Gate', 'Fail', '500', 'diagnostics', 'dp-cache']):
-        candidates.append(decoded)
+# Search for null-delimited ascii bytes
+pattern = bytes([0])
+words = []
+for kw in [b'IntegrityGate', b'IntegrityStore', b'.dp-cache', b'diagnostics']:
+    pos = 0
+    while True:
+        pos = data.find(kw, pos)
+        if pos == -1:
+            break
+        # grab surrounding 200 bytes
+        snippet = data[max(0, pos-100):min(len(data), pos+150)]
+        printable = ''.join(chr(b) if 32 <= b <= 126 else ' ' for b in snippet)
+        words.append(printable.strip())
+        pos += len(kw)
 
-print('=== MATCHING USER STRINGS IN DLL ===')
-for c in set(candidates):
-    print(' ', repr(c))
+print('=== OCCURRENCES OF INTEGRITY KEYWORDS ===')
+for w in words[:15]:
+    print('-->', w)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
