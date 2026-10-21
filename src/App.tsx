@@ -1,40 +1,49 @@
 import { useState, useEffect } from 'react';
 import { 
-  Terminal, 
   Server, 
   RefreshCw, 
-  Globe, 
-  Clock,
-  ShieldCheck,
-  Cpu,
-  HardDrive,
-  Database,
-  Radio,
-  FileCode,
-  Layers,
-  ChevronRight
+  Clock, 
+  ShieldCheck, 
+  Cpu, 
+  HardDrive, 
+  Radio, 
+  Layers, 
+  ArrowDownCircle, 
+  ArrowUpCircle,
+  Activity,
+  CheckCircle2,
+  XCircle,
+  Search,
+  Network,
+  Smartphone,
+  Router
 } from 'lucide-react';
 
-interface DeviceItem {
-  id: string;
-  name: string;
-  ip: string;
-  url: string;
-  statusCode: number;
-  statusText: string;
-  isOnline: boolean;
-  latencyMs: number | null;
+interface DeviceCategory {
+  Id: number;
+  Key: string;
+  Name: string;
+  ShortName: string;
+  Description: string;
 }
 
-interface CollectorQuery {
-  id: string;
-  name: string;
-  category: 'web_grabber' | 'snmp' | 'script' | 'http';
-  target: string;
-  interval: number;
-  status: string;
-  lastRun: string;
-  value: string;
+interface FiveGDevice {
+  Id: number;
+  Name: string;
+  IpAddress: string;
+  Port: number;
+  CategoryId: number;
+  CategoryName: string;
+  CategoryKey: string;
+  LastReachable: number;
+  LastPolledAt: string;
+  CollectionMethod: number;
+}
+
+interface ThroughputItem {
+  Timestamp: string;
+  DlMbps: number;
+  UlMbps: number;
 }
 
 const FALLBACK_BANNER = ` ┌──────────────────────────────────────────────────────────────────────┐
@@ -56,142 +65,99 @@ Welcome to Ubuntu 26.04 LTS (GNU/Linux 7.0.0-34-generic x86_64)
  * Management:     https://landscape.canonical.com
  * Support:        https://ubuntu.com/pro
 
- System information as of Wed Oct 21 01:26:05 AM CEST 2026
+ System information as of Wed Oct 21 02:30:10 AM CEST 2026
 
   System load:  0.18               Processes:              144
   Usage of /:   44.3% of 23.45GB   Users logged in:        0
   Memory usage: 3%                 IPv4 address for ens18: 10.20.110.7
   Swap usage:   0%
 
- * Canonical Workshop gives developers fast, composable, reproducible, and
-   secure developer environments that are perfect for agentic workflows.
-
-   https://ubuntu.com/workshop
-
-Expanded Security Maintenance for Applications is not enabled.
-
-79 updates can be applied immediately.
-11 of these updates are standard security updates.
-To see these additional updates run: apt list --upgradable
-
-Enable ESM Apps to receive additional future security updates.
-See https://ubuntu.com/esm or run: sudo pro status
-
-
-*** System restart required ***
-Last login: Tue Oct 20 17:09:41 2026 from 10.20.110.22
 root@absolutsrf:~#`;
 
 export default function App() {
-  const [bannerText, setBannerText] = useState<string>(FALLBACK_BANNER);
-  const [devices, setDevices] = useState<DeviceItem[]>([
-    { id: 'gw-router', name: 'Main Router / WebUI', ip: '192.168.1.1', url: 'http://192.168.1.1', statusCode: 200, statusText: '200 OK (Scraped)', isOnline: true, latencyMs: 1 },
-    { id: 'srf-main', name: 'Main Server (Ubuntu 26.04)', ip: '10.20.110.7', url: 'http://10.20.110.7', statusCode: 200, statusText: '200 OK', isOnline: true, latencyMs: 14 },
-    { id: 'client-gw', name: 'Workstation Gateway', ip: '10.20.110.22', url: 'http://10.20.110.22', statusCode: 200, statusText: '200 OK', isOnline: true, latencyMs: 6 },
-    { id: 'mgmt-console', name: 'Management Portal', ip: '10.20.110.1', url: 'http://10.20.110.1', statusCode: 401, statusText: '401 Unauthorized', isOnline: true, latencyMs: 22 },
-    { id: 'dns-primary', name: 'Primary DNS Node', ip: '1.1.1.1', url: 'https://1.1.1.1', statusCode: 200, statusText: '200 OK', isOnline: true, latencyMs: 18 },
+  const [categories, setCategories] = useState<DeviceCategory[]>([
+    { Id: 1, Key: "mobile", Name: "5G Core", ShortName: "Core", Description: "5G mobile core network functions." },
+    { Id: 2, Key: "ims", Name: "IMS Core", ShortName: "IMS", Description: "IMS core network functions." },
+    { Id: 3, Key: "bbu", Name: "Base Stations", ShortName: "BBU", Description: "5G base stations / gNodeB." },
+    { Id: 4, Key: "au", Name: "Access Units", ShortName: "AU", Description: "Aggregation units." },
+    { Id: 5, Key: "eu", Name: "Hub & Power", ShortName: "EU", Description: "Remote hub & power units." },
+    { Id: 6, Key: "ru", Name: "PICO Sender", ShortName: "RU", Description: "Radio units." },
+    { Id: 7, Key: "cell", Name: "Cells", ShortName: "Cell", Description: "NR/LTE cells." },
+    { Id: 8, Key: "ue", Name: "User Equipment", ShortName: "UE", Description: "Connected handsets." },
+    { Id: 9, Key: "switch", Name: "Switches", ShortName: "SW", Description: "Ethernet switches." }
   ]);
-  const [queries, setQueries] = useState<CollectorQuery[]>([
-    { id: 'q1', category: 'web_grabber', name: 'Router WAN Status', target: 'http://192.168.1.1', interval: 10, status: 'OK', lastRun: '01:31:02', value: 'Connected (PPPoE/Fiber)' },
-    { id: 'q2', category: 'web_grabber', name: 'Router Public IP', target: 'http://192.168.1.1', interval: 15, status: 'OK', lastRun: '01:31:10', value: '84.115.12.98' },
-    { id: 'q3', category: 'web_grabber', name: 'DSL/Fiber Sync Rate', target: 'http://192.168.1.1', interval: 30, status: 'OK', lastRun: '01:30:45', value: '1000/500 Mbps' },
-    { id: 'q4', category: 'web_grabber', name: 'DHCP Client Leases', target: 'http://192.168.1.1', interval: 20, status: 'OK', lastRun: '01:31:12', value: '28 active leases' },
-    { id: 'q7', category: 'snmp', name: 'System Uptime (Router)', target: '192.168.1.1', interval: 15, status: 'OK', lastRun: '01:31:05', value: '244d 16h 32m' },
-    { id: 'q9', category: 'snmp', name: 'eth0 Inbound Traffic', target: '192.168.1.1', interval: 10, status: 'OK', lastRun: '01:31:15', value: '142.8 Mbps' },
-    { id: 'q17', category: 'script', name: 'Ping Latency (192.168.1.1)', target: '192.168.1.1', interval: 5, status: 'OK', lastRun: '01:31:18', value: '0.85 ms' },
-    { id: 'q25', category: 'http', name: 'Router WebUI Health', target: 'http://192.168.1.1', interval: 10, status: 'OK', lastRun: '01:31:10', value: 'HTTP 200 OK' }
-  ]);
-  const [selectedIp, setSelectedIp] = useState('10.20.110.7');
-  const [activeTab, setActiveTab] = useState<'both' | 'terminal' | 'devices' | 'collector'>('both');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [loading, setLoading] = useState(false);
-  const [routerGrabResult, setRouterGrabResult] = useState<any>(null);
 
-  const fetchAllData = async () => {
+  const [devices, setDevices] = useState<FiveGDevice[]>([
+    { Id: 1, Name: "H3C vSCN5100 5G Core", IpAddress: "10.20.110.15", Port: 22, CategoryId: 1, CategoryName: "5G Core", CategoryKey: "mobile", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 1 },
+    { Id: 2, Name: "H3C 5gVIMS Core", IpAddress: "10.20.110.16", Port: 161, CategoryId: 2, CategoryName: "IMS Core", CategoryKey: "ims", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 0 },
+    { Id: 3, Name: "BTI nCELL-T5100 (Site Alpha)", IpAddress: "10.20.110.30", Port: 20000, CategoryId: 3, CategoryName: "Base Stations", CategoryKey: "bbu", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 3 },
+    { Id: 4, Name: "Huawei S5735 Switch", IpAddress: "10.20.110.1", Port: 161, CategoryId: 9, CategoryName: "Switches", CategoryKey: "switch", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 0 },
+    { Id: 5, Name: "BTI AU300 Aggregation", IpAddress: "10.20.110.30", Port: 0, CategoryId: 4, CategoryName: "Access Units", CategoryKey: "au", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 2 },
+    { Id: 6, Name: "BTI RU8250 PICO Sender", IpAddress: "10.20.110.30", Port: 0, CategoryId: 6, CategoryName: "PICO Sender", CategoryKey: "ru", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 2 },
+    { Id: 7, Name: "NR Cell 1 (3.5GHz n78)", IpAddress: "10.20.110.30", Port: 0, CategoryId: 7, CategoryName: "Cells", CategoryKey: "cell", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 2 },
+    { Id: 8, Name: "Connected Handset (IMSI ...489)", IpAddress: "10.45.0.2", Port: 0, CategoryId: 8, CategoryName: "User Equipment", CategoryKey: "ue", LastReachable: 1, LastPolledAt: "Just now", CollectionMethod: 1 }
+  ]);
+
+  const [throughput, setThroughput] = useState<ThroughputItem[]>([
+    { Timestamp: "02:34:00", DlMbps: 684.2, UlMbps: 112.5 },
+    { Timestamp: "02:33:30", DlMbps: 712.0, UlMbps: 108.4 }
+  ]);
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<'both' | 'devices' | 'terminal'>('both');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Terminal Banner
-      const bannerRes = await fetch('/api/banner', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ip: selectedIp })
-      });
-      if (bannerRes.ok) {
-        const data = await bannerRes.json();
-        if (data.banner) setBannerText(data.banner);
-      }
-
-      // 2. Fetch Devices Status
-      const devRes = await fetch('/api/devices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ devices })
-      });
-      if (devRes.ok) {
-        const data = await devRes.json();
-        if (data.devices) setDevices(data.devices);
-      }
-
-      // 3. Fetch 30 Queries Collector Status
-      const qRes = await fetch('/api/collector/queries', { method: 'POST' });
-      if (qRes.ok) {
-        const data = await qRes.json();
-        if (data.queries && data.queries.length > 0) {
-          setQueries(data.queries);
-        }
-      }
-    } catch {
-      // Offline fallback
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const triggerRouterGrab = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/collector/grab_router', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: 'http://192.168.1.1' })
-      });
+      const res = await fetch('/api/fiveg/data');
       if (res.ok) {
-        const d = await res.json();
-        setRouterGrabResult(d.data);
+        const data = await res.json();
+        if (data.categories && data.categories.length > 0) setCategories(data.categories);
+        if (data.devices && data.devices.length > 0) setDevices(data.devices);
+        if (data.throughput && data.throughput.length > 0) setThroughput(data.throughput);
       }
     } catch {
-      setRouterGrabResult({ error: 'Failed to contact backend scraper.' });
+      // offline fallback
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAllData();
-    const interval = setInterval(fetchAllData, 10000);
+    fetchData();
+    const interval = setInterval(fetchData, 8000);
     return () => clearInterval(interval);
-  }, [selectedIp]);
+  }, []);
 
-  const filteredQueries = selectedCategory === 'all' 
-    ? queries 
-    : queries.filter(q => q.category === selectedCategory);
+  const filteredDevices = devices.filter(d => {
+    const matchesCat = selectedCategory === "all" || d.CategoryKey === selectedCategory;
+    const matchesSearch = !searchFilter || 
+      d.Name.toLowerCase().includes(searchFilter.toLowerCase()) || 
+      d.IpAddress.toLowerCase().includes(searchFilter.toLowerCase());
+    return matchesCat && matchesSearch;
+  });
+
+  const latestThroughput = throughput[0] || { DlMbps: 684.2, UlMbps: 112.5 };
+  const onlineCount = devices.filter(d => d.LastReachable !== 0).length;
 
   return (
     <div className="min-h-screen bg-[#090d16] text-[#c9d1d9] flex flex-col font-mono selection:bg-[#238636] selection:text-white">
-      {/* Top Header */}
+      {/* Top Navbar */}
       <header className="border-b border-[#21262d] bg-[#161b22] px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30 shadow-md">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-[#238636]/20 border border-[#238636]/40 text-[#3fb950]">
-            <Terminal className="w-5 h-5" />
+            <Radio className="w-5 h-5 animate-pulse" />
           </div>
           <div>
             <h1 className="text-sm font-semibold tracking-wide text-white flex items-center gap-2">
-              Multi-System Collector & MobaXterm Console
+              5G Network Operations & MobaXterm Live Console
               <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#1f6feb]/20 text-[#58a6ff] border border-[#1f6feb]/40">
-                SNMP • Web Grabber • Scripts
+                5G Core • BBU • AU • RU • UE
               </span>
             </h1>
-            <p className="text-xs text-[#8b949e]">Target: {selectedIp} | Gateway: 192.168.1.1</p>
+            <p className="text-xs text-[#8b949e]">SQLite /var/lib/absolutdashboard-test/app.db | Host: 10.20.110.7</p>
           </div>
         </div>
 
@@ -205,37 +171,31 @@ export default function App() {
               Unified View
             </button>
             <button
-              onClick={() => setActiveTab('collector')}
-              className={`px-3 py-1 rounded transition ${activeTab === 'collector' ? 'bg-[#238636] text-white font-medium' : 'text-[#8b949e] hover:text-white'}`}
+              onClick={() => setActiveTab('devices')}
+              className={`px-3 py-1 rounded transition ${activeTab === 'devices' ? 'bg-[#238636] text-white font-medium' : 'text-[#8b949e] hover:text-white'}`}
             >
-              30 Queries ({queries.length})
+              5G Devices ({devices.length})
             </button>
             <button
               onClick={() => setActiveTab('terminal')}
               className={`px-3 py-1 rounded transition ${activeTab === 'terminal' ? 'bg-[#238636] text-white font-medium' : 'text-[#8b949e] hover:text-white'}`}
             >
-              SSH Banner
-            </button>
-            <button
-              onClick={() => setActiveTab('devices')}
-              className={`px-3 py-1 rounded transition ${activeTab === 'devices' ? 'bg-[#238636] text-white font-medium' : 'text-[#8b949e] hover:text-white'}`}
-            >
-              Devices HTTP
+              MobaXterm Console
             </button>
           </div>
 
           <button
-            onClick={fetchAllData}
+            onClick={fetchData}
             disabled={loading}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] border border-[#30363d] rounded-md transition disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#58a6ff]' : ''}`} />
-            <span>{loading ? 'Polling...' : 'Refresh'}</span>
+            <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
           </button>
         </div>
       </header>
 
-      {/* Main Grid */}
+      {/* Main Content Area */}
       <main className="flex-1 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1700px] w-full mx-auto">
         
         {/* Terminal Screen Container */}
@@ -258,7 +218,7 @@ export default function App() {
               {/* Terminal Body */}
               <div className="p-4 md:p-6 overflow-x-auto text-[13px] leading-relaxed text-[#58a6ff] bg-[#05080e] min-h-[460px] flex-1 flex flex-col justify-between">
                 <pre className="whitespace-pre font-mono text-[#c9d1d9] select-text">
-                  {bannerText}
+                  {FALLBACK_BANNER}
                 </pre>
                 
                 <div className="mt-4 flex items-center text-[#3fb950]">
@@ -270,11 +230,12 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Terminal Bottom stats */}
+              {/* Terminal Quick stats */}
               <div className="bg-[#161b22] px-4 py-2 border-t border-[#30363d] text-[11px] text-[#8b949e] flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1"><Cpu className="w-3.5 h-3.5 text-[#58a6ff]" /> Load: 0.18</span>
                   <span className="flex items-center gap-1"><HardDrive className="w-3.5 h-3.5 text-[#e3b341]" /> Root: 44.3%</span>
+                  <span className="flex items-center gap-1"><Activity className="w-3.5 h-3.5 text-[#3fb950]" /> RAM: 3%</span>
                 </div>
                 <span className="text-[#58a6ff] font-medium flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5" /> 10.20.110.7 session active
@@ -284,156 +245,151 @@ export default function App() {
           </div>
         )}
 
-        {/* Right / Secondary Section: Collector & Devices */}
-        <div className={`${activeTab === 'both' ? 'lg:col-span-6' : 'lg:col-span-12'} flex flex-col gap-5`}>
-          
-          {/* Quick Scraper Banner for 192.168.1.1 */}
-          <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded bg-[#1f6feb]/20 text-[#58a6ff]">
-                  <Globe className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">Target Gateway Scraper: 192.168.1.1</h3>
-                  <p className="text-xs text-[#8b949e]">Bypasses clunky router web interface and extracts raw values</p>
-                </div>
+        {/* 5G Network Dashboard Container */}
+        {(activeTab === 'both' || activeTab === 'devices') && (
+          <div className={`${activeTab === 'both' ? 'lg:col-span-6' : 'lg:col-span-12'} flex flex-col gap-4`}>
+            
+            {/* 5G Live Throughput & Metrics Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-[#161b22] border border-[#30363d] p-3 rounded-lg shadow-sm">
+                <span className="text-xs text-[#8b949e] flex items-center gap-1.5">
+                  <ArrowDownCircle className="w-3.5 h-3.5 text-[#3fb950]" /> 5G Downlink
+                </span>
+                <p className="text-lg font-bold text-white mt-1">{latestThroughput.DlMbps} <span className="text-xs text-[#8b949e]">Mbps</span></p>
               </div>
-              <button
-                onClick={triggerRouterGrab}
-                className="px-3 py-1.5 text-xs bg-[#238636] hover:bg-[#2ea043] text-white rounded font-medium transition flex items-center gap-1.5 shadow"
-              >
-                <span>Scrape Router HTML Now</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+
+              <div className="bg-[#161b22] border border-[#30363d] p-3 rounded-lg shadow-sm">
+                <span className="text-xs text-[#8b949e] flex items-center gap-1.5">
+                  <ArrowUpCircle className="w-3.5 h-3.5 text-[#58a6ff]" /> 5G Uplink
+                </span>
+                <p className="text-lg font-bold text-white mt-1">{latestThroughput.UlMbps} <span className="text-xs text-[#8b949e]">Mbps</span></p>
+              </div>
+
+              <div className="bg-[#161b22] border border-[#30363d] p-3 rounded-lg shadow-sm">
+                <span className="text-xs text-[#8b949e] flex items-center gap-1.5">
+                  <Network className="w-3.5 h-3.5 text-[#d29922]" /> 5G Nodes
+                </span>
+                <p className="text-lg font-bold text-white mt-1">{devices.length}</p>
+              </div>
+
+              <div className="bg-[#161b22] border border-[#30363d] p-3 rounded-lg shadow-sm">
+                <span className="text-xs text-[#8b949e] flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#3fb950]" /> Operational
+                </span>
+                <p className="text-lg font-bold text-[#3fb950] mt-1">{onlineCount} / {devices.length}</p>
+              </div>
             </div>
 
-            {routerGrabResult && (
-              <div className="mt-3 p-3 bg-[#0d1117] border border-[#30363d] rounded text-xs">
-                <div className="flex justify-between items-center text-[#8b949e] border-b border-[#21262d] pb-1.5 mb-2">
-                  <span className="font-semibold text-white">Parser Result: {routerGrabResult.title || 'Router WebUI'}</span>
-                  <span className="text-[#3fb950] font-mono">Status: {routerGrabResult.statusCode || 200}</span>
-                </div>
-                <p className="text-[#8b949e] font-mono mb-2">{routerGrabResult.cleanTextSnippet}</p>
-                {routerGrabResult.extractedIps && (
-                  <div className="flex items-center gap-1 text-[11px]">
-                    <span className="text-[#58a6ff]">Extracted Nodes:</span>
-                    {routerGrabResult.extractedIps.map((ip: string, idx: number) => (
-                      <span key={idx} className="bg-[#21262d] px-1.5 py-0.5 rounded text-[#c9d1d9]">{ip}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* 30 Multi-Source Queries Overview */}
-          {(activeTab === 'both' || activeTab === 'collector') && (
+            {/* 5G Topology & Devices List */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden flex flex-col flex-1 shadow-md">
-              <div className="px-4 py-3 border-b border-[#30363d] flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-[#58a6ff]" />
-                  <h2 className="text-sm font-semibold text-white">Configured Data Queries (~30 Active)</h2>
+              
+              {/* Header with Search and Category Filter */}
+              <div className="p-3 border-b border-[#30363d] flex flex-col gap-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-[#58a6ff]" />
+                    <h2 className="text-sm font-semibold text-white">5G Network Elements & Devices</h2>
+                  </div>
+
+                  {/* Search box */}
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 absolute left-2.5 top-2 text-[#8b949e]" />
+                    <input 
+                      type="text"
+                      placeholder="Search device / IP..."
+                      value={searchFilter}
+                      onChange={(e) => setSearchFilter(e.target.value)}
+                      className="bg-[#0d1117] border border-[#30363d] rounded text-xs pl-8 pr-3 py-1 text-white placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
+                    />
+                  </div>
                 </div>
 
-                {/* Filter Pills */}
-                <div className="flex gap-1.5 text-xs">
-                  {['all', 'web_grabber', 'snmp', 'script', 'http'].map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-2 py-0.5 rounded transition capitalize ${selectedCategory === cat ? 'bg-[#388bfd]/20 text-[#58a6ff] border border-[#388bfd]/50' : 'text-[#8b949e] hover:text-white'}`}
-                    >
-                      {cat.replace('_', ' ')}
-                    </button>
-                  ))}
+                {/* Category Pills */}
+                <div className="flex flex-wrap gap-1.5 text-[11px]">
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className={`px-2 py-0.5 rounded transition ${selectedCategory === "all" ? 'bg-[#388bfd] text-white font-medium' : 'bg-[#21262d] text-[#8b949e] hover:text-white'}`}
+                  >
+                    All ({devices.length})
+                  </button>
+                  {categories.map((c) => {
+                    const count = devices.filter(d => d.CategoryKey === c.Key).length;
+                    return (
+                      <button
+                        key={c.Id}
+                        onClick={() => setSelectedCategory(c.Key)}
+                        className={`px-2 py-0.5 rounded transition ${selectedCategory === c.Key ? 'bg-[#388bfd] text-white font-medium' : 'bg-[#21262d] text-[#8b949e] hover:text-white'}`}
+                      >
+                        {c.ShortName} ({count})
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Query Matrix Items */}
-              <div className="divide-y divide-[#21262d] overflow-y-auto max-h-[350px]">
-                {filteredQueries.map((q) => {
-                  let icon = <Database className="w-4 h-4 text-[#58a6ff]" />;
-                  if (q.category === 'web_grabber') icon = <Globe className="w-4 h-4 text-[#3fb950]" />;
-                  if (q.category === 'snmp') icon = <Radio className="w-4 h-4 text-[#e3b341]" />;
-                  if (q.category === 'script') icon = <FileCode className="w-4 h-4 text-[#f778ba]" />;
+              {/* Devices Scroll Area */}
+              <div className="divide-y divide-[#21262d] overflow-y-auto max-h-[500px]">
+                {filteredDevices.map((dev) => {
+                  let icon = <Server className="w-4 h-4 text-[#58a6ff]" />;
+                  if (dev.CategoryKey === 'bbu') icon = <Radio className="w-4 h-4 text-[#3fb950]" />;
+                  if (dev.CategoryKey === 'ue') icon = <Smartphone className="w-4 h-4 text-[#e3b341]" />;
+                  if (dev.CategoryKey === 'switch') icon = <Router className="w-4 h-4 text-[#f778ba]" />;
+
+                  const isOnline = dev.LastReachable !== 0;
 
                   return (
-                    <div key={q.id} className="p-3 hover:bg-[#1a202c] transition flex items-center justify-between gap-3">
+                    <div key={dev.Id} className="p-3.5 hover:bg-[#1a202c] transition flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="p-1.5 rounded bg-[#0d1117] border border-[#30363d]">
+                        <div className="p-2 rounded bg-[#0d1117] border border-[#30363d]">
                           {icon}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">{q.name}</span>
-                            <span className="text-[10px] uppercase font-mono px-1.5 rounded bg-[#21262d] text-[#8b949e]">
-                              {q.category}
+                            <span className="text-xs font-semibold text-white">{dev.Name}</span>
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#21262d] text-[#8b949e] font-mono">
+                              {dev.CategoryName}
                             </span>
                           </div>
-                          <span className="text-[11px] text-[#8b949e] font-mono">{q.target}</span>
+                          <span className="text-[11px] text-[#8b949e] font-mono">
+                            {dev.IpAddress} {dev.Port > 0 ? `:${dev.Port}` : ''}
+                          </span>
                         </div>
                       </div>
 
-                      <div className="text-right">
-                        <span className="text-xs font-mono font-bold text-[#3fb950] block">{q.value}</span>
-                        <span className="text-[10px] text-[#8b949e] flex items-center justify-end gap-1">
-                          <Clock className="w-3 h-3" /> every {q.interval}s
-                        </span>
+                      <div className="text-right flex items-center gap-3">
+                        <div className="hidden sm:block">
+                          <span className="text-[10px] text-[#8b949e] block font-mono">
+                            {dev.LastPolledAt || 'Polled'}
+                          </span>
+                          <span className="text-[10px] text-[#58a6ff] uppercase">
+                            {dev.CollectionMethod === 0 ? 'SNMP' : dev.CollectionMethod === 1 ? 'SSH' : dev.CollectionMethod === 3 ? 'BTI Protocol' : 'Via Parent'}
+                          </span>
+                        </div>
+
+                        <div className={`px-2 py-0.5 rounded text-[11px] font-bold border flex items-center gap-1 ${isOnline ? 'bg-[#238636]/20 text-[#3fb950] border-[#238636]/40' : 'bg-[#f85149]/20 text-[#f85149] border-[#f85149]/40'}`}>
+                          {isOnline ? <CheckCircle2 className="w-3 h-3 text-[#3fb950]" /> : <XCircle className="w-3 h-3 text-[#f85149]" />}
+                          <span>{isOnline ? 'ONLINE' : 'DOWN'}</span>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          )}
 
-          {/* Network Devices HTTP Status Overview */}
-          {(activeTab === 'both' || activeTab === 'devices') && (
-            <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden flex flex-col shadow-md">
-              <div className="px-4 py-3 border-b border-[#30363d] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Server className="w-4 h-4 text-[#58a6ff]" />
-                  <h2 className="text-sm font-semibold text-white">Device HTTP Availability Probe</h2>
-                </div>
-                <span className="text-xs text-[#3fb950] font-mono">
-                  {devices.filter(d => d.isOnline).length} / {devices.length} Online
+              {/* Bottom Card Footer */}
+              <div className="p-3 bg-[#0d1117] border-t border-[#30363d] text-xs text-[#8b949e] flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#3fb950]" />
+                  Synchronized with /var/lib/absolutdashboard-test/app.db
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> Auto-sync 8s
                 </span>
               </div>
-
-              <div className="divide-y divide-[#21262d] overflow-y-auto max-h-[220px]">
-                {devices.map((device) => {
-                  const isSuccess = device.statusCode >= 200 && device.statusCode < 300;
-                  return (
-                    <div 
-                      key={device.id} 
-                      className={`p-3 transition hover:bg-[#1a202c] cursor-pointer flex items-center justify-between gap-2 ${selectedIp === device.ip ? 'bg-[#1c222c] border-l-4 border-l-[#58a6ff]' : ''}`}
-                      onClick={() => setSelectedIp(device.ip)}
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-medium text-white">{device.name}</span>
-                          <span className="text-[11px] text-[#8b949e] font-mono">({device.ip})</span>
-                        </div>
-                        <span className="text-[11px] text-[#58a6ff] truncate block max-w-[280px]">{device.url}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {device.latencyMs !== null && (
-                          <span className="text-[11px] font-mono text-[#3fb950]">{device.latencyMs}ms</span>
-                        )}
-                        <span className={`text-[11px] px-2 py-0.5 rounded border font-mono font-bold ${isSuccess ? 'bg-[#238636]/20 text-[#3fb950] border-[#238636]/40' : 'bg-[#f85149]/20 text-[#f85149] border-[#f85149]/40'}`}>
-                          HTTP {device.statusCode}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
-          )}
+          </div>
+        )}
 
-        </div>
       </main>
     </div>
   );

@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo =======================================================
-echo          PATRIKEIG SYSTEM AUTO-UPDATER & LAUNCHER
+echo          PATRIKEIG SYSTEM AUTO-UPDATER & DUAL LAUNCHER
 echo =======================================================
 echo.
 
@@ -25,7 +25,11 @@ if errorlevel 1 (
 )
 
 echo.
-echo [*] Checking Backend requirements.txt...
+echo [*] Installing / Updating Frontend Dependencies...
+call npm install
+
+echo.
+echo [*] Installing / Updating Backend Dependencies...
 if not exist "backend\requirements.txt" (
     (
         echo flask
@@ -39,26 +43,19 @@ if not exist "backend\requirements.txt" (
         echo paramiko
     ) > "backend\requirements.txt"
 )
-
-echo [*] Installing / Updating Backend Dependencies...
 python -m pip install -r "backend\requirements.txt" --quiet
 
 echo.
+echo [*] Copying frontend URL to clipboard...
+<nul set /p="http://localhost:5173" | clip
+
 echo =======================================================
-echo     [SUCCESS] Running Database Extraction...
+echo     [SUCCESS] URL COPIED TO CLIPBOARD: http://localhost:5173
 echo =======================================================
 echo.
+echo [*] Launching Python Backend in a separate window...
+start "Python Backend WSGI & Debug" cmd /k "cd /d %~dp0backend && python app.py"
 
-python backend\read_absolut_db.py
-
+echo [*] Launching React Frontend (npm run dev)...
 echo.
-echo Press any key to start the background WSGI and Debug GUI...
-pause >nul
-
-cd /d "%~dp0backend"
-python app.py
-
-if errorlevel 1 (
-    echo [!] Application exited with error code %errorlevel%.
-    pause
-)
+call npm run dev
