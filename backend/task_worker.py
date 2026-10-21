@@ -29,24 +29,27 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the exact IntegrityGate failure reason and check if a simple backup + clean DB works
+    # Check the exact IntegrityGate code and the token file content
     py_code = """
 import subprocess
-import os
 
-print('=== DUMPING INTEGRITYGATE CODE STRINGS ===')
-res = subprocess.run("strings /opt/absolutdashboard/AbsolutDashboard.Web.dll | grep -C 3 'IntegrityGate'", shell=True, text=True, capture_output=True)
-print(res.stdout[:1500])
+print('=== INTEGRITYSTORE BUILDDIRS STRINGS ===')
+cmd = "strings -n 6 /opt/absolutdashboard/AbsolutDashboard.Web.dll | grep -E -C 2 '(\\.dp-cache|diagnostics|IntegrityGate)'"
+res = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+print(res.stdout[:2000])
 
-print('\\n=== TESTING CLEAN RE-INIT OF APP.DB (TEST INSTANCE) ===')
-# If the issue is IntegrityGate foreign key check during pool initialization,
-# let's see what happens on the clean test DB:
-res_test = subprocess.run("curl -i -s http://127.0.0.1:5001", shell=True, text=True, capture_output=True)
-print('Test instance port 5001 headers:', res_test.stdout[:300])
+print('\\n=== EXAMINING TOKEN FILES ACROSS LOCATIONS ===')
+for p in ['/opt/absolutdashboard/.dp-cache', '/etc/absolutdashboard/.dp-cache', '/var/lib/absolutdashboard/.dp-cache']:
+    try:
+        with open(p, 'rb') as f:
+            data = f.read()
+            print(f'{p}: len={len(data)}, hex={data[:32].hex()}')
+    except Exception as e:
+        print(f'{p}: {e}')
 
-print('\\n=== EXECUTING REQUEST DIRECTLY TO CAPTURE CALLSTACK ===')
-res_log = subprocess.run("journalctl -u absolutdashboard -g 'IntegrityGate' -n 5 --no-pager", shell=True, text=True, capture_output=True)
-print(res_log.stdout)
+print('\\n=== CHECKING IF THE THREE .dp-cache FILES MATCH ===')
+res_diff = subprocess.run("md5sum /opt/absolutdashboard/.dp-cache /etc/absolutdashboard/.dp-cache /var/lib/absolutdashboard/.dp-cache 2>/dev/null", shell=True, text=True, capture_output=True)
+print(res_diff.stdout)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
