@@ -29,45 +29,37 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check why IntegrityGate threw foreign key violation during pool init:
-    # We will query all foreign key references between tables, check for nulls or mismatches,
-    # and inspect the exact database table definitions.
-    cmd = """
-python3 - <<'EOF'
+    # Run check script directly via base64 to avoid shell quote interpolation issues
+    py_code = """
 import sqlite3
 
 con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
 cur = con.cursor()
 
-print("=== CHECKING ALL TABLES AND SCHEMAS ===")
+print('=== ALL TABLES ===')
 tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
-print("Tables:", tables)
+print(tables)
 
-print("\n=== FOREIGN KEYS PRAGMAS ===")
-for t in tables:
-    fks = cur.execute(f"PRAGMA foreign_key_list('{t}');").fetchall()
-    if fks:
-        print(f"Table {t} foreign keys: {fks}")
+print('=== PRAGMA FOREIGN_KEY_CHECK ===')
+cur.execute('PRAGMA foreign_keys = ON;')
+violations = cur.execute('PRAGMA foreign_key_check;').fetchall()
+print('Violations count:', len(violations))
+for v in violations:
+    print('Violation:', v)
 
-print("\n=== FOREIGN KEY ENFORCEMENT CHECK ===")
-cur.execute("PRAGMA foreign_keys = ON;")
-try:
-    violations = cur.execute("PRAGMA foreign_key_check;").fetchall()
-    print("Violations with FK ON:", violations)
-except Exception as e:
-    print("FK Check error:", e)
+print('=== USERS ===')
+users = cur.execute('SELECT Id, UserName, Email, IsOwner FROM AspNetUsers;').fetchall()
+print(users)
 
-print("\n=== CHECKING AspNetUsers ===")
-users = cur.execute("SELECT Id, UserName, Email, IsOwner FROM AspNetUsers;").fetchall()
-print("Users:", users)
-
-print("\n=== CHECKING AspNetUserRoles ===")
-roles = cur.execute("SELECT * FROM AspNetUserRoles;").fetchall()
-print("UserRoles:", roles)
+print('=== RECENT 5 POLL RESULTS ===')
+polls = cur.execute('SELECT Id, DeviceId, Timestamp, Success FROM DevicePollResults ORDER BY Id DESC LIMIT 5;').fetchall()
+print(polls)
 
 con.close()
-EOF
 """
+    import base64
+    b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
+    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
