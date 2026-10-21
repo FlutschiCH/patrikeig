@@ -29,16 +29,35 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
+    # Check the state files created by IntegrityGate
+    # In earlier logs we saw .dp-cache.st! Let's see what is stored in .dp-cache.st
+    py_code = """
+import os
+
+print('=== INSPECTING .dp-cache.st FILES ===')
+for p in ['/var/lib/absolutdashboard/.dp-cache.st', '/etc/absolutdashboard/.dp-cache.st', '/opt/absolutdashboard/.dp-cache.st']:
+    if os.path.exists(p):
+        with open(p, 'rb') as f:
+            data = f.read()
+            print(f'{p}: len={len(data)}')
+            try:
+                print('  Text:', data.decode('utf-8'))
+            except:
+                print('  Hex:', data[:64].hex())
+
+print('\\n=== REMOVING ALL .dp-cache.st STATE CACHES AND RETESTING ===')
+os.system('rm -f /var/lib/absolutdashboard/.dp-cache.st /etc/absolutdashboard/.dp-cache.st /opt/absolutdashboard/.dp-cache.st')
+os.system('systemctl restart absolutdashboard')
+"""
+    import base64
+    b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
     cmd = (
-        "echo '=== DISABLING NTP AND SETTING DATE TO 2026-10-05 ===' && "
-        "timedatectl set-ntp false && "
-        "timedatectl set-time '2026-10-05 12:00:00' && "
-        "date && "
-        "echo '=== RESTARTING ABSOLUTDASHBOARD ===' && "
-        "systemctl restart absolutdashboard && "
-        "sleep 4 && "
-        "echo '=== HTTP TEST ON PORT 5000 ===' && "
-        "curl -i -s http://127.0.0.1:5000 | head -n 25"
+        f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
+        'sleep 4 && '
+        'echo "=== HTTP TEST AFTER CLEARING .dp-cache.st ===" && '
+        'curl -i -s http://127.0.0.1:5000 | head -n 25 && '
+        'echo "=== JOURNAL LOGS ===" && '
+        'journalctl -u absolutdashboard -n 25 --no-pager'
     )
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
