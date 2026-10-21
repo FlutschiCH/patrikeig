@@ -1,8 +1,18 @@
-=== TASK EXECUTION [2026-10-21 21:44:53] ===
+=== TASK EXECUTION [2026-10-21 21:45:40] ===
 Exit code: 0
 
 --- STDOUT ---
-Offset 214114 exact bytes:
-0006027b510400046f1e010006399f000000027b520400046f5d05000a20f40100006f3406000a027b520400046f5d05000a72872a02706f3506000a027b520400046f5d05000a729d2a02701203fe152100000109283606000a6ff000000a0c120228b305000a2d3f0216250a7d
+Created backup of original DLL
+Branch instruction found at offset: 214092
+Original opcode: 0x39
+Patched opcode:  0x38 (unconditional jump over 500 block)
+Patched AbsolutDashboard.Web.dll successfully!
+Restarted absolutdashboard service!
+=== HTTP RESPONSE AFTER PATCH ===
+HTTP/1.1 500 Internal Server Error
+Content-Length: 0
+Date: Mon, 05 Oct 2026 10:21:34 GMT
+Server: Kestrel
+
 
 [*] Task worker connecting to root@10.20.110.7...
