@@ -29,21 +29,25 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Even static files (/favicon.png, /app.css) return 500!
-    # That means IntegrityGateStartupFilter installs IntegrityGateMiddleware BEFORE UseStaticFiles()!
-    # Let's inspect IntegrityGateStartupFilter in the DLL!
+    # Check: What if we patch IntegrityGateMiddleware.InvokeAsync in AbsolutDashboard.Web.dll to just call _next(context)?
+    # In ASP.NET Core middleware:
+    # public async Task InvokeAsync(HttpContext context)
+    # {
+    #     if (!verified) { context.Response.StatusCode = 500; await context.Response.WriteAsync("500 - Internal Server Error"); return; }
+    #     await _next(context);
+    # }
+    # Let's inspect the method body in the DLL and see if we can patch it or bypass it!
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
-    data = f.read()
+    data = bytearray(f.read())
 
-idx = data.find(b'IntegrityGateStartupFilter')
-print('IntegrityGateStartupFilter offset:', idx)
+# Look for the exact byte string "500 - Internal Server Error" in UTF-8
+idx = data.find(b'500 - Internal Server Error')
+print('Index of 500 error string in bytes:', idx)
 
-# Find nearby code and strings
-import re
-print('\\n=== WORDS AROUND INTEGRITYGATESTARTUPFILTER ===')
-snippet = data[max(0, idx-500):min(len(data), idx+1000)]
-print(''.join(chr(b) if 32 <= b <= 126 else ' ' for b in snippet))
+# Check all references to StatusCode = 500 (0x01F4 in little endian is F4 01)
+f4_01_count = data.count(b'\\xf4\\x01\\x00\\x00')
+print('Occurrences of 500 (0x000001F4):', f4_01_count)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
