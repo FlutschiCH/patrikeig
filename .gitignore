@@ -29,3 +29,7 @@ __pycache__/
 *$py.class
 venv/
 .env
+
+# Large dump files
+SSH Root.rar
+SSH Root/
