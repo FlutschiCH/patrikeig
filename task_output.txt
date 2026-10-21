@@ -1,41 +1,27 @@
-=== TASK EXECUTION [2026-10-21 21:50:37] ===
+=== TASK EXECUTION [2026-10-21 21:51:38] ===
 Exit code: 0
 
 --- STDOUT ---
-Found target at offset: 214092
-Applied stack-preserving true condition patch (pop; ldc.i4.1; nop*3)!
-=== HTTP TEST (CURL -i -L) ===
-HTTP/1.1 500 Internal Server Error
-Content-Type: text/plain
-Date: Mon, 05 Oct 2026 10:26:31 GMT
-Server: Kestrel
-Transfer-Encoding: chunked
+String '500 - Internal Server Error' at: -1
+Bytes at 214020-214320:
+28 45 00 00 0a 2a 1e 03 6f 18 01 00 06 2a 00 00 1b 30 03 00 67 01 00 00 6d 01 00 11 02 7b 4f 04 00 04 0a 02 7b 53 04 00 04 0b 06 39 9c 00 00 00 06 17 3b fa 00 00 00 02 7b 51 04 00 04 6f 1f 01 00 06 02 7b 51 04 00 04 6f 1e 01 00 06 39 9f 00 00 00 02 7b 52 04 00 04 6f 5d 05 00 0a 20 f4 01 00 00 6f 34 06 00 0a 02 7b 52 04 00 04 6f 5d 05 00 0a 72 87 2a 02 70 6f 35 06 00 0a 02 7b 52 04 00 04 6f 5d 05 00 0a 72 9d 2a 02 70 12 03 fe 15 21 00 00 01 09 28
+36 06 00 0a 6f f0 00 00 0a 0c 12 02 28 b3 05 00 0a 2d 3f 02 16 25 0a 7d 4f 04 00 04 02 08 7d 54 04 00 04 02 7c 50 04 00 04 12 02 02 28 02 02 00 2b dd b6 00 00 00 02 7b 54 04 00 04 0c 02 7c 54 04 00 04 fe 15 19 00 00 01 02 15 25 0a 7d 4f 04 00 04 12 02 28 f1 00 00 0a de 7e 07 7b 8b 00 00 04 02 7b 52 04 00 04 6f 37 06 00 0a 6f f0 00 00 0a 0c 12 02 28 b3 05 00 0a 2d 3c 02 17 25 0a 7d 4f 04 00 04 02 08 7d 54 04 00 04 02 7c 50 04 00 04 12 02 02 28 02
+Tool found: objdump at /usr/bin/objdump
+Tool found: strings at /usr/bin/strings
+Dotnet info snippet: 
+Host:
+  Version:      10.0.13
+  Architecture: x64
+  Commit:       4099f83977
+  RID:          ubuntu.26.04-x64
 
-500 - Internal Server Error=== JOURNAL LOGS (LAST 25) ===
-Oct 05 12:26:30 absolutsrf absolutdashboard[13071]:       Hosting environment: Production
-Oct 05 12:26:30 absolutsrf absolutdashboard[13071]: info: Microsoft.Hosting.Lifetime[0]
-Oct 05 12:26:30 absolutsrf absolutdashboard[13071]:       Content root path: /opt/absolutdashboard
-Oct 05 12:26:30 absolutsrf absolutdashboard[13071]: dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
-Oct 05 12:26:30 absolutsrf absolutdashboard[13071]:       Hosting started
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" accepted.
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" started.
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Request starting HTTP/1.1 GET http://127.0.0.1:5000/ - - -
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       All hosts are allowed.
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" completed keep alive response.
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[6]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" received FIN.
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[7]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" sending FIN because: "The Socket transport's send loop completed gracefully."
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Request finished HTTP/1.1 GET http://127.0.0.1:5000/ - 500 - text/plain 6.4633ms
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[10]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" disconnecting.
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[2]
-Oct 05 12:26:32 absolutsrf absolutdashboard[13071]:       Connection id "0HNP2PCG1SRFO" stopped.
+.NET SDKs installed:
+  No SDKs were found.
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 10.0.13 [/usr/lib/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 10.0.13 [/
+IntegrityGateStartupFilter found at: 712498
+IntegrityGateMiddleware found at: 697538
 
 [*] Task worker connecting to root@10.20.110.7...
