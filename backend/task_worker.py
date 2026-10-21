@@ -29,40 +29,38 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Let's inspect where IntegrityGateStartupFilter is registered or where its Configure method is located.
-    # In .NET metadata, strings are in the #Strings heap. Method names, Type names, etc.
-    # Look at line 11:
-    # "tegrityStore._store.Configure.ITrackingConsentFeature.Micros" at 697883!
-    # Configure is right next to IntegrityStore!
-    # Let's see what methods IntegrityGate has and what methods IntegrityGateMiddleware has.
+    # Look at strings chunk:
+    # 8: UseMiddleware
+    # 9: IntegrityGateMiddleware
+    # ...
+    # 20: IntegrityStore
+    # 21: _store
+    # 22: Configure
+    #
+    # Where does UseMiddleware appear in the code (method body)?
+    # Let's search for references to UseMiddleware!
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak', 'rb') as f:
     orig = f.read()
 
-# Let's look at all strings around 697883:
-s_start = 697500
-s_end = 698500
-print("Strings chunk:")
-raw = orig[s_start:s_end]
-for part in raw.split(b'\\x00'):
-    if part and len(part) > 1:
-        try:
-            print(" ", part.decode('utf-8'))
-        except:
-            pass
+# Let's search for the method body of IntegrityGateStartupFilter.Configure
+# In Configure(Action<IApplicationBuilder> next):
+# It usually calls UseMiddleware<IntegrityGateMiddleware>(builder)
+# Let's find method defs that call UseMiddleware or reference IntegrityGateMiddleware!
+# Let's find MemberRef or MethodDef tokens, or search for string 'IntegrityGateStartupFilter'
+# In .NET assemblies, MethodDef table has RVA pointers to method IL.
+# Let's search for byte pattern of UseMiddleware or the closure created in Configure!
 
-# Also let's inspect IntegrityGate methods!
-# Search for 'Validate' or 'Check' or 'Gate' or 'IsAuthorized' or 'Verify'
-for word in [b'IntegrityGate', b'IntegrityCheck', b'IntegrityService', b'Validate', b'IsValid', b'CheckIntegrity']:
-    pos = 0
-    cnt = 0
-    while True:
-        pos = orig.find(word, pos)
-        if pos == -1 or cnt > 5:
-            break
-        print(f"Found {word.decode()} at {pos}")
-        pos += len(word)
-        cnt += 1
+# Let's find occurrences of byte sequence around 214000
+# Notice that at 214020 was MoveNext of IntegrityGateMiddleware.
+# What is right before 214020?
+# Offset 213900 - 214020:
+print("Bytes before 214020 (213800-214020):")
+print(' '.join(f'{b:02x}' for b in orig[213800:214020]))
+
+# Also what is right after MoveNext (say 214500-215000):
+print("Bytes after 214500 (214500-214700):")
+print(' '.join(f'{b:02x}' for b in orig[214500:214700]))
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
