@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo =======================================================
-echo          PATRIKEIG SYSTEM AUTO-UPDATER & DUAL LAUNCHER
+echo          PATRIKEIG SYSTEM AUTO-UPDATER & DASHBOARD FIX
 echo =======================================================
 echo.
 
@@ -25,11 +25,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [*] Installing / Updating Frontend Dependencies...
-call npm install
-
-echo.
-echo [*] Installing / Updating Backend Dependencies...
+echo [*] Installing / Updating Python Dependencies...
 if not exist "backend\requirements.txt" (
     (
         echo flask
@@ -50,16 +46,7 @@ echo [*] Running AbsolutDashboard remote repair...
 python backend\remote_fix.py
 
 echo.
-echo [*] Copying frontend URL to clipboard...
-<nul set /p="http://localhost:5173" | clip
-
 echo =======================================================
-echo     [SUCCESS] URL COPIED TO CLIPBOARD: http://localhost:5173
+echo                     EXECUTION COMPLETE
 echo =======================================================
-echo.
-echo [*] Launching Python Backend in a separate window...
-start "Python Backend WSGI & Debug" cmd /k "cd /d %~dp0backend && python app.py"
-
-echo [*] Launching React Frontend (npm run dev)...
-echo.
-call npm run dev
+pause
