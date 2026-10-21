@@ -29,25 +29,24 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check migration history and column schema
+    # Check the exact IntegrityGate failure reason and check if a simple backup + clean DB works
     py_code = """
-import sqlite3
+import subprocess
+import os
 
-con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
-cur = con.cursor()
+print('=== DUMPING INTEGRITYGATE CODE STRINGS ===')
+res = subprocess.run("strings /opt/absolutdashboard/AbsolutDashboard.Web.dll | grep -C 3 'IntegrityGate'", shell=True, text=True, capture_output=True)
+print(res.stdout[:1500])
 
-print('=== EF MIGRATIONS HISTORY ===')
-migs = cur.execute('SELECT MigrationId, ProductVersion FROM __EFMigrationsHistory;').fetchall()
-for m in migs:
-    print(m)
+print('\\n=== TESTING CLEAN RE-INIT OF APP.DB (TEST INSTANCE) ===')
+# If the issue is IntegrityGate foreign key check during pool initialization,
+# let's see what happens on the clean test DB:
+res_test = subprocess.run("curl -i -s http://127.0.0.1:5001", shell=True, text=True, capture_output=True)
+print('Test instance port 5001 headers:', res_test.stdout[:300])
 
-print('\\n=== COLUMNS IN DevicePollResults ===')
-cols = cur.execute('PRAGMA table_info(DevicePollResults);').fetchall()
-for c in cols:
-    print(c)
-
-print('\\n=== APPLIED MIGRATIONS VS PUBLISHED CODE ===')
-con.close()
+print('\\n=== EXECUTING REQUEST DIRECTLY TO CAPTURE CALLSTACK ===')
+res_log = subprocess.run("journalctl -u absolutdashboard -g 'IntegrityGate' -n 5 --no-pager", shell=True, text=True, capture_output=True)
+print(res_log.stdout)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
