@@ -29,29 +29,30 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the exact IntegrityGate code in the binary using UTF-16LE / insensitive search
+    # Check what causes Kestrel to return 500 when calling http://127.0.0.1:5000/
+    # Let's test calling other paths: /login, /setup, /api, /_blazor, /health
     py_code = """
-import re
+import urllib.request
+import urllib.error
 
-with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
-    data = f.read()
+urls = [
+    'http://127.0.0.1:5000/',
+    'http://127.0.0.1:5000/login',
+    'http://127.0.0.1:5000/setup',
+    'http://127.0.0.1:5000/api',
+    'http://127.0.0.1:5000/favicon.png',
+    'http://127.0.0.1:5000/app.css'
+]
 
-# Let's find IntegrityGate class definition and methods
-idx = data.find(b'IntegrityGate')
-print('IntegrityGate at:', idx)
-
-# Check what methods exist in IntegrityGate
-methods = re.findall(rb'[A-Za-z0-9_]{3,30}', data[idx:idx+800])
-print('Methods/Tokens in IntegrityGate:')
-for m in methods[:25]:
-    print(' ', m.decode('ascii', 'ignore'))
-
-# Look for any text returned on 500 error
-print('\\n=== ALL OCCURRENCES OF 500 ===')
-for m in re.finditer(rb'500', data):
-    pos = m.start()
-    snippet = data[max(0, pos-20):min(len(data), pos+30)]
-    print('  500 snippet:', snippet)
+print('=== TESTING MULTIPLE ENDPOINTS ===')
+for u in urls:
+    try:
+        req = urllib.request.urlopen(u, timeout=3)
+        print(f'{u:35}: Status {req.status}, len={len(req.read())}')
+    except urllib.error.HTTPError as e:
+        print(f'{u:35}: HTTPError {e.code} - {e.read().decode("utf-8", errors="replace").strip()}')
+    except Exception as e:
+        print(f'{u:35}: Error ({e})')
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
