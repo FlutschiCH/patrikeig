@@ -26,7 +26,6 @@ print("==================================================")
 print(f"Monitoring repository in: {REPO_DIR}")
 print(f"Using Python: {PYTHON_EXE}")
 
-# Ensure git user config exists so git commit never fails silently
 run_cmd('git config user.name "FlutschiCH"')
 run_cmd('git config user.email "flutschich@gmail.com"')
 print("Auto-fetching new commits every 3 seconds...")
@@ -39,8 +38,10 @@ while True:
         code, out, _ = run_cmd("git rev-parse origin/main")
         remote_commit = out.strip()
 
-        if remote_commit and remote_commit != last_commit:
-            print(f"\n[+] New instruction detected ({remote_commit[:7]}). Pulling...")
+        # Only execute if the remote commit was created by Antigravity (not an Auto-report commit)
+        _, log_msg, _ = run_cmd("git log -1 --pretty=%B origin/main")
+        if remote_commit and remote_commit != last_commit and "Auto-report" not in log_msg:
+            print(f"\n[+] New instruction detected ({remote_commit[:7]}: {log_msg.splitlines()[0] if log_msg else ''}). Pulling...")
             run_cmd("git reset --hard origin/main")
             last_commit = remote_commit
 
@@ -62,13 +63,16 @@ while True:
                 copy_to_clipboard(output)
                 print("[*] Output copied to clipboard.")
 
-                # Force git add, commit, and push with verbose output
-                c_add, o_add, e_add = run_cmd("git add -f task_output.txt")
-                c_com, o_com, e_com = run_cmd('git commit -m "Auto-report task execution result"')
-                print(f"[*] Git commit status: code={c_com}, out={o_com}, err={e_com}")
-
+                # Push the task output back
+                run_cmd("git add -f task_output.txt")
+                run_cmd('git commit -m "Auto-report task execution result"')
+                run_cmd("git pull --rebase origin main")
                 c_push, o_push, e_push = run_cmd("git push origin main")
-                print(f"[*] Git push status: code={c_push}, out={o_push}, err={e_push}")
+                print(f"[*] Git push status: code={c_push}, err={e_push}")
+                
+                # Update last_commit to the pushed commit to avoid re-triggering
+                _, new_head, _ = run_cmd("git rev-parse HEAD")
+                last_commit = new_head.strip()
 
         time.sleep(3)
     except KeyboardInterrupt:
