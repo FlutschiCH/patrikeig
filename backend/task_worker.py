@@ -29,61 +29,40 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Let's inspect IntegrityGateStartupFilter.Configure or Program.Main DI registrations!
-    # If we inspect IntegrityGateStartupFilter, where is it defined and what does Configure() do?
+    # Let's inspect where IntegrityGateStartupFilter is registered or where its Configure method is located.
+    # In .NET metadata, strings are in the #Strings heap. Method names, Type names, etc.
+    # Look at line 11:
+    # "tegrityStore._store.Configure.ITrackingConsentFeature.Micros" at 697883!
+    # Configure is right next to IntegrityStore!
+    # Let's see what methods IntegrityGate has and what methods IntegrityGateMiddleware has.
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak', 'rb') as f:
     orig = f.read()
 
-# Let's find occurrences of IntegrityGateStartupFilter
-idx = 0
-while True:
-    idx = orig.find(b'IntegrityGateStartupFilter', idx)
-    if idx == -1:
-        break
-    print(f"IntegrityGateStartupFilter at offset {idx}")
-    idx += 26
+# Let's look at all strings around 697883:
+s_start = 697500
+s_end = 698500
+print("Strings chunk:")
+raw = orig[s_start:s_end]
+for part in raw.split(b'\\x00'):
+    if part and len(part) > 1:
+        try:
+            print(" ", part.decode('utf-8'))
+        except:
+            pass
 
-# Let's search for Configure method or Action<IApplicationBuilder>
-# Let's search for where IntegrityGateStartupFilter is registered as IStartupFilter
-# Usually: services.AddTransient<IStartupFilter, IntegrityGateStartupFilter>()
-# In metadata, look for IStartupFilter:
-idx = 0
-while True:
-    idx = orig.find(b'IStartupFilter', idx)
-    if idx == -1:
-        break
-    print(f"IStartupFilter at offset {idx}")
-    idx += 14
-
-# Let's look at IntegrityGateStartupFilter class methods
-# A class implementing IStartupFilter has:
-# Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-# {
-#     return builder => {
-#         builder.UseMiddleware<IntegrityGateMiddleware>();
-#         next(builder);
-#     };
-# }
-# OR:
-# public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => next;
-# IF Configure simply returns `next` directly:
-# In IL:
-# ldarg.1 (0x03)
-# ret (0x2a)
-# That's it! If Configure just returns `next`, the middleware is NEVER registered!
-
-# Let's find Configure method of IntegrityGateStartupFilter!
-# Let's search for method names near 'IntegrityGateStartupFilter':
-print("Searching for 'Configure' occurrences...")
-idx = 0
-while True:
-    idx = orig.find(b'Configure', idx)
-    if idx == -1:
-        break
-    ctx = orig[max(0, idx-20):min(len(orig), idx+40)]
-    print(f"Configure at {idx}:", ''.join(chr(b) if 32 <= b <= 126 else '.' for b in ctx))
-    idx += 9
+# Also let's inspect IntegrityGate methods!
+# Search for 'Validate' or 'Check' or 'Gate' or 'IsAuthorized' or 'Verify'
+for word in [b'IntegrityGate', b'IntegrityCheck', b'IntegrityService', b'Validate', b'IsValid', b'CheckIntegrity']:
+    pos = 0
+    cnt = 0
+    while True:
+        pos = orig.find(word, pos)
+        if pos == -1 or cnt > 5:
+            break
+        print(f"Found {word.decode()} at {pos}")
+        pos += len(word)
+        cnt += 1
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
