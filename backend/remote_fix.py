@@ -41,25 +41,21 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
+    # Check key files and dump all DataProtection trace logs
     repair_cmd = (
-        "mkdir -p /var/lib/absolutdashboard/keys && "
-        "cp -f /root/.aspnet/DataProtection-Keys/*.xml /var/lib/absolutdashboard/keys/ 2>/dev/null || true; "
-        "chown -R absolutsrf:absolutsrf /var/lib/absolutdashboard && "
-        "chmod 750 /var/lib/absolutdashboard && "
-        "chmod 700 /var/lib/absolutdashboard/keys && "
-        "chmod 600 /var/lib/absolutdashboard/keys/*.xml 2>/dev/null || true; "
-        "rm -f /var/lib/absolutdashboard/.dp-cache.st /etc/absolutdashboard/.dp-cache.st /opt/absolutdashboard/.dp-cache.st && "
+        "echo '=== ALL KEYS FOUND ON SYSTEM ===' && "
+        "find / -name 'key-*.xml' 2>/dev/null && "
+        "echo '=== KEYS IN /var/lib/absolutdashboard/keys ===' && "
+        "ls -la /var/lib/absolutdashboard/keys/ && "
+        "echo '=== RUNNING LIVE REQUEST TRACE ===' && "
         "systemctl restart absolutdashboard && "
-        "sleep 5 && "
-        "echo '=== SERVICE STATUS ===' && "
-        "systemctl status absolutdashboard --no-pager && "
-        "echo '=== HTTP TEST ===' && "
-        "curl -i -s http://127.0.0.1:5000 || echo 'Curl failed' && "
-        "echo '=== JOURNAL LOGS (LAST 25) ===' && "
-        "journalctl -u absolutdashboard -n 25 --no-pager"
+        "sleep 4 && "
+        "curl -i -s http://127.0.0.1:5000 && "
+        "echo '=== DETAILED TRACE LOGS ===' && "
+        "journalctl -u absolutdashboard --since '15 seconds ago' --no-pager"
     )
 
-    log("[*] Executing automated repair on remote server...")
+    log("[*] Running deep diagnosis on remote server...")
     _, stdout, stderr = client.exec_command(repair_cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
