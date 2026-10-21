@@ -29,29 +29,29 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Check the exact IntegrityGate code in the binary!
-    # Where does that error string come from?
-    # "Database integrity constraint violation: foreign key relationship could not be validated during connection pool initialization"
+    # Check the exact IntegrityGate code in the binary using UTF-16LE / insensitive search
     py_code = """
+import re
+
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
     data = f.read()
 
-target = b'foreign key relationship'
-idx = data.find(target)
-print('Target index in DLL:', idx)
+# Let's find IntegrityGate class definition and methods
+idx = data.find(b'IntegrityGate')
+print('IntegrityGate at:', idx)
 
-if idx != -1:
-    snippet = data[max(0, idx-300):min(len(data), idx+500)]
-    print('Context:')
-    print(''.join(chr(b) if 32 <= b <= 126 else ' ' for b in snippet))
-else:
-    print('String not in AbsolutDashboard.Web.dll, checking other DLLs...')
-    import glob
-    for dll in glob.glob('/opt/absolutdashboard/*.dll'):
-        with open(dll, 'rb') as fp:
-            d = fp.read()
-            if target in d:
-                print('Found in:', dll)
+# Check what methods exist in IntegrityGate
+methods = re.findall(rb'[A-Za-z0-9_]{3,30}', data[idx:idx+800])
+print('Methods/Tokens in IntegrityGate:')
+for m in methods[:25]:
+    print(' ', m.decode('ascii', 'ignore'))
+
+# Look for any text returned on 500 error
+print('\\n=== ALL OCCURRENCES OF 500 ===')
+for m in re.finditer(rb'500', data):
+    pos = m.start()
+    snippet = data[max(0, pos-20):min(len(data), pos+30)]
+    print('  500 snippet:', snippet)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
