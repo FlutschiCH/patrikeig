@@ -1,33 +1,58 @@
-=== TASK EXECUTION [2026-10-21 21:54:45] ===
+=== TASK EXECUTION [2026-10-21 21:55:06] ===
 Exit code: 0
 
 --- STDOUT ---
-Original Method 293 bytes: 62 73 e2 08 00 06 25 03 7d 55 04 00 04 fe 06 e3 08 00 06 73 59 01 00 0a 2a 1e
-Patched Method 293 bytes:  0a 03 2a 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-Saved patched DLL. Restarting absolutdashboard.service...
-=== CURL TEST ===
+=== CURL -i http://127.0.0.1:5000/ ===
+Returncode: 0
+HTTP/1.1 302 Found
+Content-Length: 0
+Date: Mon, 05 Oct 2026 10:31:01 GMT
+Server: Kestrel
+Location: http://127.0.0.1:5000/Account/Login?ReturnUrl=%2F
 
-=== JOURNAL LOGS (LAST 20) ===
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:               bool? value1;
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:               value1 = dataReader.IsDBNull(0) ? default(bool?) : (bool?)dataReader.GetBoolean(0);
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:               return (bool)value1;
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:           },
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:           contextType: AbsolutDashboard.Web.Data.ApplicationDbContext,
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:           standAloneStateManager: False,
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:           detailedErrorsEnabled: False,
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:           threadSafetyChecksEnabled: True)
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:           .Single()'
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:       Opening connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:       Opened connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:       Closing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:       Closed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]: dbug: Microsoft.EntityFrameworkCore.Query[10111]
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:       Compiling query expression:
-Oct 05 12:30:40 absolutsrf absolutdashboard[13953]:       'DbSet<DeviceCategory>()'
 
+Stderr:   % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+
+  0      0   0      0   0      0      0      0                              0
+  0      0   0      0   0      0      0      0                              0
+  0      0   0      0   0      0      0      0                              0
+  0      0   0      0   0      0      0      0                              0
+
+=== CURL -i -L http://127.0.0.1:5000/ ===
+HTTP/1.1 302 Found
+Content-Length: 0
+Date: Mon, 05 Oct 2026 10:31:01 GMT
+Server: Kestrel
+Location: http://127.0.0.1:5000/Account/Login?ReturnUrl=%2F
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Date: Mon, 05 Oct 2026 10:31:01 GMT
+Server: Kestrel
+Cache-Control: no-cache,no-store
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Pragma: no-cache
+Set-Cookie: Identity.External=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly
+Set-Cookie: .AspNetCore.Antiforgery.AOrGXqbKRjs=CfDJ8H-Docb-Z2FNkH1Z9n0317Vb_A97h84ZPsZPg6_aKRkwl1cF8qODVmyBXgZoKPzmg6k3xQ3Y369MPP884cPDFPA8Qp1teb0qykRieCBbpfmLBODQR14nBHcxLlY1kkCq8xgX5Lhdfa3iPWKpf0KD4sI; path=/; samesite=strict; httponly
+Transfer-Encoding: chunked
+Content-Security-Policy: frame-ancestors 'self'
+blazor-enhanced-nav: allow
+X-Frame-Options: SAMEORIGIN
+
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <link rel="stylesheet" href="app.bzygsa3kr3.css" />
+    <link rel="stylesheet" href="AbsolutDashboard.Web.aneez6h5tz.styles.css" />
+    <script type="importmap">{
+  "imports": {
+    "./_framework/blazor.server.js": "./_framework/blazor.server.wfr2hj6447.js",
+    "./_framework/blazor.web.js": "./_framework/blazor.web.wyu7y4jcvb.js"
+  },
+  "integrity": {
+    "./_framework/blazor.server.js": "sha256-bDQTw7AEuAYCpWRK2jFgleO9a7PxBwvuxd9zN63+oso=",
+    "./_framework/blazor.server.wfr2hj6447.js": "sha256-bDQTw7AEuAYCpWRK2jF
 
 [*] Task worker connecting to root@10.20.110.7...
