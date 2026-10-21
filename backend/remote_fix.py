@@ -8,7 +8,6 @@ REMOTE_USER = os.environ.get("REMOTE_SSH_USER", "root")
 REMOTE_PASS = os.environ.get("REMOTE_SSH_PASSWORD", "Absolut1.")
 
 def copy_to_clipboard(text):
-    """Copies given text to Windows clipboard via clip command."""
     try:
         process = subprocess.Popen(['clip'], stdin=subprocess.PIPE, close_fds=True)
         process.communicate(input=text.encode('utf-8', errors='replace'))
@@ -37,26 +36,25 @@ def run_remote_fix():
             allow_agent=True
         )
     except Exception as e:
-        log(f"[!] SSH connection failed ({e}). Skipping remote dashboard repair.")
+        log(f"[!] SSH connection failed ({e}). Skipping repair.")
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # Check key files and dump all DataProtection trace logs
-    repair_cmd = (
-        "echo '=== ALL KEYS FOUND ON SYSTEM ===' && "
-        "find / -name 'key-*.xml' 2>/dev/null && "
-        "echo '=== KEYS IN /var/lib/absolutdashboard/keys ===' && "
-        "ls -la /var/lib/absolutdashboard/keys/ && "
-        "echo '=== RUNNING LIVE REQUEST TRACE ===' && "
-        "systemctl restart absolutdashboard && "
-        "sleep 4 && "
-        "curl -i -s http://127.0.0.1:5000 && "
-        "echo '=== DETAILED TRACE LOGS ===' && "
-        "journalctl -u absolutdashboard --since '15 seconds ago' --no-pager"
+    # 1. Check sqlite foreign keys and integrity
+    # 2. Check schema
+    cmd = (
+        "echo '=== SQLITE INTEGRITY CHECK ===' && "
+        "sqlite3 /var/lib/absolutdashboard/app.db 'PRAGMA integrity_check;' && "
+        "echo '=== SQLITE FOREIGN KEY CHECK ===' && "
+        "sqlite3 /var/lib/absolutdashboard/app.db 'PRAGMA foreign_key_check;' && "
+        "echo '=== SQLITE QUICK CHECK ===' && "
+        "sqlite3 /var/lib/absolutdashboard/app.db 'PRAGMA quick_check;' && "
+        "echo '=== DEVICE TEMPLATES & DEVICES COUNT ===' && "
+        "sqlite3 /var/lib/absolutdashboard/app.db 'SELECT count(*) FROM Devices; SELECT count(*) FROM DeviceTemplates;' "
     )
 
-    log("[*] Running deep diagnosis on remote server...")
-    _, stdout, stderr = client.exec_command(repair_cmd, timeout=30)
+    log("[*] Checking SQLite integrity on remote server...")
+    _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
     client.close()
