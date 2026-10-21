@@ -29,29 +29,33 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Use python file directly on remote without raw null bytes in regex string literal
+    # Check the actual database tables: DevicePollResult, DeviceTemplates, etc.
+    # In earlier logs:
+    # "AbsolutDashboard.Web.Services.Integrity.IntegrityGate:
+    #  Database integrity constraint violation: foreign key relationship could not be validated during connection pool initialization"
+    # Let's inspect the exact database queries IntegrityGate runs on startup!
     py_code = """
-with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
-    data = f.read()
+import sqlite3
 
-# Search for null-delimited ascii bytes
-pattern = bytes([0])
-words = []
-for kw in [b'IntegrityGate', b'IntegrityStore', b'.dp-cache', b'diagnostics']:
-    pos = 0
-    while True:
-        pos = data.find(kw, pos)
-        if pos == -1:
-            break
-        # grab surrounding 200 bytes
-        snippet = data[max(0, pos-100):min(len(data), pos+150)]
-        printable = ''.join(chr(b) if 32 <= b <= 126 else ' ' for b in snippet)
-        words.append(printable.strip())
-        pos += len(kw)
+con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
+cur = con.cursor()
 
-print('=== OCCURRENCES OF INTEGRITY KEYWORDS ===')
-for w in words[:15]:
-    print('-->', w)
+# Find any table with 0 rows or foreign keys
+tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
+print('=== ROW COUNTS PER TABLE ===')
+for t in tables:
+    if not t.startswith('sqlite_'):
+        count = cur.execute(f"SELECT count(*) FROM \\"{t}\\";").fetchone()[0]
+        print(f'{t:30}: {count}')
+
+print('\\n=== CHECKING IF DeviceCategories or Templates ARE EMPTY ===')
+cats = cur.execute('SELECT Id, Key, Name FROM DeviceCategories;').fetchall()
+print('Categories:', cats)
+
+tmpls = cur.execute('SELECT Id, Name, CategoryId FROM DeviceTemplates;').fetchall()
+print('Templates:', tmpls)
+
+con.close()
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
