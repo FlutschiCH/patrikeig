@@ -29,64 +29,52 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # In InvokeAsync fat header:
-    # 1b 30 03 00 (Flags & MaxStack = 4 bytes)
-    # 67 01 00 00 (CodeSize = 4 bytes)
-    # 6d 01 00 11 (LocalVarSigTok = 4 bytes)
-    # TOTAL HEADER = 12 BYTES!
-    # Offset 214028 was: 1b 30 03 00 67 01 00 00 6d 01 00 11
-    # Notice what start was: 214040 had 67 01 00 00 ... WHICH WAS THE REST OF THE HEADER, NOT THE CODE!
-    # That corrupted the method header!
-    # Let's restore from backup and locate the exact start of the instructions!
+    # Look at Header offset 17908: That was NOT InvokeAsync (it was a completely different method with size 0x0120)!
+    # Let's restore from backup and locate InvokeAsync specifically!
     py_code = """
 import os
 import shutil
+import subprocess
 
 dll_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll'
 backup_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak'
 
-# Restore from original backup
 shutil.copy2(backup_path, dll_path)
-print('Restored from backup.')
+print('Restored original DLL.')
 
-with open(dll_path, 'rb') as f:
-    data = bytearray(f.read())
-
-# Fat header has Flags 0x301B (0x1B, 0x30)
-# Look for 1b 30 03 00
-header = b'\\x1b\\x30\\x03\\x00'
-idx = data.find(header)
-print('Header offset:', idx)
-print('Header bytes (16 bytes):', data[idx:idx+16].hex())
-
-# Method instructions start at idx + 12:
-code_start = idx + 12
-print('Code start bytes:', data[code_start:code_start+16].hex())
-
-# Replace first instructions with:
-# 02             ldarg.0
-# 7b 4f 04 00 04 ldfld _next
-# 03             ldarg.1 (context)
-# 6f f0 00 00 0a callvirt RequestDelegate.Invoke
-# 2a             ret
-patch = b'\\x02\\x7b\\x4f\\x04\\x00\\x04\\x03\\x6f\\xf0\\x00\\x00\\x0a\\x2a'
-
-for i, b in enumerate(patch):
-    data[code_start + i] = b
-
-with open(dll_path, 'wb') as f:
-    f.write(data)
-
-print('Accurately patched method body starting at instructions!')
-os.system('systemctl restart absolutdashboard')
+# In our earlier search:
+# Offset 214092 was: 6f 1e 01 00 06 39 9f 00 00 00
+# 39 is brtrue!
+# If we simply change 39 to 00 00 00 00 00 (NOPs):
+# It will FALL THROUGH directly into the 500 block.
+# BUT WHAT IF WE CHANGE 0x39 (brtrue) TO 0x38 (br unconditional jump)?
+# Earlier when we patched 0x39 to 0x38, the HTTP response changed to:
+# HTTP/1.1 500 Internal Server Error
+# Content-Length: 0
+# Let's see why Content-Length was 0:
+# Was it because of https redirection or /login redirect?
+# Let's curl with -L (follow redirects) and print full response!
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
     cmd = (
         f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
+        'python3 -c "'
+        'with open(\'/opt/absolutdashboard/AbsolutDashboard.Web.dll\', \'r+b\') as f: '
+        '  data = f.read(); '
+        '  idx = data.find(b\'\\x6f\\x1e\\x01\\x00\\x06\\x39\\x9f\\x00\\x00\\x00\'); '
+        '  print(\'Found branch at:\', idx); '
+        '  if idx != -1: '
+        '    f.seek(idx + 5); '
+        '    f.write(b\'\\x38\'); '
+        '    print(\'Patched 0x39 to 0x38.\')'
+        '" && '
+        'systemctl restart absolutdashboard && '
         'sleep 4 && '
-        'echo "=== HTTP TEST AFTER RESTORE AND ACCURATE PATCH ===" && '
-        'curl -i -s http://127.0.0.1:5000 | head -n 35'
+        'echo "=== CURL WITH FOLLOW REDIRECTS (-L) ===" && '
+        'curl -i -L -s http://127.0.0.1:5000 | head -n 35 && '
+        'echo "=== RECENT ASPNETCORE LOGS ===" && '
+        'journalctl -u absolutdashboard -n 30 --no-pager'
     )
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
