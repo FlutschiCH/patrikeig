@@ -25,16 +25,8 @@ if errorlevel 1 (
 )
 
 echo.
-echo [*] Installing / Updating Frontend Dependencies...
-call npm install --omit=dev
-
-echo [*] Building Production Frontend Assets...
-call npm run build
-
-echo.
 echo [*] Checking Backend requirements.txt...
 if not exist "backend\requirements.txt" (
-    echo [*] requirements.txt not found. Generating default requirements...
     (
         echo flask
         echo flask-cors
@@ -44,17 +36,24 @@ if not exist "backend\requirements.txt" (
         echo beautifulsoup4
         echo lxml
         echo pysnmp-lextudio
+        echo paramiko
     ) > "backend\requirements.txt"
 )
 
 echo [*] Installing / Updating Backend Dependencies...
-python -m pip install -r "backend\requirements.txt"
+python -m pip install -r "backend\requirements.txt" --quiet
 
 echo.
 echo =======================================================
-echo     [SUCCESS] Update completed! Launching app.py...
+echo     [SUCCESS] Running Database Extraction...
 echo =======================================================
 echo.
+
+python backend\read_absolut_db.py
+
+echo.
+echo Press any key to start the background WSGI and Debug GUI...
+pause >nul
 
 cd /d "%~dp0backend"
 python app.py
