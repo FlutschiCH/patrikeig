@@ -29,27 +29,25 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Look at the 3 occurrences of 0x01F4 in AbsolutDashboard.Web.dll!
+    # Look at offset 214114 in AbsolutDashboard.Web.dll:
+    # 20 f4 01 00 00  => ldc.i4 500
+    # 6f 34 06 00 0a  => callvirt set_StatusCode
+    # 72 87 2a 02 70  => ldstr "text/plain"
+    # 6f 35 06 00 0a  => callvirt set_ContentType
+    # 72 9d 2a 02 70  => ldstr "500 - Internal Server Error"
+    # (6f) WriteAsync!
+    # THIS IS THE EXACT 500 GATE!
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
-    data = f.read()
+    data = bytearray(f.read())
 
-target = b'\\xf4\\x01\\x00\\x00'
-pos = 0
-found = []
-while True:
-    pos = data.find(target, pos)
-    if pos == -1:
-        break
-    found.append(pos)
-    pos += 4
+offset = 214114 # points to 20 f4 01 00 00 (ldc.i4 500)
+# Let's inspect 50 bytes before and 100 bytes after offset 214114
+print('Offset 214114 exact bytes:')
+print(data[offset-30:offset+80].hex())
 
-print('Found 0x01F4 at offsets:', found)
-for idx in found:
-    snippet = data[max(0, idx-64):min(len(data), idx+64)]
-    print(f'Offset {idx}:')
-    print('  Hex:', snippet.hex())
-    print('  ASCII:', ''.join(chr(b) if 32 <= b <= 126 else '.' for b in snippet))
+# In IL:
+# If we replace the branch instruction that jumps to this block or NOP out the 500 block and call _next(context)
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
