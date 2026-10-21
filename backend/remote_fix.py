@@ -40,31 +40,20 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # Check the database for orphaned Device rows where CategoryId or TemplateId doesn't exist
-    py_script = """
-import sqlite3
+    # Check the test instance on port 5001 or check if 5001 works
+    cmd = (
+        "echo '=== CHECKING absolutdashboard-test.service ===' && "
+        "systemctl status absolutdashboard-test --no-pager || true && "
+        "echo '=== TESTING PORT 5001 ===' && "
+        "curl -i -s http://127.0.0.1:5001 | head -n 15 || true && "
+        "echo '=== TESTING APP.DB WITH WAL CHECKPOINT ===' && "
+        "python3 -c \"import sqlite3; con = sqlite3.connect('/var/lib/absolutdashboard/app.db'); con.execute('PRAGMA wal_checkpoint(FULL);'); con.close(); print('WAL Checkpoint complete')\" && "
+        "systemctl restart absolutdashboard && "
+        "sleep 4 && "
+        "curl -i -s http://127.0.0.1:5000 | head -n 15"
+    )
 
-con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
-cur = con.cursor()
-
-print('=== CHECKING ORPHANED DEVICES ===')
-# Devices -> DeviceTemplates
-orphaned_tmpl = cur.execute('SELECT Id, Name, TemplateId FROM Devices WHERE TemplateId NOT IN (SELECT Id FROM DeviceTemplates);').fetchall()
-print(f'Devices with missing TemplateId: {orphaned_tmpl}')
-
-# Devices -> DeviceCategories
-orphaned_cat = cur.execute('SELECT Id, Name, CategoryId FROM Devices WHERE CategoryId NOT IN (SELECT Id FROM DeviceCategories);').fetchall()
-print(f'Devices with missing CategoryId: {orphaned_cat}')
-
-# DeviceTemplates -> DeviceCategories
-orphaned_tmpl_cat = cur.execute('SELECT Id, Name, CategoryId FROM DeviceTemplates WHERE CategoryId NOT IN (SELECT Id FROM DeviceCategories);').fetchall()
-print(f'DeviceTemplates with missing CategoryId: {orphaned_tmpl_cat}')
-
-con.close()
-"""
-    cmd = f"python3 -c \"{py_script}\""
-
-    log("[*] Checking Foreign Key references in app.db...")
+    log("[*] Performing WAL checkpoint and testing ports...")
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
