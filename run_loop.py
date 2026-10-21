@@ -9,7 +9,6 @@ OUT_FILE = os.path.join(REPO_DIR, "task_output.txt")
 PYTHON_EXE = sys.executable
 
 def copy_to_clipboard(text):
-    """Copies text to Windows clipboard via clip command."""
     try:
         if sys.platform == "win32":
             p = subprocess.Popen(['clip'], stdin=subprocess.PIPE, close_fds=True)
@@ -19,14 +18,18 @@ def copy_to_clipboard(text):
 
 def run_cmd(cmd, cwd=REPO_DIR):
     res = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
-    return res.returncode, res.stdout, res.stderr
+    return res.returncode, res.stdout.strip(), res.stderr.strip()
 
 print("==================================================")
 print("   PATRIKEIG ANYDESK AUTO-SYNC LOOP ACTIVE")
 print("==================================================")
 print(f"Monitoring repository in: {REPO_DIR}")
 print(f"Using Python: {PYTHON_EXE}")
-print("Auto-fetching new commits every 4 seconds...")
+
+# Ensure git user config exists so git commit never fails silently
+run_cmd('git config user.name "FlutschiCH"')
+run_cmd('git config user.email "flutschich@gmail.com"')
+print("Auto-fetching new commits every 3 seconds...")
 
 last_commit = None
 
@@ -56,19 +59,21 @@ while True:
                 with open(OUT_FILE, "w", encoding="utf-8") as f:
                     f.write(output)
 
-                # Always copy to clipboard immediately!
                 copy_to_clipboard(output)
-                print("[*] OUTPUT COPIED TO CLIPBOARD!")
+                print("[*] Output copied to clipboard.")
 
-                # Try pushing to git, but don't hang if unauthenticated
-                run_cmd("git add task_output.txt")
-                run_cmd('git commit -m "Auto-report task execution result"')
-                run_cmd("git push origin main")
+                # Force git add, commit, and push with verbose output
+                c_add, o_add, e_add = run_cmd("git add -f task_output.txt")
+                c_com, o_com, e_com = run_cmd('git commit -m "Auto-report task execution result"')
+                print(f"[*] Git commit status: code={c_com}, out={o_com}, err={e_com}")
 
-        time.sleep(4)
+                c_push, o_push, e_push = run_cmd("git push origin main")
+                print(f"[*] Git push status: code={c_push}, out={o_push}, err={e_push}")
+
+        time.sleep(3)
     except KeyboardInterrupt:
         print("\nExiting loop.")
         break
     except Exception as e:
         print(f"[!] Error: {e}")
-        time.sleep(4)
+        time.sleep(3)
