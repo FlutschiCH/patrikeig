@@ -30,36 +30,31 @@ def run():
         return
 
     # In ASP.NET Core:
-    # services.AddTransient<IStartupFilter, IntegrityGateStartupFilter>();
+    # UseMiddleware<T>() is called inside Configure.
+    # What if we patch IntegrityGateMiddleware.InvokeAsync entry point directly?
+    # In CIL:
+    # public Task InvokeAsync(HttpContext context)
+    # The first instructions are:
+    # ldarg.0 (this)
+    # ldfld _next
+    # ldarg.1 (context)
+    # callvirt RequestDelegate.Invoke(HttpContext)
+    # ret
     #
-    # In .NET TypeDef / TypeRef / MethodDef tables:
-    # If we simply change IntegrityGateStartupFilter's Configure method in the binary:
-    # The Configure method looks like:
-    #   public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-    #   {
-    #       return next;   // <-- JUST RETURN NEXT DIRECTLY WITHOUT ADDING IntegrityGateMiddleware!
-    #   }
-    # In IL:
-    #   ldarg.1 (next)
-    #   ret
-    #   (03 2a in bytes!)
-    # Let's inspect the IL of IntegrityGateStartupFilter.Configure!
+    # If the method immediately delegates to _next(context) and returns:
+    # It acts as a 100% transparent pass-through middleware for all requests!
+    # Let's inspect the first 20 bytes of InvokeAsync!
     py_code = """
 with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll', 'rb') as f:
     data = bytearray(f.read())
 
-# Look for Configure method in IntegrityGateStartupFilter
-# In the assembly:
-# IntegrityGateStartupFilter implements IStartupFilter:
-# Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-# Target pattern: ldarg.1, ret (0x03, 0x2a) or NOPing out builder.UseMiddleware<IntegrityGateMiddleware>()
-# Let's find "UseMiddleware" near IntegrityGate
-idx_mw = data.find(b'UseMiddleware')
-print('UseMiddleware offset:', idx_mw)
-
-# Let's see all calls to IntegrityGateMiddleware:
-idx_gate = data.find(b'IntegrityGateMiddleware')
-print('IntegrityGateMiddleware offset in metadata:', idx_gate)
+# Look for the method header of InvokeAsync
+# In our earlier search, offset 214092 was inside InvokeAsync:
+# 6f 1e 01 00 06 38 9f 00 00 00
+# Let's look at 100 bytes preceding offset 214092:
+offset = 214092
+print('Bytes preceding offset 214092:')
+print(data[offset-80:offset].hex())
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
