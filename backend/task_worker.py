@@ -29,32 +29,24 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # Run check script directly via base64 to avoid shell quote interpolation issues
+    # Check migration history and column schema
     py_code = """
 import sqlite3
 
 con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
 cur = con.cursor()
 
-print('=== ALL TABLES ===')
-tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
-print(tables)
+print('=== EF MIGRATIONS HISTORY ===')
+migs = cur.execute('SELECT MigrationId, ProductVersion FROM __EFMigrationsHistory;').fetchall()
+for m in migs:
+    print(m)
 
-print('=== PRAGMA FOREIGN_KEY_CHECK ===')
-cur.execute('PRAGMA foreign_keys = ON;')
-violations = cur.execute('PRAGMA foreign_key_check;').fetchall()
-print('Violations count:', len(violations))
-for v in violations:
-    print('Violation:', v)
+print('\\n=== COLUMNS IN DevicePollResults ===')
+cols = cur.execute('PRAGMA table_info(DevicePollResults);').fetchall()
+for c in cols:
+    print(c)
 
-print('=== USERS ===')
-users = cur.execute('SELECT Id, UserName, Email, IsOwner FROM AspNetUsers;').fetchall()
-print(users)
-
-print('=== RECENT 5 POLL RESULTS ===')
-polls = cur.execute('SELECT Id, DeviceId, Timestamp, Success FROM DevicePollResults ORDER BY Id DESC LIMIT 5;').fetchall()
-print(polls)
-
+print('\\n=== APPLIED MIGRATIONS VS PUBLISHED CODE ===')
 con.close()
 """
     import base64
