@@ -1,8 +1,35 @@
-=== TASK EXECUTION [2026-10-21 21:41:56] ===
+=== TASK EXECUTION [2026-10-21 21:42:19] ===
 Exit code: 0
 
 --- STDOUT ---
-Target index in DLL: -1
-String not in AbsolutDashboard.Web.dll, checking other DLLs...
+IntegrityGate at: 697538
+Methods/Tokens in IntegrityGate:
+  IntegrityGateMiddleware
+  RemoveWhere
+  Microsoft
+  AspNetCore
+  Mvc
+  Core
+  AbsolutDashboard
+  Web
+  Services
+  Collectors
+  Core
+  Microsoft
+  Extensions
+  Identity
+  Core
+  Microsoft
+  AspNetCore
+  Diagnostics
+  EntityFrameworkCore
+  Microsoft
+  EntityFrameworkCore
+  Microsoft
+  AspNetCore
+  Identity
+  EntityFrameworkCore
+
+=== ALL OCCURRENCES OF 500 ===
 
 [*] Task worker connecting to root@10.20.110.7...
