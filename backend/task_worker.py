@@ -2,6 +2,11 @@ import os
 import sys
 import paramiko
 
+# Ensure stdout and stderr handle utf-8 on Windows cp1252 consoles
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 REMOTE_HOST = os.environ.get("REMOTE_SSH_HOST", "10.20.110.7")
 REMOTE_USER = os.environ.get("REMOTE_SSH_USER", "root")
 REMOTE_PASS = os.environ.get("REMOTE_SSH_PASSWORD", "Absolut1.")
@@ -40,9 +45,11 @@ def run():
     client.close()
 
     if out:
-        print(out)
+        sys.stdout.buffer.write(out.encode('utf-8', errors='replace'))
+        sys.stdout.buffer.write(b'\n')
     if err:
-        print(err)
+        sys.stderr.buffer.write(err.encode('utf-8', errors='replace'))
+        sys.stderr.buffer.write(b'\n')
 
 if __name__ == "__main__":
     run()
