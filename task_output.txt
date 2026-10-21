@@ -1,0 +1,15 @@
+=== TASK EXECUTION [2026-10-21 21:36:47] ===
+Exit code: 0
+
+--- STDOUT ---
+DevicePollResults with non-existent DeviceId: 0
+
+[*] Task worker connecting to root@10.20.110.7...
+
+--- STDERR ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import base64; exec(base64.b64decode('CmltcG9ydCBzcWxpdGUzCgpjb24gPSBzcWxpdGUzLmNvbm5lY3QoJy92YXIvbGliL2Fic29sdXRkYXNoYm9hcmQvYXBwLmRiJykKY3VyID0gY29uLmN1cnNvcigpCgpiYWRfcG9sbHMgPSBjdXIuZXhlY3V0ZSgnU0VMRUNUIGNvdW50KCopIEZST00gRGV2aWNlUG9sbFJlc3VsdHMgV0hFUkUgRGV2aWNlSWQgTk9UIElOIChTRUxFQ1QgSWQgRlJPTSBEZXZpY2VzKTsnKS5mZXRjaG9uZSgpWzBdCnByaW50KGYnRGV2aWNlUG9sbFJlc3VsdHMgd2l0aCBub24tZXhpc3RlbnQgRGV2aWNlSWQ6IHtiYWRfcG9sbHN9JykKCmJhZF9zYW1wbGVzID0gY3VyLmV4ZWN1dGUoJ1NFTEVDVCBjb3VudCgqKSBGUk9NIFRocm91Z2hwdXRTYW1wbGVzIFdIRVJFIERldmljZUlkIE5PVCBJTiAoU0VMRUNUIElkIEZST00gRGV2aWNlcyk7JykuZmV0Y2hvbmUoKVswXQpwcmludChmJ1Rocm91Z2hwdXRTYW1wbGVzIHdpdGggbm9uLWV4aXN0ZW50IERldmljZUlkOiB7YmFkX3NhbXBsZXN9JykKCmlmIGJhZF9wb2xscyA+IDA6CiAgICBwcmludCgnQ2xlYW5pbmcgb3JwaGFuZWQgRGV2aWNlUG9sbFJlc3VsdHMuLi4nKQogICAgY3VyLmV4ZWN1dGUoJ0RFTEVURSBGUk9NIERldmljZVBvbGxSZXN1bHRzIFdIRVJFIERldmljZUlkIE5PVCBJTiAoU0VMRUNUIElkIEZST00gRGV2aWNlcyk7JykKICAgIGNvbi5jb21taXQoKQogICAgcHJpbnQoJ0NsZWFuZWQgRGV2aWNlUG9sbFJlc3VsdHMhJykKCmlmIGJhZF9zYW1wbGVzID4gMDoKICAgIHByaW50KCdDbGVhbmluZyBvcnBoYW5lZCBUaHJvdWdocHV0U2FtcGxlcy4uLicpCiAgICBjdXIuZXhlY3V0ZSgnREVMRVRFIEZST00gVGhyb3VnaHB1dFNhbXBsZXMgV0hFUkUgRGV2aWNlSWQgTk9UIElOIChTRUxFQ1QgSWQgRlJPTSBEZXZpY2VzKTsnKQogICAgY29uLmNvbW1pdCgpCiAgICBwcmludCgnQ2xlYW5lZCBUaHJvdWdocHV0U2FtcGxlcyEnKQoKY29uLmNsb3NlKCkK').decode('utf-8'))
+                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 10, in <module>
+sqlite3.OperationalError: no such column: DeviceId
