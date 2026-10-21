@@ -2,7 +2,6 @@ import os
 import sys
 import paramiko
 
-# Ensure stdout and stderr handle utf-8 on Windows cp1252 consoles
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -30,14 +29,45 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    cmd = (
-        "echo '=== SERVICE STATUS ===' && "
-        "systemctl status absolutdashboard --no-pager && "
-        "echo '=== HTTP RESPONSE ON 5000 ===' && "
-        "curl -i -s http://127.0.0.1:5000 | head -n 15 && "
-        "echo '=== LAST 20 LOG LINES ===' && "
-        "journalctl -u absolutdashboard -n 20 --no-pager"
-    )
+    # Check why IntegrityGate threw foreign key violation during pool init:
+    # We will query all foreign key references between tables, check for nulls or mismatches,
+    # and inspect the exact database table definitions.
+    cmd = """
+python3 - <<'EOF'
+import sqlite3
+
+con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
+cur = con.cursor()
+
+print("=== CHECKING ALL TABLES AND SCHEMAS ===")
+tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
+print("Tables:", tables)
+
+print("\n=== FOREIGN KEYS PRAGMAS ===")
+for t in tables:
+    fks = cur.execute(f"PRAGMA foreign_key_list('{t}');").fetchall()
+    if fks:
+        print(f"Table {t} foreign keys: {fks}")
+
+print("\n=== FOREIGN KEY ENFORCEMENT CHECK ===")
+cur.execute("PRAGMA foreign_keys = ON;")
+try:
+    violations = cur.execute("PRAGMA foreign_key_check;").fetchall()
+    print("Violations with FK ON:", violations)
+except Exception as e:
+    print("FK Check error:", e)
+
+print("\n=== CHECKING AspNetUsers ===")
+users = cur.execute("SELECT Id, UserName, Email, IsOwner FROM AspNetUsers;").fetchall()
+print("Users:", users)
+
+print("\n=== CHECKING AspNetUserRoles ===")
+roles = cur.execute("SELECT * FROM AspNetUserRoles;").fetchall()
+print("UserRoles:", roles)
+
+con.close()
+EOF
+"""
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
