@@ -40,10 +40,15 @@ def run_remote_fix():
         copy_to_clipboard("\n".join(output_buffer))
         return
 
-    # Check the logs of absolutdashboard-test
-    cmd = "journalctl -u absolutdashboard-test --since '30 seconds ago' --no-pager"
+    # Check the recent logs of test instance and also check who is listening on 5000 and 5001
+    cmd = (
+        "echo '=== ACTIVE PORTS ===' && "
+        "ss -tulpn | grep -E ':(5000|5001)' && "
+        "echo '=== RECENT TEST LOGS (50 lines) ===' && "
+        "journalctl -u absolutdashboard-test -n 50 --no-pager"
+    )
 
-    log("[*] Checking logs of test instance on port 5001...")
+    log("[*] Checking test instance logs and ports...")
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
