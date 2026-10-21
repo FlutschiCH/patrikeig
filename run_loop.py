@@ -30,7 +30,9 @@ run_cmd('git config user.name "FlutschiCH"')
 run_cmd('git config user.email "flutschich@gmail.com"')
 print("Auto-fetching new commits every 3 seconds...")
 
-last_commit = None
+# Initialize last_commit to the current HEAD so it NEVER triggers on its own past commits
+_, head_rev, _ = run_cmd("git rev-parse HEAD")
+last_commit = head_rev.strip()
 
 while True:
     try:
@@ -38,9 +40,11 @@ while True:
         code, out, _ = run_cmd("git rev-parse origin/main")
         remote_commit = out.strip()
 
-        # Only execute if the remote commit was created by Antigravity (not an Auto-report commit)
+        # Check commit message: NEVER execute on Auto-report commits!
         _, log_msg, _ = run_cmd("git log -1 --pretty=%B origin/main")
-        if remote_commit and remote_commit != last_commit and "Auto-report" not in log_msg:
+        is_auto_report = "Auto-report" in (log_msg or "")
+
+        if remote_commit and remote_commit != last_commit and not is_auto_report:
             print(f"\n[+] New instruction detected ({remote_commit[:7]}: {log_msg.splitlines()[0] if log_msg else ''}). Pulling...")
             run_cmd("git reset --hard origin/main")
             last_commit = remote_commit
@@ -63,14 +67,14 @@ while True:
                 copy_to_clipboard(output)
                 print("[*] Output copied to clipboard.")
 
-                # Push the task output back
+                # Push the task output back to git
                 run_cmd("git add -f task_output.txt")
                 run_cmd('git commit -m "Auto-report task execution result"')
                 run_cmd("git pull --rebase origin main")
                 c_push, o_push, e_push = run_cmd("git push origin main")
                 print(f"[*] Git push status: code={c_push}, err={e_push}")
                 
-                # Update last_commit to the pushed commit to avoid re-triggering
+                # Immediately update last_commit to the pushed commit to prevent re-triggering
                 _, new_head, _ = run_cmd("git rev-parse HEAD")
                 last_commit = new_head.strip()
 
