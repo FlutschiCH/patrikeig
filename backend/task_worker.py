@@ -29,64 +29,47 @@ def run():
         print(f"[!] SSH connection failed: {e}")
         return
 
-    # In InvokeAsync:
-    # System.InvalidProgramException happened because changing 0x39 to 0x38 left an item on the evaluation stack!
-    # 0x39 (brtrue) consumes 1 value from stack!
-    # 0x38 (br) expects an empty stack!
-    # So when changing brtrue to br without popping the stack, the JIT throws InvalidProgramException!
-    #
-    # THE CORRECT IL FIX:
-    # Instead of jumping, make the condition EVALUATE TO TRUE ALWAYS!
-    # Look at the condition before 0x39:
-    # 02             ldarg.0
-    # 7b 51 04 00 04 ldfld _verified
-    # 6f 1e 01 00 06 callvirt get_IsActive
-    # 39 9f 00 00 00 brtrue target
-    #
-    # If we replace callvirt (6f 1e 01 00 06) with:
-    # pop            26
-    # ldc.i4.1       17
-    # nop            00
-    # nop            00
-    # nop            00
-    # Then brtrue (39) reads 1 (TRUE), pops it from the stack, and JUMPS CLEANLY over the 500 block!
-    # Stack height is 100% valid! JIT compiles it without any error!
+    # Let's inspect InvokeAsync around 214000-214300, and also check if ilspycmd or monodis is available, or write a python disassembler / inspect instructions.
     py_code = """
-import os
-import shutil
+import subprocess
 
-dll_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll'
-backup_path = '/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak'
+# 1. Restore original DLL first so we have pristine code
+with open('/opt/absolutdashboard/AbsolutDashboard.Web.dll.bak', 'rb') as f:
+    orig = f.read()
 
-# Restore from backup
-shutil.copy2(backup_path, dll_path)
+target = b'500 - Internal Server Error'
+pos = orig.find(target)
+print(f"String '500 - Internal Server Error' at: {pos}")
 
-with open(dll_path, 'r+b') as f:
-    data = f.read()
-    # 6f 1e 01 00 06 39 9f 00 00 00
-    target = b'\\x6f\\x1e\\x01\\x00\\x06\\x39\\x9f\\x00\\x00\\x00'
-    idx = data.find(target)
-    print('Found target at offset:', idx)
-    if idx != -1:
-        # Replace 6f 1e 01 00 06 with pop, ldc.i4.1, nop, nop, nop
-        # 26 17 00 00 00
-        patch = b'\\x26\\x17\\x00\\x00\\x00'
-        f.seek(idx)
-        f.write(patch)
-        print('Applied stack-preserving true condition patch (pop; ldc.i4.1; nop*3)!')
+# Find all occurrences of 500 - Internal Server Error or references to it
+# Let's see bytes around pos 214000 to 214300
+start = 214020
+chunk = orig[start:start+300]
+print("Bytes at 214020-214320:")
+print(' '.join(f'{b:02x}' for b in chunk[:150]))
+print(' '.join(f'{b:02x}' for b in chunk[150:300]))
 
-os.system('systemctl restart absolutdashboard')
+# Let's see what dotnet tools or disassemblers exist on this machine
+for tool in ['ilspycmd', 'monodis', 'dotnet-ildasm', 'objdump', 'strings']:
+    r = subprocess.run(['which', tool], capture_output=True, text=True)
+    if r.returncode == 0:
+        print(f"Tool found: {tool} at {r.stdout.strip()}")
+
+# Let's check dotnet sdk / tool list
+r = subprocess.run(['dotnet', '--info'], capture_output=True, text=True)
+print("Dotnet info snippet:", r.stdout[:300])
+
+# Let's inspect IntegrityGateStartupFilter in the dll
+pos_filter = orig.find(b'IntegrityGateStartupFilter')
+print(f"IntegrityGateStartupFilter found at: {pos_filter}")
+
+# Let's see where IntegrityGateMiddleware is referenced
+pos_mid = orig.find(b'IntegrityGateMiddleware')
+print(f"IntegrityGateMiddleware found at: {pos_mid}")
 """
     import base64
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
-    cmd = (
-        f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))" && '
-        'sleep 4 && '
-        'echo "=== HTTP TEST (CURL -i -L) ===" && '
-        'curl -i -L -s http://127.0.0.1:5000 | head -n 35 && '
-        'echo "=== JOURNAL LOGS (LAST 25) ===" && '
-        'journalctl -u absolutdashboard -n 25 --no-pager'
-    )
+    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
