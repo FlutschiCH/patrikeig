@@ -1,0 +1,355 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <ProjectGuid>{17928F1E-CC12-4E1D-9971-26F14375288F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AbsolutDashboard.Web</RootNamespace>
+    <AssemblyName>AbsolutDashboard.Web</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net10.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnableDefaultItems>False</EnableDefaultItems>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <StartupObject>Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AppVersion.cs" />
+    <Compile Include="Components\Account\IdentityNoOpEmailSender.cs" />
+    <Compile Include="Components\Account\IdentityRedirectManager.cs" />
+    <Compile Include="Components\Account\IdentityRevalidatingAuthenticationStateProvider.cs" />
+    <Compile Include="Components\Account\IdentityUserAccessor.cs" />
+    <Compile Include="Components\Account\Pages\AccessDenied.cs" />
+    <Compile Include="Components\Account\Pages\InvalidUser.cs" />
+    <Compile Include="Components\Account\Pages\Lockout.cs" />
+    <Compile Include="Components\Account\Pages\Login.cs" />
+    <Compile Include="Components\Account\Pages\LoginWith2fa.cs" />
+    <Compile Include="Components\Account\Pages\LoginWithRecoveryCode.cs" />
+    <Compile Include="Components\Account\Pages\Manage\ChangePassword.cs" />
+    <Compile Include="Components\Account\Pages\Manage\DeletePersonalData.cs" />
+    <Compile Include="Components\Account\Pages\Manage\Disable2fa.cs" />
+    <Compile Include="Components\Account\Pages\Manage\EnableAuthenticator.cs" />
+    <Compile Include="Components\Account\Pages\Manage\GenerateRecoveryCodes.cs" />
+    <Compile Include="Components\Account\Pages\Manage\Index.cs" />
+    <Compile Include="Components\Account\Pages\Manage\PersonalData.cs" />
+    <Compile Include="Components\Account\Pages\Manage\ResetAuthenticator.cs" />
+    <Compile Include="Components\Account\Pages\Manage\SetPassword.cs" />
+    <Compile Include="Components\Account\Pages\Manage\TwoFactorAuthentication.cs" />
+    <Compile Include="Components\Account\Pages\Manage\_Imports.cs" />
+    <Compile Include="Components\Account\Pages\Setup.cs" />
+    <Compile Include="Components\Account\Pages\_Imports.cs" />
+    <Compile Include="Components\Account\Shared\ManageLayout.cs" />
+    <Compile Include="Components\Account\Shared\ManageNavMenu.cs" />
+    <Compile Include="Components\Account\Shared\RedirectToLogin.cs" />
+    <Compile Include="Components\Account\Shared\ShowRecoveryCodes.cs" />
+    <Compile Include="Components\Account\Shared\StatusMessage.cs" />
+    <Compile Include="Components\App.cs" />
+    <Compile Include="Components\BbuSettings.cs" />
+    <Compile Include="Components\ComingSoon.cs" />
+    <Compile Include="Components\DeviceRowActions.cs" />
+    <Compile Include="Components\HubPorts.cs" />
+    <Compile Include="Components\Layout\MainLayout.cs" />
+    <Compile Include="Components\Layout\NavMenu.cs" />
+    <Compile Include="Components\LineChart.cs" />
+    <Compile Include="Components\N6Uplink.cs" />
+    <Compile Include="Components\Pages\AddDevice.cs" />
+    <Compile Include="Components\Pages\ApiAccess.cs" />
+    <Compile Include="Components\Pages\Category.cs" />
+    <Compile Include="Components\Pages\DeviceDetail.cs" />
+    <Compile Include="Components\Pages\DeviceForm.cs" />
+    <Compile Include="Components\Pages\DeviceFormModel.cs" />
+    <Compile Include="Components\Pages\EditDevice.cs" />
+    <Compile Include="Components\Pages\Error.cs" />
+    <Compile Include="Components\Pages\Home.cs" />
+    <Compile Include="Components\Pages\UeLocalization.cs" />
+    <Compile Include="Components\Pages\_Imports.cs" />
+    <Compile Include="Components\PreviewBanner.cs" />
+    <Compile Include="Components\Routes.cs" />
+    <Compile Include="Components\ShutdownAll.cs" />
+    <Compile Include="Components\Sparkline.cs" />
+    <Compile Include="Components\StatusStrip.cs" />
+    <Compile Include="Components\Users\CreateUser.cs" />
+    <Compile Include="Components\Users\UserDetail.cs" />
+    <Compile Include="Components\Users\Users.cs" />
+    <Compile Include="Components\Users\_Imports.cs" />
+    <Compile Include="Components\_Imports.cs" />
+    <Compile Include="Data\ApplicationDbContext.cs" />
+    <Compile Include="Data\ApplicationUser.cs" />
+    <Compile Include="Data\DbSeeder.cs" />
+    <Compile Include="Data\Entities\CollectionMethod.cs" />
+    <Compile Include="Data\Entities\Device.cs" />
+    <Compile Include="Data\Entities\DeviceCategory.cs" />
+    <Compile Include="Data\Entities\DevicePollResult.cs" />
+    <Compile Include="Data\Entities\DeviceTemplate.cs" />
+    <Compile Include="Data\Entities\ThroughputSample.cs" />
+    <Compile Include="Data\Migrations\AddBbuConfigRestartTracking.cs" />
+    <Compile Include="Data\Migrations\AddDeviceSerialNumber.cs" />
+    <Compile Include="Data\Migrations\AddDeviceSerialPort.cs" />
+    <Compile Include="Data\Migrations\AddOwnerFlag.cs" />
+    <Compile Include="Data\Migrations\AddRuCoordinates.cs" />
+    <Compile Include="Data\Migrations\AddThroughputSamples.cs" />
+    <Compile Include="Data\Migrations\ApplicationDbContextModelSnapshot.cs" />
+    <Compile Include="Data\Migrations\DeviceParentCascadeDelete.cs" />
+    <Compile Include="Data\Migrations\InitialCreate.cs" />
+    <Compile Include="Localization\Loc.cs" />
+    <Compile Include="Microsoft\AspNetCore\Routing\IdentityComponentsEndpointRouteBuilderExtensions.cs" />
+    <Compile Include="Microsoft\CodeAnalysis\EmbeddedAttribute.cs" />
+    <Compile Include="Microsoft\Extensions\Validation\Embedded\ValidatableTypeAttribute.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Collectors\AlarmStatus.cs" />
+    <Compile Include="Services\Collectors\BaseStationLookup.cs" />
+    <Compile Include="Services\Collectors\BbuDefinition.cs" />
+    <Compile Include="Services\Collectors\Bbu\BbuCellSettings.cs" />
+    <Compile Include="Services\Collectors\Bbu\BbuConfigWriter.cs" />
+    <Compile Include="Services\Collectors\Bbu\BbuMmlClient.cs" />
+    <Compile Include="Services\Collectors\Bbu\BbuMmlCollector.cs" />
+    <Compile Include="Services\Collectors\Bbu\BbuSessionLock.cs" />
+    <Compile Include="Services\Collectors\Bbu\BbuWriteOutcome.cs" />
+    <Compile Include="Services\Collectors\Bbu\CellConfigEdit.cs" />
+    <Compile Include="Services\Collectors\Bbu\MmlParser.cs" />
+    <Compile Include="Services\Collectors\Bbu\MmlResponse.cs" />
+    <Compile Include="Services\Collectors\Bbu\MmlStep.cs" />
+    <Compile Include="Services\Collectors\Bbu\MmlWrite.cs" />
+    <Compile Include="Services\Collectors\BtiAuParser.cs" />
+    <Compile Include="Services\Collectors\ChartAxis.cs" />
+    <Compile Include="Services\Collectors\ChartSeries.cs" />
+    <Compile Include="Services\Collectors\ChildStatus.cs" />
+    <Compile Include="Services\Collectors\CliParse.cs" />
+    <Compile Include="Services\Collectors\ConnectivityTimeline.cs" />
+    <Compile Include="Services\Collectors\Core\CliStep.cs" />
+    <Compile Include="Services\Collectors\Core\CoreLivePollService.cs" />
+    <Compile Include="Services\Collectors\Core\CoreLiveRates.cs" />
+    <Compile Include="Services\Collectors\Core\CoreLiveSnapshot.cs" />
+    <Compile Include="Services\Collectors\Core\CoreLiveState.cs" />
+    <Compile Include="Services\Collectors\Core\CoreN6Config.cs" />
+    <Compile Include="Services\Collectors\Core\CoreN6Outcome.cs" />
+    <Compile Include="Services\Collectors\Core\CoreN6Writer.cs" />
+    <Compile Include="Services\Collectors\Core\CoreStep.cs" />
+    <Compile Include="Services\Collectors\Core\CounterSample.cs" />
+    <Compile Include="Services\Collectors\Core\IpWithMask.cs" />
+    <Compile Include="Services\Collectors\Core\N6Interface.cs" />
+    <Compile Include="Services\Collectors\Core\N6State.cs" />
+    <Compile Include="Services\Collectors\Core\UeLive.cs" />
+    <Compile Include="Services\Collectors\CredentialProtector.cs" />
+    <Compile Include="Services\Collectors\DevicePollingService.cs" />
+    <Compile Include="Services\Collectors\DeviceSnapshot.cs" />
+    <Compile Include="Services\Collectors\DeviceStatusView.cs" />
+    <Compile Include="Services\Collectors\DownsampleMode.cs" />
+    <Compile Include="Services\Collectors\GenericSshParser.cs" />
+    <Compile Include="Services\Collectors\H3c5gcParser.cs" />
+    <Compile Include="Services\Collectors\HistoryPoint.cs" />
+    <Compile Include="Services\Collectors\IDeviceCollector.cs" />
+    <Compile Include="Services\Collectors\ISshOutputParser.cs" />
+    <Compile Include="Services\Collectors\KnownVendors.cs" />
+    <Compile Include="Services\Collectors\LinkSegment.cs" />
+    <Compile Include="Services\Collectors\LinkState.cs" />
+    <Compile Include="Services\Collectors\Metric.cs" />
+    <Compile Include="Services\Collectors\MetricHistory.cs" />
+    <Compile Include="Services\Collectors\MobileNetworkFormat.cs" />
+    <Compile Include="Services\Collectors\PollingOptions.cs" />
+    <Compile Include="Services\Collectors\PollOutcome.cs" />
+    <Compile Include="Services\Collectors\PortStatus.cs" />
+    <Compile Include="Services\Collectors\Rhub\PortKind.cs" />
+    <Compile Include="Services\Collectors\Rhub\PortState.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubDataPorts.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubDialogAction.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubDialogStep.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubPort.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubPowerParseResult.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubPowerResponseParser.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubSerialClient.cs" />
+    <Compile Include="Services\Collectors\Rhub\RhubSerialDialog.cs" />
+    <Compile Include="Services\Collectors\RouteAddr.cs" />
+    <Compile Include="Services\Collectors\SnapshotSerializer.cs" />
+    <Compile Include="Services\Collectors\SnmpCollector.cs" />
+    <Compile Include="Services\Collectors\SnmpDefinition.cs" />
+    <Compile Include="Services\Collectors\SnmpMetric.cs" />
+    <Compile Include="Services\Collectors\Snssai.cs" />
+    <Compile Include="Services\Collectors\SshDefinition.cs" />
+    <Compile Include="Services\Collectors\SshFollowUp.cs" />
+    <Compile Include="Services\Collectors\SshParserRegistry.cs" />
+    <Compile Include="Services\Collectors\SshScriptCollector.cs" />
+    <Compile Include="Services\Collectors\TemplateDefinition.cs" />
+    <Compile Include="Services\Collectors\Trend.cs" />
+    <Compile Include="Services\Collectors\UptimeFormat.cs" />
+    <Compile Include="Services\Collectors\ValueAxis.cs" />
+    <Compile Include="Services\Collectors\ViaParentDefinition.cs" />
+    <Compile Include="Services\Integrity\IntegrityGate.cs" />
+    <Compile Include="Services\Integrity\IntegrityGateMiddleware.cs" />
+    <Compile Include="Services\Integrity\IntegrityGateStartupFilter.cs" />
+    <Compile Include="Services\Integrity\IntegrityStore.cs" />
+    <Compile Include="Services\Integrity\IntegrityVerifier.cs" />
+    <Compile Include="Services\Operations\OperationResult.cs" />
+    <Compile Include="Services\Operations\OperationRunner.cs" />
+    <Compile Include="Services\Operations\OperationsOptions.cs" />
+    <Compile Include="Services\Operations\OperationStep.cs" />
+    <Compile Include="Services\Operations\PrruPowerOptions.cs" />
+    <Compile Include="Services\Operations\ShutdownAllOptions.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\LoginWith2fa\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\LoginWithRecoveryCode\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Login\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Manage\ChangePassword\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Manage\DeletePersonalData\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Manage\EnableAuthenticator\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Manage\SetPassword\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Setup\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Pages\DeviceForm\TypeInference.cs" />
+    <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Users\CreateUser\TypeInference.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Antiforgery">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Antiforgery.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authentication">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Authentication.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Authentication.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authorization">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Authorization.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authorization.Policy">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Authorization.Policy.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Components.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components.Authorization">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Components.Authorization.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components.Endpoints">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Components.Endpoints.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components.Forms">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Components.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components.Server">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Components.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components.Web">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Components.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.DataProtection">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.DataProtection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.DataProtection.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.DataProtection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Diagnostics">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Features">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Http.Features.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Results">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Http.Results.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.HttpOverrides">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.HttpOverrides.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.HttpsPolicy">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.HttpsPolicy.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Identity">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Identity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Mvc.Core">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Routing">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.Routing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.StaticAssets">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.AspNetCore.StaticAssets.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.Relational">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.EntityFrameworkCore.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.UserSecrets">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Configuration.UserSecrets.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Features">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Features.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Identity.Core">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Identity.Stores">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Identity.Stores.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Headers">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Microsoft.Net.Http.Headers.dll</HintPath>
+    </Reference>
+    <Reference Include="QRCoder">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\QRCoder.dll</HintPath>
+    </Reference>
+    <Reference Include="Renci.SshNet">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\Renci.SshNet.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpSnmpLib">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\SharpSnmpLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Ports">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\System.IO.Ports.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography">
+      <HintPath>..\..\SSH Root\SSH Root\opt\absolutdashboard\System.Security.Cryptography.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.manifest" />
+  </ItemGroup>
+</Project>
