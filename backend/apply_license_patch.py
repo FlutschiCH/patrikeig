@@ -58,18 +58,30 @@ for svc in ['absolutdashboard', 'absolutdashboard-test']:
     subprocess.run(['systemctl', 'restart', svc], capture_output=True)
 
 import time
-time.sleep(2)
+time.sleep(3)
 
 print('=== SERVICE STATUS ===')
 for svc in ['absolutdashboard', 'absolutdashboard-test']:
     res = subprocess.run(['systemctl', 'is-active', svc], capture_output=True, text=True)
     print(f'Service {svc}: {res.stdout.strip()}')
 
-print('=== HTTP PROBE (Port 5000 & 5001) ===')
+print('=== ACTIVE LISTENING PORTS ===')
+r = subprocess.run(['ss', '-tulpn'], capture_output=True, text=True)
+for line in r.stdout.splitlines():
+    if any(k in line for k in ['5000', '5001', 'Absolut']):
+        print('  ' + line)
+
+print('=== HTTP PROBE ===')
 for port in [5000, 5001]:
     r = subprocess.run(['curl', '-i', '-s', f'http://127.0.0.1:{port}/'], capture_output=True, text=True)
-    status_line = r.stdout.splitlines()[0] if r.stdout else 'No response'
+    status_line = r.stdout.splitlines()[0] if r.stdout else 'No response (Kestrel still initializing)'
     print(f'Port {port}: {status_line}')
+
+print('=== RECENT SERVICE LOGS ===')
+for svc in ['absolutdashboard', 'absolutdashboard-test']:
+    res = subprocess.run(['journalctl', '-u', svc, '-n', '10', '--no-pager'], capture_output=True, text=True)
+    print(f'--- {svc} ---')
+    print(res.stdout)
 """
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
     cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
