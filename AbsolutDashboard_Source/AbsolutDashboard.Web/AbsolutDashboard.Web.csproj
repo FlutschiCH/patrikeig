@@ -178,11 +178,6 @@
     <Compile Include="Services\Collectors\UptimeFormat.cs" />
     <Compile Include="Services\Collectors\ValueAxis.cs" />
     <Compile Include="Services\Collectors\ViaParentDefinition.cs" />
-    <Compile Include="Services\Integrity\IntegrityGate.cs" />
-    <Compile Include="Services\Integrity\IntegrityGateMiddleware.cs" />
-    <Compile Include="Services\Integrity\IntegrityGateStartupFilter.cs" />
-    <Compile Include="Services\Integrity\IntegrityStore.cs" />
-    <Compile Include="Services\Integrity\IntegrityVerifier.cs" />
     <Compile Include="Services\Operations\OperationResult.cs" />
     <Compile Include="Services\Operations\OperationRunner.cs" />
     <Compile Include="Services\Operations\OperationsOptions.cs" />
