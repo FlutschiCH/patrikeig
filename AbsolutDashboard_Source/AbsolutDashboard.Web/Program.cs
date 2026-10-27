@@ -13,7 +13,6 @@ using AbsolutDashboard.Web.Services.Collectors;
 using AbsolutDashboard.Web.Services.Collectors.Bbu;
 using AbsolutDashboard.Web.Services.Collectors.Core;
 using AbsolutDashboard.Web.Services.Collectors.Rhub;
-using AbsolutDashboard.Web.Services.Integrity;
 using AbsolutDashboard.Web.Services.Operations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -93,8 +92,6 @@ public class Program
 		webApplicationBuilder.Services.AddHostedService<DevicePollingService>();
 		webApplicationBuilder.Services.AddSingleton<CoreLiveState>();
 		webApplicationBuilder.Services.AddHostedService<CoreLivePollService>();
-		webApplicationBuilder.Services.AddSingleton<IntegrityGate>();
-		webApplicationBuilder.Services.AddSingleton<IStartupFilter, IntegrityGateStartupFilter>();
 		webApplicationBuilder.Services.Configure<ForwardedHeadersOptions>(delegate(ForwardedHeadersOptions options)
 		{
 			options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -107,20 +104,6 @@ public class Program
 		{
 			ApplicationDbContext requiredService = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 			requiredService.Database.Migrate();
-			IntegrityGate gate = scope.ServiceProvider.GetRequiredService<IntegrityGate>();
-			DateTime? witness = null;
-			try
-			{
-				IQueryable<DevicePollResult> devicePollResults = requiredService.DevicePollResults;
-				ParameterExpression parameterExpression = Expression.Parameter(typeof(DevicePollResult), "r");
-				DateTime? dateTime = await devicePollResults.MaxAsync<DevicePollResult, DateTime?>(Expression.Lambda<Func<DevicePollResult, DateTime?>>(Expression.Convert(Expression.Property(parameterExpression, methodof(DevicePollResult.get_Timestamp())), typeof(DateTime?)), new ParameterExpression[] { parameterExpression }), default(CancellationToken));
-				witness = dateTime;
-			}
-			catch
-			{
-			}
-			gate.Evaluate(DateTime.UtcNow, witness);
-			gate = null;
 		}
 		IServiceScope scope = null;
 		await DbSeeder.SeedAsync(app.Services, app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("DbSeeder"));
