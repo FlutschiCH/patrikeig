@@ -1,4 +1,4 @@
-=== TASK EXECUTION [2026-10-27 13:41:14] ===
+=== TASK EXECUTION [2026-10-27 13:47:46] ===
 Exit code: 0
 
 --- STDOUT ---
@@ -8,13 +8,13 @@ absolutdashboard is-active: active
 Status line: HTTP/1.1 200 OK
   HTTP/1.1 200 OK
   Content-Type: text/html; charset=utf-8
-  Date: Tue, 27 Oct 2026 12:41:15 GMT
+  Date: Tue, 27 Oct 2026 12:47:46 GMT
   Server: Kestrel
   Cache-Control: no-cache,no-store
   Expires: Thu, 01 Jan 1970 00:00:00 GMT
   Pragma: no-cache
   Set-Cookie: Identity.External=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly
-  Set-Cookie: .AspNetCore.Antiforgery.AOrGXqbKRjs=CfDJ8FaNzhkyM2xJvaMbhsnK_IcR9dmVmAPu5O36iqvJnhJHK-PDfVujvVAZnS_g5RCAG4Z_qwK5MJMfd6fOLXcS2SWLDlIBZQXIe_1kcR2iwkR1PyzWH-ssrZqUyjYOWvIxWr-PWiJBSV5o-dUVL0GPgqo; path=/; samesite=strict; httponly
+  Set-Cookie: .AspNetCore.Antiforgery.AOrGXqbKRjs=CfDJ8FaNzhkyM2xJvaMbhsnK_Ieciq7LYi1o44dDoRkRw7iMxO2QJTzAFKk7wT-0cPe6jrP0aQz2U3g7Dc9L1iRE4s5-e_RgqdyFf-SkIny47x94A99Dp4V4vdNdwvba5ka7PFICcg8DUCkD_atnbqDXsGc; path=/; samesite=strict; httponly
   Transfer-Encoding: chunked
   Content-Security-Policy: frame-ancestors 'self'
   blazor-enhanced-nav: allow
