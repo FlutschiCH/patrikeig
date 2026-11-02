@@ -1,2 +1,49 @@
-=== TASK EXECUTION [2026-11-02 14:27:24] ===
+=== TASK EXECUTION [2026-11-02 14:28:07] ===
 Exit code: 0
+
+--- STDOUT ---
+Active DB handles:
+ lrwx------ 1 absolutsrf absolutsrf 64 Nov  2  2026 278 -> /var/lib/absolutdashboard-test/app.db
+lrwx------ 1 absolutsrf absolutsrf 64 Nov  2  2026 283 -> /var/lib/absolutdashboard-test/app.db-wal
+lrwx------ 1 absolutsrf absolutsrf 64 Nov  2  2026 284 -> /var/lib/absolutdashboard-test/app.db-shm
+lr-x------ 1 absolutsrf absolutsrf 64 Nov  2  2026 285 -> /var/lib/absolutdashboard-test/app.db
+
+=== /var/lib/absolutdashboard/app.db ===
+  ID=1 | Name=BBU1 | IP=10.20.110.6 | Port=20000 | User=absolutdashboard
+  ID=2 | Name=AU300 0001T | IP=None | Port=0 | User=None
+  ID=3 | Name=Cell 1 | IP=None | Port=0 | User=None
+  ID=8 | Name=5G CORE | IP=10.20.111.30 | Port=22 | User=admin
+  ID=9 | Name=absolut sim 01 | IP=None | Port=0 | User=None
+  ID=10 | Name=IMS CORE | IP=10.20.111.15 | Port=161 | User=None
+  ID=11 | Name=UE 0000000055 | IP=None | Port=0 | User=None
+  ID=12 | Name=UE 0000000022 | IP=None | Port=0 | User=None
+  ID=13 | Name=UE 0000000020 | IP=None | Port=0 | User=None
+  ID=14 | Name=UE 0000000016 | IP=None | Port=0 | User=None
+  ID=15 | Name=UE 0000000015 | IP=None | Port=0 | User=None
+  ID=16 | Name=UE 0000000023 | IP=None | Port=0 | User=None
+  ID=17 | Name=UE 0000000027 | IP=None | Port=0 | User=None
+  ID=18 | Name=UE 0000000028 | IP=None | Port=0 | User=None
+  ID=19 | Name=UE 0000000029 | IP=None | Port=0 | User=None
+  ID=20 | Name=UE 0000000013 | IP=None | Port=0 | User=None
+  ID=21 | Name=UE 0000000014 | IP=None | Port=0 | User=None
+  ID=22 | Name=UE 0000000012 | IP=None | Port=0 | User=None
+  ID=23 | Name=UE 0000000030 | IP=None | Port=0 | User=None
+  ID=24 | Name=UE 0000000515 | IP=None | Port=0 | User=None
+  ID=25 | Name=UE 0000000001 | IP=None | Port=0 | User=None
+  ID=26 | Name=UE 0000000002 | IP=None | Port=0 | User=None
+  ID=27 | Name=UE 0000000005 | IP=None | Port=0 | User=None
+  ID=28 | Name=AU300 0002T | IP=None | Port=0 | User=None
+  ID=29 | Name=EU300 0003S | IP=None | Port=0 | User=None
+  ID=30 | Name=RU8250 0005T | IP=None | Port=0 | User=None
+  ID=31 | Name=RU8250 0fred 2 | IP=None | Port=0 | User=None
+  ID=32 | Name=RU8250 0001T | IP=None | Port=0 | User=None
+  ID=33 | Name=UE 0000000004 | IP=None | Port=0 | User=None
+  ID=34 | Name=UE 0000000021 | IP=None | Port=0 | User=None
+  ID=35 | Name=RU8250 0002T | IP=None | Port=0 | User=None
+  ID=36 | Name=iPhone | IP=None | Port=0 | User=None
+  ID=37 | Name=UE 0000000518 | IP=None | Port=0 | User=None
+  ID=38 | Name=UE 0000000008 | IP=None | Port=0 | User=None
+  ID=39 | Name=UE 0000002530 | IP=None | Port=0 | User=None
+  ID=40 | Name=Samsung | IP=None | Port=0 | User=None
+  ID=41 | Name=UE 0000000101 | IP=None | Port=0 | User=None
+  ID=42 | Name=UE 0000000002 | IP=None | Port=0 | User=None
