@@ -12,24 +12,12 @@ def run():
     c7.connect("10.20.110.7", port=22, username="root", password="Absolut1.", timeout=5)
 
     py_poller = """
-import sqlite3
 import subprocess
 
-print("=== CHECK IF POLLER IS INSERTING NEW RECORDS ===")
-for path in ['/var/lib/absolutdashboard-test/app.db', '/var/lib/absolutdashboard/app.db']:
-    if os.path.exists(path):
-        con = sqlite3.connect(path)
-        cur = con.cursor()
-        cur.execute("SELECT COUNT(*) FROM ThroughputSamples;")
-        ts = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM DevicePollResults;")
-        pr = cur.fetchone()[0]
-        cur.execute("SELECT Id, Name, LastPolledAt, LastReachable FROM Devices WHERE Id IN (1, 8, 10);")
-        rows = cur.fetchall()
-        print(f"DB {path}: ThroughputSamples={ts}, PollResults={pr}")
-        for r in rows:
-            print(f"  {r[1]}: LastPolled={r[2]}, Reachable={r[3]}")
-        con.close()
+# Look for PollDueDevicesAsync log output in journalctl
+log = subprocess.run(['journalctl', '-u', 'absolutdashboard', '-n', '50', '--no-pager'], capture_output=True, text=True)
+for l in log.stdout.splitlines()[-30:]:
+    print(l)
 """
     import base64
     b64 = base64.b64encode(py_poller.encode()).decode()
