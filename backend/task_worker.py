@@ -16,23 +16,15 @@ def run():
         print(f"SSH to 10.20.110.7 failed: {e}")
         return
 
-    # Use native ssh / curl / nc commands on 10.20.110.7
+    # Use sshpass or python with sshpass / pexpect / expect to login with Absolut1.
     cmd = """
-    echo '=== 1. TEST SSH PORT 22 ON 10.20.110.5 ==='
-    nc -zv -w 2 10.20.110.5 22 2>&1 || timeout 2 bash -c "</dev/tcp/10.20.110.5/22" && echo "Port 22 OPEN on 10.20.110.5" || echo "Port 22 CLOSED/FILTERED on 10.20.110.5"
-
-    echo ''
-    echo '=== 2. SSH KEYS OR ATTEMPT SSH WITH PASSWORDS TO 10.20.110.5 ==='
-    ssh -o BatchMode=yes -o ConnectTimeout=2 root@10.20.110.5 "echo SSH_KEY_AUTH_OK" 2>&1 || true
-
-    echo ''
-    echo '=== 3. CHECK PROXMOX API / PORT 8006 ON 10.20.110.4 ==='
-    curl -k -s -I --connect-timeout 2 https://10.20.110.4:8006/ | head -n 5
-
-    echo ''
-    echo '=== 4. CHECK 10.20.111.30 PORTS (PING / TCP) ==='
-    ping -c 2 -W 1 10.20.111.30 || true
-    timeout 2 bash -c "</dev/tcp/10.20.111.30/22" 2>/dev/null && echo "Port 22 OPEN on 10.20.111.30" || echo "10.20.111.30 not reachable on port 22"
+    echo '=== ATTEMPT SSH INTO 10.20.110.5 WITH PASSWORD ==='
+    sshpass -p 'Absolut1.' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 root@10.20.110.5 "
+        echo '=== 10.20.110.5 INTERFACES ==='
+        ip addr
+        echo '=== 10.20.110.5 DOCKER / PODMAN CONTAINERS ==='
+        docker ps -a 2>/dev/null || podman ps -a 2>/dev/null
+    " 2>&1 || true
     """
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
