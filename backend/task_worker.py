@@ -16,38 +16,24 @@ def run():
         print(f"SSH to 10.20.110.7 failed: {e}")
         return
 
-    py_code = """
-import subprocess
-import paramiko
+    # Use native ssh / curl / nc commands on 10.20.110.7
+    cmd = """
+    echo '=== 1. TEST SSH PORT 22 ON 10.20.110.5 ==='
+    nc -zv -w 2 10.20.110.5 22 2>&1 || timeout 2 bash -c "</dev/tcp/10.20.110.5/22" && echo "Port 22 OPEN on 10.20.110.5" || echo "Port 22 CLOSED/FILTERED on 10.20.110.5"
 
-print("=== CHECK ROUTER 10.20.110.1 REACHABILITY ===")
-p_gw = subprocess.run(['ping', '-c', '2', '-W', '2', '10.20.110.1'], capture_output=True, text=True)
-print("Router 10.20.110.1 Ping:", "OK" if p_gw.returncode == 0 else "FAIL")
+    echo ''
+    echo '=== 2. SSH KEYS OR ATTEMPT SSH WITH PASSWORDS TO 10.20.110.5 ==='
+    ssh -o BatchMode=yes -o ConnectTimeout=2 root@10.20.110.5 "echo SSH_KEY_AUTH_OK" 2>&1 || true
 
-print("\\n=== CONNECT TO 5G CORE VM (10.20.110.5) VIA SSH ===")
-# Try SSH from 10.20.110.7 to 10.20.110.5
-client_vm = paramiko.SSHClient()
-client_vm.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    echo ''
+    echo '=== 3. CHECK PROXMOX API / PORT 8006 ON 10.20.110.4 ==='
+    curl -k -s -I --connect-timeout 2 https://10.20.110.4:8006/ | head -n 5
 
-connected = False
-for u, p in [('root', 'Absolut1.'), ('root', 'root'), ('h3c', 'h3c'), ('admin', 'admin')]:
-    try:
-        client_vm.connect('10.20.110.5', port=22, username=u, password=p, timeout=4)
-        print(f"[+] Successfully logged into 10.20.110.5 with user '{u}'!")
-        _, stdout, _ = client_vm.exec_command('ip addr; ip route; docker ps 2>/dev/null || podman ps 2>/dev/null')
-        print(stdout.read().decode('utf-8', errors='replace'))
-        client_vm.close()
-        connected = True
-        break
-    except Exception as e:
-        pass
-
-if not connected:
-    print("[-] SSH to 10.20.110.5 with standard credentials timed out or failed.")
-"""
-
-    b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
-    cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
+    echo ''
+    echo '=== 4. CHECK 10.20.111.30 PORTS (PING / TCP) ==='
+    ping -c 2 -W 1 10.20.111.30 || true
+    timeout 2 bash -c "</dev/tcp/10.20.111.30/22" 2>/dev/null && echo "Port 22 OPEN on 10.20.111.30" || echo "10.20.111.30 not reachable on port 22"
+    """
 
     _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
