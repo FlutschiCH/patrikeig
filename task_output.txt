@@ -1,6 +1,33 @@
-=== TASK EXECUTION [2026-11-02 14:31:01] ===
+=== TASK EXECUTION [2026-11-02 14:42:34] ===
 Exit code: 0
 
 --- STDOUT ---
-Max ThroughputSample Timestamp: 2026-10-10 00:00:20.4888183
-Max DevicePollResult Timestamp: 2026-10-09 23:59:52.1895356
+[+] Created original backup: /opt/absolutdashboard/AbsolutDashboard.Web.dll.orig_bak
+[+] Successfully patched /opt/absolutdashboard/AbsolutDashboard.Web.dll (both get_IsBlocked=false AND Configure=pass-through)!
+[+] Created original backup: /opt/absolutdashboard-test/AbsolutDashboard.Web.dll.orig_bak
+[+] Successfully patched /opt/absolutdashboard-test/AbsolutDashboard.Web.dll (both get_IsBlocked=false AND Configure=pass-through)!
+
+[*] Restarting absolutdashboard systemd services...
+
+=== SERVICE STATUS AFTER PATCH ===
+  absolutdashboard is-active: active
+  absolutdashboard-test is-active: active
+
+=== RECENT JOURNAL LOGS ===
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:       Entity Framework Core 10.0.9 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:10.0.9' with options: None
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Query[10111]
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:       Compiling query expression:
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:       'DbSet<Device>()
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:           .Include(d => d.Category)
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:           .Include(d => d.Template)
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:           .Include(d => d.ParentDevice)
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:           .FirstOrDefault(d => d.Id == @Id)'
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Query[10112]
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:       Including navigation: 'Device.Category'.
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Query[10112]
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:       Including navigation: 'Device.Template'.
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Query[10112]
+  Nov 02 14:42:34 absolutsrf absolutdashboard[32495]:       Including navigation: 'Device.ParentDevice'.
+
+[*] Task worker connecting to root@10.20.110.7...
