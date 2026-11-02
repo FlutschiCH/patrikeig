@@ -1,34 +1,25 @@
-=== TASK EXECUTION [2026-11-02 14:43:59] ===
+=== TASK EXECUTION [2026-11-02 14:45:00] ===
 Exit code: 0
 
 --- STDOUT ---
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20006]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Created DbConnection. (0ms).
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20000]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Opening connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20001]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Opened connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20002]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Closing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20003]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Closed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'AbsolutDashboard.Diagnostics.v1').
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'AbsolutDashboard.Diagnostics.v1').
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'AbsolutDashboard.Diagnostics.v1').
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[31]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Performing protect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'AbsolutDashboard.Diagnostics.v1').
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10407]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       'ApplicationDbContext' disposed.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20007]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Disposing connection to database 'main' on server '/var/lib/absolutdashboard/app.db'.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: dbug: Microsoft.EntityFrameworkCore.Database.Connection[20008]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Disposed connection to database 'main' on server '/var/lib/absolutdashboard/app.db' (0ms).
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]: fail: AbsolutDashboard.Web.Services.Collectors.DevicePollingService[0]
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       Polling cycle failed.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:       System.InvalidProgramException: Common Language Runtime detected an invalid program.
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:          at AbsolutDashboard.Web.Services.Integrity.IntegrityGate.get_IsBlocked()
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:          at AbsolutDashboard.Web.Services.Collectors.DevicePollingService.PollDueDevicesAsync(CancellationToken ct)
-Nov 02 14:43:58 absolutsrf absolutdashboard[32495]:          at AbsolutDashboard.Web.Services.Collectors.DevicePollingService.ExecuteAsync(CancellationToken stoppingToken)
+[+] Applied clean ECMA-335 IL patch to /opt/absolutdashboard/AbsolutDashboard.Web.dll
+[+] Applied clean ECMA-335 IL patch to /opt/absolutdashboard-test/AbsolutDashboard.Web.dll
+[*] Restarting absolutdashboard...
+=== SERVICE STATUS ===
+is-active: active
+=== RECENT JOURNAL LOGS ===
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       1 candidate(s) found for the request path '/devices/detail/8'
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1005]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Endpoint '/devices/detail/{Id:int} (/devices/detail/{Id:int})' with route pattern '/devices/detail/{Id:int}' is valid for the request path '/devices/detail/8'
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Request matched endpoint '/devices/detail/{Id:int} (/devices/detail/{Id:int})'
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       The endpoint does not specify the IRequestSizeLimitMetadata.
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware', 'Identity.Application', 'v2').
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Connection id "0HNPOSTUL93MU" accepted.
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Connection id "0HNPOSTUL93MU" started.
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler[8]
+  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       AuthenticationScheme: Identity.Application was successfully authenticated.
