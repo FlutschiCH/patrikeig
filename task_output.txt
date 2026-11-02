@@ -1,25 +1,6 @@
-=== TASK EXECUTION [2026-11-02 14:20:28] ===
+=== TASK EXECUTION [2026-11-02 14:20:55] ===
 Exit code: 0
 
 --- STDOUT ---
-=== 1. TEST SSH PORT 22 ON 10.20.110.5 ===
-Connection to 10.20.110.5 22 port [tcp/ssh] succeeded!
-Port 22 OPEN on 10.20.110.5
-
-=== 2. SSH KEYS OR ATTEMPT SSH WITH PASSWORDS TO 10.20.110.5 ===
-Host key verification failed.
-
-=== 3. CHECK PROXMOX API / PORT 8006 ON 10.20.110.4 ===
-HTTP/1.1 501 method 'HEAD' not available
-Cache-Control: max-age=0
-Connection: close
-Date: Mon, 02 Nov 2026 13:20:26 GMT
-Pragma: no-cache
-
-=== 4. CHECK 10.20.111.30 PORTS (PING / TCP) ===
-PING 10.20.111.30 (10.20.111.30) 56(84) bytes of data.
-
---- 10.20.111.30 ping statistics ---
-2 packets transmitted, 0 received, 100% packet loss, time 1009ms
-
-10.20.111.30 not reachable on port 22
+=== ATTEMPT SSH INTO 10.20.110.5 WITH PASSWORD ===
+bash: line 3: sshpass: command not found
