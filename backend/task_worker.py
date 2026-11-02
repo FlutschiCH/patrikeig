@@ -21,28 +21,48 @@ def run():
         return
 
     py_code = """
-import subprocess
+import sqlite3
 import os
+import subprocess
 
-print("=== 1. FIND THE ACTIVE DB USED BY PID 1114 ===")
-p_fds = subprocess.run(['ls', '-l', '/proc/1114/fd/'], capture_output=True, text=True)
-for line in p_fds.stdout.splitlines():
-    if '.db' in line or '.sqlite' in line:
-        print("  FD DB:", line)
+# Find all SQLite DBs and inspect Devices table
+db_candidates = [
+    '/opt/absolutdashboard/app.db',
+    '/opt/absolutdashboard-test/app.db',
+    '/var/opt/absolutdashboard/app.db',
+    '/var/lib/absolutdashboard-test/app.db'
+]
 
-print("=== 2. ALL DB FILES ON SERVER & SIZES ===")
-find_dbs = subprocess.run(['find', '/opt', '/var', '/root', '-name', '*.db', '-o', '-name', '*.sqlite*'], capture_output=True, text=True)
-for db_f in find_dbs.stdout.splitlines():
-    if os.path.exists(db_f):
-        print(f"  {db_f}: {os.path.getsize(db_f)} bytes")
+# Search for any sqlite files on disk
+out = subprocess.run(['find', '/opt', '/var', '/root', '-name', '*.db'], capture_output=True, text=True)
+for l in out.stdout.splitlines():
+    if l.strip() and l.strip() not in db_candidates:
+        db_candidates.append(l.strip())
 
-print("=== 3. NETWORK INTERFACES & ROUTES ON 10.20.110.7 ===")
-ip_a = subprocess.run(['ip', 'addr'], capture_output=True, text=True)
-print(ip_a.stdout)
+for db_path in db_candidates:
+    if os.path.exists(db_path):
+        try:
+            con = sqlite3.connect(db_path)
+            cur = con.cursor()
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Devices';")
+            if cur.fetchone():
+                print(f"=== DB FOUND WITH DEVICES: {db_path} ===")
+                cur.execute("SELECT Id, Name, IpAddress, LastReachable, LastPolledAt, LastSnapshotJson FROM Devices WHERE Name LIKE '%CORE%';")
+                rows = cur.fetchall()
+                for r in rows:
+                    snap_len = len(r[5]) if r[5] else 0
+                    print(f"  Device: Id={r[0]} | Name={r[1]} | IP={r[2]} | Reachable={r[3]} | LastPolled={r[4]} | SnapLen={snap_len}")
+                    if r[5]:
+                        print(f"  LastSnapshotJson preview: {r[5][:250]}")
+            con.close()
+        except Exception as e:
+            pass
 
-ip_r = subprocess.run(['ip', 'route'], capture_output=True, text=True)
-print("=== Routes ===")
-print(ip_r.stdout)
+print("\\n=== CHECK SERVICE LOGS FOR POLLER ===")
+log = subprocess.run(['journalctl', '-u', 'absolutdashboard', '-n', '100', '--no-pager'], capture_output=True, text=True)
+for line in log.stdout.splitlines():
+    if any(k in line.lower() for k in ['poll', 'integrity', 'blocked', 'metric', 'error', 'fail']):
+        print("  LOG:", line)
 """
 
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
