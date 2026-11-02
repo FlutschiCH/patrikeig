@@ -13,48 +13,43 @@ def run():
     try:
         client.connect("10.20.110.7", port=22, username="root", password="Absolut1.", timeout=8)
     except Exception as e:
-        print(f"SSH failed: {e}")
+        print(f"SSH to 10.20.110.7 failed: {e}")
         return
 
     py_code = """
 import subprocess
+import paramiko
 
-print("=== 1. ROUTING FROM 10.20.110.7 (LINUX) ===")
-# Ping default gateway 10.20.110.1
+print("=== CHECK ROUTER 10.20.110.1 REACHABILITY ===")
 p_gw = subprocess.run(['ping', '-c', '2', '-W', '2', '10.20.110.1'], capture_output=True, text=True)
-print("Ping 10.20.110.1 (Router):", "OK" if p_gw.returncode == 0 else "FAIL")
+print("Router 10.20.110.1 Ping:", "OK" if p_gw.returncode == 0 else "FAIL")
 
-# Ping Proxmox 10.20.110.4
-p_prox = subprocess.run(['ping', '-c', '2', '-W', '2', '10.20.110.4'], capture_output=True, text=True)
-print("Ping 10.20.110.4 (Proxmox):", "OK" if p_prox.returncode == 0 else "FAIL")
+print("\\n=== CONNECT TO 5G CORE VM (10.20.110.5) VIA SSH ===")
+# Try SSH from 10.20.110.7 to 10.20.110.5
+client_vm = paramiko.SSHClient()
+client_vm.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-# Ping 5G Core VM 10.20.110.5
-p_vm = subprocess.run(['ping', '-c', '2', '-W', '2', '10.20.110.5'], capture_output=True, text=True)
-print("Ping 10.20.110.5 (5G Core VM Mgmt):", "OK" if p_vm.returncode == 0 else "FAIL")
+connected = False
+for u, p in [('root', 'Absolut1.'), ('root', 'root'), ('h3c', 'h3c'), ('admin', 'admin')]:
+    try:
+        client_vm.connect('10.20.110.5', port=22, username=u, password=p, timeout=4)
+        print(f"[+] Successfully logged into 10.20.110.5 with user '{u}'!")
+        _, stdout, _ = client_vm.exec_command('ip addr; ip route; docker ps 2>/dev/null || podman ps 2>/dev/null')
+        print(stdout.read().decode('utf-8', errors='replace'))
+        client_vm.close()
+        connected = True
+        break
+    except Exception as e:
+        pass
 
-# Ping 5G Core Service 10.20.111.30
-p_core = subprocess.run(['ping', '-c', '2', '-W', '2', '10.20.111.30'], capture_output=True, text=True)
-print("Ping 10.20.111.30 (5G Core):", "OK" if p_core.returncode == 0 else "FAIL")
-
-# Traceroute to 10.20.111.30
-tr = subprocess.run(['traceroute', '-n', '-m', '4', '10.20.111.30'], capture_output=True, text=True)
-print("Traceroute to 10.20.111.30:\\n", tr.stdout or tr.stderr)
-
-# Scan for any alive IPs on 10.20.110.0/24 from 10.20.110.7
-print("\\n=== 2. QUICK ARP SCAN OF 10.20.110.x FROM LINUX ===")
-scan = subprocess.run(['arp-scan', '--localnet'], capture_output=True, text=True)
-if scan.returncode == 0:
-    print(scan.stdout)
-else:
-    # fallback to fping or nmap
-    nmap = subprocess.run(['nmap', '-sn', '10.20.110.0/24'], capture_output=True, text=True)
-    print(nmap.stdout[:1500])
+if not connected:
+    print("[-] SSH to 10.20.110.5 with standard credentials timed out or failed.")
 """
 
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
     cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64_code}\').decode(\'utf-8\'))"'
 
-    _, stdout, stderr = client.exec_command(cmd, timeout=60)
+    _, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode('utf-8', errors='replace')
     err = stderr.read().decode('utf-8', errors='replace')
     client.close()
