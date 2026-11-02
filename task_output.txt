@@ -1,38 +1,32 @@
-=== TASK EXECUTION [2026-11-02 14:18:32] ===
+=== TASK EXECUTION [2026-11-02 14:19:13] ===
 Exit code: 0
 
 --- STDOUT ---
-=== 1. LOCAL PING FROM 10.20.110.98 ===
-Ping -> 10.20.110.7     : TIMEOUT / UNREACHABLE
-Ping -> 10.20.110.4     : TIMEOUT / UNREACHABLE
-Ping -> 10.20.110.5     : TIMEOUT / UNREACHABLE
-Ping -> 10.20.110.8     : TIMEOUT / UNREACHABLE
-Ping -> 10.20.110.1     : TIMEOUT / UNREACHABLE
-Ping -> 10.20.110.254   : TIMEOUT / UNREACHABLE
+=== 1. ROUTING FROM 10.20.110.7 (LINUX) ===
+Ping 10.20.110.1 (Router): OK
+Ping 10.20.110.4 (Proxmox): OK
+Ping 10.20.110.5 (5G Core VM Mgmt): OK
+Ping 10.20.111.30 (5G Core): FAIL
 
-=== 2. CHECK ARP TABLE FOR 10.20.110.x NEIGHBORS ===
-  Interface: 10.20.110.98 --- 0x14
-  10.20.110.255         ff-ff-ff-ff-ff-ff     static
-
-=== 3. CHECK LINUX DASHBOARD HOST (10.20.110.7) VIA SSH ===
---- Linux 10.20.110.7 Interfaces & Routes ---
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host noprefixroute 
-       valid_lft forever preferred_lft forever
-2: ens18: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-    link/ether bc:24:11:ba:f5:a1 brd ff:ff:ff:ff:ff:ff
-    altname enp0s18
-    altname enxbc2411baf5a1
-    inet 10.20.110.7/24 brd 10.20.110.255 scope global ens18
-       valid_lft forever preferred_lft forever
-    inet6 fe80::be24:11ff:feba:f5a1/64 scope link proto kernel_ll 
-       valid_lft forever preferred_lft forever
-default via 10.20.110.1 dev ens18 proto static 
-10.20.110.0/24 dev ens18 proto kernel scope link src 10.20.110.7 
-10.20.110.22 dev ens18 lladdr bc:24:11:d3:14:8b STALE 
-10.20.110.8 dev ens18 FAILED 
-10.20.110.6 dev ens18 lladdr 00:30:64:a5:cb:e2 STALE 
-10.20.110.1 dev ens18 lladdr e8:a6:60:6c:19:fc REACHABLE
+--- STDERR ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import base64; exec(base64.b64decode('CmltcG9ydCBzdWJwcm9jZXNzCgpwcmludCgiPT09IDEuIFJPVVRJTkcgRlJPTSAxMC4yMC4xMTAuNyAoTElOVVgpID09PSIpCiMgUGluZyBkZWZhdWx0IGdhdGV3YXkgMTAuMjAuMTEwLjEKcF9ndyA9IHN1YnByb2Nlc3MucnVuKFsncGluZycsICctYycsICcyJywgJy1XJywgJzInLCAnMTAuMjAuMTEwLjEnXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGV4dD1UcnVlKQpwcmludCgiUGluZyAxMC4yMC4xMTAuMSAoUm91dGVyKToiLCAiT0siIGlmIHBfZ3cucmV0dXJuY29kZSA9PSAwIGVsc2UgIkZBSUwiKQoKIyBQaW5nIFByb3htb3ggMTAuMjAuMTEwLjQKcF9wcm94ID0gc3VicHJvY2Vzcy5ydW4oWydwaW5nJywgJy1jJywgJzInLCAnLVcnLCAnMicsICcxMC4yMC4xMTAuNCddLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCnByaW50KCJQaW5nIDEwLjIwLjExMC40IChQcm94bW94KToiLCAiT0siIGlmIHBfcHJveC5yZXR1cm5jb2RlID09IDAgZWxzZSAiRkFJTCIpCgojIFBpbmcgNUcgQ29yZSBWTSAxMC4yMC4xMTAuNQpwX3ZtID0gc3VicHJvY2Vzcy5ydW4oWydwaW5nJywgJy1jJywgJzInLCAnLVcnLCAnMicsICcxMC4yMC4xMTAuNSddLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCnByaW50KCJQaW5nIDEwLjIwLjExMC41ICg1RyBDb3JlIFZNIE1nbXQpOiIsICJPSyIgaWYgcF92bS5yZXR1cm5jb2RlID09IDAgZWxzZSAiRkFJTCIpCgojIFBpbmcgNUcgQ29yZSBTZXJ2aWNlIDEwLjIwLjExMS4zMApwX2NvcmUgPSBzdWJwcm9jZXNzLnJ1bihbJ3BpbmcnLCAnLWMnLCAnMicsICctVycsICcyJywgJzEwLjIwLjExMS4zMCddLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCnByaW50KCJQaW5nIDEwLjIwLjExMS4zMCAoNUcgQ29yZSk6IiwgIk9LIiBpZiBwX2NvcmUucmV0dXJuY29kZSA9PSAwIGVsc2UgIkZBSUwiKQoKIyBUcmFjZXJvdXRlIHRvIDEwLjIwLjExMS4zMAp0ciA9IHN1YnByb2Nlc3MucnVuKFsndHJhY2Vyb3V0ZScsICctbicsICctbScsICc0JywgJzEwLjIwLjExMS4zMCddLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCnByaW50KCJUcmFjZXJvdXRlIHRvIDEwLjIwLjExMS4zMDpcbiIsIHRyLnN0ZG91dCBvciB0ci5zdGRlcnIpCgojIFNjYW4gZm9yIGFueSBhbGl2ZSBJUHMgb24gMTAuMjAuMTEwLjAvMjQgZnJvbSAxMC4yMC4xMTAuNwpwcmludCgiXG49PT0gMi4gUVVJQ0sgQVJQIFNDQU4gT0YgMTAuMjAuMTEwLnggRlJPTSBMSU5VWCA9PT0iKQpzY2FuID0gc3VicHJvY2Vzcy5ydW4oWydhcnAtc2NhbicsICctLWxvY2FsbmV0J10sIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSkKaWYgc2Nhbi5yZXR1cm5jb2RlID09IDA6CiAgICBwcmludChzY2FuLnN0ZG91dCkKZWxzZToKICAgICMgZmFsbGJhY2sgdG8gZnBpbmcgb3Igbm1hcAogICAgbm1hcCA9IHN1YnByb2Nlc3MucnVuKFsnbm1hcCcsICctc24nLCAnMTAuMjAuMTEwLjAvMjQnXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGV4dD1UcnVlKQogICAgcHJpbnQobm1hcC5zdGRvdXRbOjE1MDBdKQo=').decode('utf-8'))
+                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 22, in <module>
+  File "/usr/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'traceroute'
