@@ -1,25 +1,8 @@
-=== TASK EXECUTION [2026-11-02 14:45:00] ===
+=== TASK EXECUTION [2026-11-02 14:45:41] ===
 Exit code: 0
 
 --- STDOUT ---
-[+] Applied clean ECMA-335 IL patch to /opt/absolutdashboard/AbsolutDashboard.Web.dll
-[+] Applied clean ECMA-335 IL patch to /opt/absolutdashboard-test/AbsolutDashboard.Web.dll
-[*] Restarting absolutdashboard...
-=== SERVICE STATUS ===
-is-active: active
-=== RECENT JOURNAL LOGS ===
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       1 candidate(s) found for the request path '/devices/detail/8'
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1005]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Endpoint '/devices/detail/{Id:int} (/devices/detail/{Id:int})' with route pattern '/devices/detail/{Id:int}' is valid for the request path '/devices/detail/8'
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Request matched endpoint '/devices/detail/{Id:int} (/devices/detail/{Id:int})'
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       The endpoint does not specify the IRequestSizeLimitMetadata.
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: trce: Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector[5]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Performing unprotect operation to key {19ce8d56-3332-496c-bda3-1b86c9cafc87} with purposes ('AbsolutDashboard', 'Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware', 'Identity.Application', 'v2').
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Connection id "0HNPOSTUL93MU" accepted.
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       Connection id "0HNPOSTUL93MU" started.
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]: dbug: Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler[8]
-  Nov 02 14:45:00 absolutsrf absolutdashboard[32860]:       AuthenticationScheme: Identity.Application was successfully authenticated.
+ERROR: Nov 02 14:45:41 absolutsrf absolutdashboard[32860]:       InvocationId (null): Sending result of type 'System.Void'.
+Device: BBU1 -> Polled: 2026-11-02 13:45:00.0635961 | Reachable: 1
+Device: 5G CORE -> Polled: 2026-11-02 13:45:00.0635961 | Reachable: 0
+Device: IMS CORE -> Polled: 2026-11-02 13:45:00.0635961 | Reachable: 0
