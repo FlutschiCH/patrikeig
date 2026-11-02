@@ -1,7 +1,10 @@
-=== TASK EXECUTION [2026-11-02 14:29:55] ===
+=== TASK EXECUTION [2026-11-02 14:30:26] ===
 Exit code: 0
 
 --- STDOUT ---
-ThroughputSamples in active test DB: 0
-DevicePollResults in active test DB: 0
-Devices status in active test DB:
+=== /var/lib/absolutdashboard/app.db ===
+ ThroughputSamples: 17255
+ DevicePollResults: 106984
+  (1, 'BBU1', '2026-10-09 23:59:52.1895356', 1)
+  (8, '5G CORE', None, 1)
+  (10, 'IMS CORE', '2026-10-09 23:59:52.1895356', 1)
