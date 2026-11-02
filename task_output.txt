@@ -1,25 +1,85 @@
-=== TASK EXECUTION [2026-10-27 13:47:46] ===
+=== TASK EXECUTION [2026-11-02 13:43:59] ===
 Exit code: 0
 
 --- STDOUT ---
-=== SYSTEMCTL STATUS ===
-absolutdashboard is-active: active
-=== CURL LOGIN PAGE ===
-Status line: HTTP/1.1 200 OK
-  HTTP/1.1 200 OK
-  Content-Type: text/html; charset=utf-8
-  Date: Tue, 27 Oct 2026 12:47:46 GMT
-  Server: Kestrel
-  Cache-Control: no-cache,no-store
-  Expires: Thu, 01 Jan 1970 00:00:00 GMT
-  Pragma: no-cache
-  Set-Cookie: Identity.External=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly
-  Set-Cookie: .AspNetCore.Antiforgery.AOrGXqbKRjs=CfDJ8FaNzhkyM2xJvaMbhsnK_Ieciq7LYi1o44dDoRkRw7iMxO2QJTzAFKk7wT-0cPe6jrP0aQz2U3g7Dc9L1iRE4s5-e_RgqdyFf-SkIny47x94A99Dp4V4vdNdwvba5ka7PFICcg8DUCkD_atnbqDXsGc; path=/; samesite=strict; httponly
-  Transfer-Encoding: chunked
-  Content-Security-Policy: frame-ancestors 'self'
-  blazor-enhanced-nav: allow
-  X-Frame-Options: SAMEORIGIN
-  
-  <!DOCTYPE html>
+=== 1. SERVICE STATUS & LOGS ===
+● absolutdashboard.service - AbsolutDashboard - 5G network monitoring dashboard
+     Loaded: loaded (/etc/systemd/system/absolutdashboard.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-10-29 09:36:59 CET; 4 days ago
+ Invocation: a3c3c21c04414e61b8df263377b73b84
+       Docs: file:/opt/absolutdashboard
+   Main PID: 1114 (AbsolutDashboar)
+      Tasks: 22 (limit: 14859)
+     Memory: 403.2M (peak: 441.6M)
+        CPU: 29min 8.489s
+     CGroup: /system.slice/absolutdashboard.service
+             └─1114 /opt/absolutdashboard/AbsolutDashboard.Web
+
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: trce: Microsoft.AspNetCore.Http.Connections.Internal.Transports.WebSocketsTransport[9]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Message received. Type: Binary, size: 30, EndOfMessage: True.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher[1]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Received hub invocation: InvocationMessage { InvocationId: "", Target: "OnRenderCompleted", Arguments: [ 72064,  ], StreamIds: [  ] }.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.Server.ComponentHub[1]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Received confirmation for batch 72064
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer[105]
+Nov 02 13:43:53 absol
+
+=== 2. RECENT JOURNAL LOGS (POLLER / ERRORS) ===
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 256 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 257 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 258 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 259 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 260 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 261 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 262 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 263 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 264 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 265 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 266 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 267 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.RenderTree.Renderer[3]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Rendering component 268 of type Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer[101]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Sending render batch 72064 of size 797 bytes to client am7hOiXi7MiPkYkhUMTtqA.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: trce: Microsoft.AspNetCore.Http.Connections.Internal.Transports.WebSocketsTransport[11]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Sending payload: 828 bytes.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: trce: Microsoft.AspNetCore.Http.Connections.Internal.Transports.WebSocketsTransport[9]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Message received. Type: Binary, size: 30, EndOfMessage: True.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher[1]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Received hub invocation: InvocationMessage { InvocationId: "", Target: "OnRenderCompleted", Arguments: [ 72064,  ], StreamIds: [  ] }.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.Server.ComponentHub[1]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Received confirmation for batch 72064
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: dbug: Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer[105]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       Completing batch 72064 without error in 1.2789ms.
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]: trce: Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher[7]
+Nov 02 13:43:53 absolutsrf absolutdashboard[1114]:       InvocationId (null): Sending result of type 'System.Void'.
+
+
+=== 3. NETWORK REACHABILITY FROM HOST ===
+Ping 10.20.111.30 (5G CORE): FAILED (exit 1)
+Ping 10.20.110.8 (BBU): FAILED (exit 1)
+
+=== 4. DATABASE CHECK (DEVICES & LAST POLLED) ===
+Using DB: /var/lib/absolutdashboard-test/app.db
+
+-- Devices in DB --
+
+-- ThroughputSamples count & recent rows --
+ThroughputSamples count: 0
+
+-- DevicePollResults count --
+DevicePollResults count: 0
 
 [*] Task worker connecting to root@10.20.110.7...
