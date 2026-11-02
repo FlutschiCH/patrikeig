@@ -11,19 +11,25 @@ def run():
     c7.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     c7.connect("10.20.110.7", port=22, username="root", password="Absolut1.", timeout=5)
 
-    py_check_core_vm = """
-import subprocess
+    py_fix_ip = """
+import sqlite3
 
-# Test whether 10.20.110.5 responds on port 22 with user admin or h3c
-print("=== CHECK 10.20.110.5 vs 10.20.111.30 ===")
-res = subprocess.run(['nc', '-zv', '-w', '2', '10.20.110.5', '22'], capture_output=True, text=True)
-print("10.20.110.5:22 ->", res.stderr.strip() or res.stdout.strip())
+con = sqlite3.connect('/var/lib/absolutdashboard/app.db')
+cur = con.cursor()
+# Check current row for 5G CORE
+cur.execute("SELECT Id, Name, IpAddress FROM Devices WHERE Id=8;")
+print("Before update:", cur.fetchone())
 
-res30 = subprocess.run(['nc', '-zv', '-w', '2', '10.20.111.30', '22'], capture_output=True, text=True)
-print("10.20.111.30:22 ->", res30.stderr.strip() or res30.stdout.strip())
+# Update IP address from 10.20.111.30 to 10.20.110.5
+cur.execute("UPDATE Devices SET IpAddress='10.20.110.5', LastPolledAt=NULL WHERE Id=8;")
+con.commit()
+
+cur.execute("SELECT Id, Name, IpAddress FROM Devices WHERE Id=8;")
+print("After update:", cur.fetchone())
+con.close()
 """
     import base64
-    b64 = base64.b64encode(py_check_core_vm.encode()).decode()
+    b64 = base64.b64encode(py_fix_ip.encode()).decode()
     _, stdout, stderr = c7.exec_command(f'python3 -c "import base64; exec(base64.b64decode(\'{b64}\').decode())"')
     print(stdout.read().decode('utf-8', errors='replace'))
     c7.close()
