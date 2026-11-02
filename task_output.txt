@@ -1,6 +1,7 @@
-=== TASK EXECUTION [2026-11-02 14:47:32] ===
+=== TASK EXECUTION [2026-11-02 14:48:19] ===
 Exit code: 0
 
 --- STDOUT ---
-Before update: (8, '5G CORE', '10.20.111.30')
-After update: (8, '5G CORE', '10.20.110.5')
+5G CORE: IP=10.20.110.5 | Reachable=0 | LastPolled=2026-11-02 13:47:44.1331628
+LastError: SSH error: An established connection was aborted by the server.
+ThroughputSamples count: 0
