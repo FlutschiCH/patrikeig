@@ -1,7 +1,6 @@
-=== TASK EXECUTION [2026-11-02 14:46:56] ===
+=== TASK EXECUTION [2026-11-02 14:47:32] ===
 Exit code: 0
 
 --- STDOUT ---
-=== CHECK 10.20.110.5 vs 10.20.111.30 ===
-10.20.110.5:22 -> Connection to 10.20.110.5 22 port [tcp/ssh] succeeded!
-10.20.111.30:22 -> nc: connect to 10.20.111.30 port 22 (tcp) timed out: Operation now in progress
+Before update: (8, '5G CORE', '10.20.111.30')
+After update: (8, '5G CORE', '10.20.110.5')
