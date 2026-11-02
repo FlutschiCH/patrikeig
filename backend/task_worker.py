@@ -14,21 +14,24 @@ def run():
     py_db = """
 import sqlite3
 
-con = sqlite3.connect('/var/lib/absolutdashboard-test/app.db')
-cur = con.cursor()
-cur.execute("SELECT COUNT(*) FROM ThroughputSamples;")
-print("ThroughputSamples in active test DB:", cur.fetchone()[0])
-cur.execute("SELECT COUNT(*) FROM DevicePollResults;")
-print("DevicePollResults in active test DB:", cur.fetchone()[0])
-cur.execute("SELECT Id, Name, LastPolledAt, LastReachable FROM Devices WHERE Id IN (1, 8);")
-print("Devices status in active test DB:")
-for r in cur.fetchall():
-    print(" ", r)
-con.close()
+# Check /var/lib/absolutdashboard/app.db
+for path in ['/var/lib/absolutdashboard/app.db', '/opt/absolutdashboard/Data/app.db', '/opt/absolutdashboard-test/Data/app.db']:
+    if os.path.exists(path):
+        con = sqlite3.connect(path)
+        cur = con.cursor()
+        print(f"=== {path} ===")
+        cur.execute("SELECT COUNT(*) FROM ThroughputSamples;")
+        print(" ThroughputSamples:", cur.fetchone()[0])
+        cur.execute("SELECT COUNT(*) FROM DevicePollResults;")
+        print(" DevicePollResults:", cur.fetchone()[0])
+        cur.execute("SELECT Id, Name, LastPolledAt, LastReachable FROM Devices WHERE Name LIKE '%CORE%' OR Name LIKE '%BBU%';")
+        for r in cur.fetchall():
+            print(" ", r)
+        con.close()
 """
     import base64
     b64 = base64.b64encode(py_db.encode()).decode()
-    _, stdout, stderr = c7.exec_command(f'python3 -c "import base64; exec(base64.b64decode(\'{b64}\').decode())"')
+    _, stdout, stderr = c7.exec_command(f'python3 -c "import base64, os; exec(base64.b64decode(\'{b64}\').decode())"')
     print(stdout.read().decode('utf-8', errors='replace'))
     c7.close()
 
