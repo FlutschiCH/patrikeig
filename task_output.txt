@@ -1,6 +1,6 @@
-=== TASK EXECUTION [2026-11-02 14:48:57] ===
+=== TASK EXECUTION [2026-11-02 14:51:43] ===
 Exit code: 0
 
 --- STDOUT ---
-ThroughputSamples count now: 120
+ThroughputSamples count now: 240
 Current Peak in last 1 hour: DL = 479.66 Mbps | UL = 109.97 Mbps
