@@ -1,6 +1,6 @@
-=== TASK EXECUTION [2026-11-02 14:20:55] ===
+=== TASK EXECUTION [2026-11-02 14:26:57] ===
 Exit code: 0
 
 --- STDOUT ---
-=== ATTEMPT SSH INTO 10.20.110.5 WITH PASSWORD ===
-bash: line 3: sshpass: command not found
+=== CONNECTING DIRECTLY TO 10.20.110.5 ===
+[-] Direct SSH to 10.20.110.5 failed. Checking via 10.20.110.7 python...
