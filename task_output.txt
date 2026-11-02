@@ -1,6 +1,2 @@
-=== TASK EXECUTION [2026-11-02 14:26:57] ===
+=== TASK EXECUTION [2026-11-02 14:27:24] ===
 Exit code: 0
-
---- STDOUT ---
-=== CONNECTING DIRECTLY TO 10.20.110.5 ===
-[-] Direct SSH to 10.20.110.5 failed. Checking via 10.20.110.7 python...
