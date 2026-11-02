@@ -1,2 +1,2 @@
-# trigger run_loop execution
-trigger = 1
+# trigger new commit for run_loop after reconnect
+trigger = 2
