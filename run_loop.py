@@ -17,8 +17,19 @@ def copy_to_clipboard(text):
         print(f"[!] Clipboard error: {e}")
 
 def run_cmd(cmd, cwd=REPO_DIR):
-    res = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
-    return res.returncode, res.stdout.strip(), res.stderr.strip()
+    try:
+        res = subprocess.run(
+            cmd,
+            shell=True,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            errors='replace'
+        )
+        return res.returncode, (res.stdout or '').strip(), (res.stderr or '').strip()
+    except Exception as ex:
+        return 1, '', str(ex)
 
 print("==================================================")
 print("   PATRIKEIG ANYDESK AUTO-SYNC LOOP ACTIVE")
@@ -61,7 +72,7 @@ while True:
                     output += f"\n--- STDERR ---\n{stderr}\n"
 
                 print(output)
-                with open(OUT_FILE, "w", encoding="utf-8") as f:
+                with open(OUT_FILE, "w", encoding="utf-8", errors="replace") as f:
                     f.write(output)
 
                 copy_to_clipboard(output)
