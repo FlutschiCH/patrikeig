@@ -23,9 +23,32 @@ def run():
     py_code = """
 import subprocess
 
-print("=== JOURNAL LOGS AFTER POLL NOW ===")
-res = subprocess.run(['journalctl', '-u', 'absolutdashboard', '-n', '30', '--no-pager'], capture_output=True, text=True)
+print("=== 1. IP ADDRESSES ON HOST (10.20.110.7) ===")
+res = subprocess.run(['ip', 'addr'], capture_output=True, text=True)
 print(res.stdout)
+
+print("=== 2. IP ROUTES & DEFAULT GATEWAY ===")
+res = subprocess.run(['ip', 'route'], capture_output=True, text=True)
+print(res.stdout)
+
+print("=== 3. TRACEROUTE TO 10.20.111.30 (5G CORE) ===")
+# Try traceroute or tracepath or mtr or ping with ttl
+res = subprocess.run(['traceroute', '-n', '-m', '5', '10.20.111.30'], capture_output=True, text=True)
+if res.returncode != 0 or not res.stdout:
+    res = subprocess.run(['tracepath', '-n', '10.20.111.30'], capture_output=True, text=True)
+print(res.stdout or res.stderr)
+
+print("=== 4. PING DEFAULT GATEWAY ===")
+lines = [l for l in subprocess.run(['ip', 'route'], capture_output=True, text=True).stdout.splitlines() if 'default' in l]
+gw = lines[0].split()[2] if lines and len(lines[0].split()) > 2 else None
+print(f"Default Gateway detected: {gw}")
+if gw:
+    pgw = subprocess.run(['ping', '-c', '2', '-W', '2', gw], capture_output=True, text=True)
+    print(f"Ping gateway ({gw}):", "OK" if pgw.returncode == 0 else "FAILED")
+
+print("=== 5. ARP TABLE (NEIGHBORS) ===")
+arp = subprocess.run(['ip', 'neigh'], capture_output=True, text=True)
+print(arp.stdout)
 """
 
     b64_code = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
