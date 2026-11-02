@@ -1,53 +1,7 @@
-=== TASK EXECUTION [2026-11-02 14:29:20] ===
+=== TASK EXECUTION [2026-11-02 14:29:55] ===
 Exit code: 0
 
 --- STDOUT ---
-=== CHECK SYSTEMD FOR POLLER ERRORS IN LAST 500 LINES ===
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-  Nov 02 14:29:17 absolutsrf absolutdashboard[1114]:       Context 'ApplicationDbContext' started tracking 'DevicePollResult' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
-
-=== CHECK INTEGRITY / LICENSE SETTINGS IN APPSETTINGS ===
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "DataSource=Data/app.db"
-  },
-  "DataProtection": {
-    "KeyDirectory": ""
-  },
-  "Operations": {
-    "ShutdownAll": { "Steps": [] },
-    "PrruPower": { "OffCommand": "", "OnCommand": "" }
-  },
-  "Polling": {
-    "Enabled": true,
-    "TickSeconds": 5,
-    "DefaultIntervalSeconds": 30,
-    "TimeoutSeconds": 15,
-    "SshTimeoutSeconds": 30,
-    "SerialTimeoutSeconds": 15,
-    "MaxConcurrency": 8,
-    "HistoryHours": 24,
-    "HistoryPerDevice": 50
+ThroughputSamples in active test DB: 0
+DevicePollResults in active test DB: 0
+Devices status in active test DB:
