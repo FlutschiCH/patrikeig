@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo =======================================================
-echo    ABSOLUTDASHBOARD MULTI-DEVICE PATCH & DEPLOY GUI
+echo    ABSOLUTDASHBOARD MULTI-DEVICE PATCH AND DEPLOY GUI
 echo =======================================================
 echo.
 
