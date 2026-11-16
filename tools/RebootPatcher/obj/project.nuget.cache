@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "zDK/A4DA0TE=",
+  "success": true,
+  "projectFilePath": "D:\\Coding\\patrikeig\\tools\\RebootPatcher\\RebootPatcher.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Flutschi\\.nuget\\packages\\mono.cecil\\0.11.6\\mono.cecil.0.11.6.nupkg.sha512"
+  ],
+  "logs": []
+}

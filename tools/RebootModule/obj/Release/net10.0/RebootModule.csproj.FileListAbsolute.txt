@@ -1,0 +1,15 @@
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.csproj.AssemblyReference.cache
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.GeneratedMSBuildEditorConfig.editorconfig
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.AssemblyInfoInputs.cache
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.AssemblyInfo.cs
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.csproj.CoreCompileInputs.cache
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.sourcelink.json
+D:\Coding\patrikeig\tools\RebootModule\bin\Release\net10.0\RebootModule.deps.json
+D:\Coding\patrikeig\tools\RebootModule\bin\Release\net10.0\RebootModule.dll
+D:\Coding\patrikeig\tools\RebootModule\bin\Release\net10.0\RebootModule.pdb
+D:\Coding\patrikeig\tools\RebootModule\bin\Release\net10.0\AbsolutDashboard.Web.dll
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootMo.84575A0B.Up2Date
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.dll
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\refint\RebootModule.dll
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\RebootModule.pdb
+D:\Coding\patrikeig\tools\RebootModule\obj\Release\net10.0\ref\RebootModule.dll
