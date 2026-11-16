@@ -142,6 +142,13 @@ class PatchToolGUI:
                 client, target_ip = self.get_ssh_client()
                 self.root.after(0, lambda: self.log(f"[+] SSH connection established to {target_ip}"))
 
+                local_dll = os.path.join(os.path.dirname(os.path.abspath(__file__)), "AbsolutDashboard.Web.dll")
+                if os.path.exists(local_dll):
+                    sftp = client.open_sftp()
+                    sftp.put(local_dll, "/tmp/AbsolutDashboard.Web.dll")
+                    sftp.close()
+                    self.root.after(0, lambda: self.log("[+] Uploaded updated AbsolutDashboard.Web.dll to /tmp/"))
+
                 # Remote script to search, backup, and patch all copies of AbsolutDashboard.Web.dll
                 py_code = """
 import os
@@ -171,15 +178,18 @@ for target in possible_paths:
     else:
         print(f'[*] Existing backup found: {backup}')
 
-    with open(target, 'rb') as f:
-        dll = bytearray(f.read())
-
-    # Check header
-    if len(dll) > offset + 25:
-        dll[offset:offset+25] = patched_body
-        with open(target, 'wb') as f:
-            f.write(dll)
-        print(f'[+] Successfully patched {target} (IntegrityGate bypassed)')
+    if os.path.exists('/tmp/AbsolutDashboard.Web.dll'):
+        import shutil
+        shutil.copy2('/tmp/AbsolutDashboard.Web.dll', target)
+        print(f'[+] Deployed updated DLL to {target}')
+    else:
+        with open(target, 'rb') as f:
+            dll = bytearray(f.read())
+        if len(dll) > offset + 25:
+            dll[offset:offset+25] = patched_body
+            with open(target, 'wb') as f:
+                f.write(dll)
+            print(f'[+] Successfully patched {target} (IntegrityGate bypassed)')
 
 # Update /etc/absolutdashboard/absolut.env with Reboot steps if not present
 env_file = '/etc/absolutdashboard/absolut.env'
