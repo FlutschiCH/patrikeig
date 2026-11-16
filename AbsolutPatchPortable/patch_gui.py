@@ -79,7 +79,7 @@ class PatchToolGUI:
         btn_bar = tk.Frame(root, bg="#0d1117", padx=16, pady=8)
         btn_bar.pack(fill=tk.X)
 
-        self.patch_btn = tk.Button(btn_bar, text="🚀 Apply Bypass Patch", bg="#238636", fg="#ffffff", font=("Segoe UI", 10, "bold"), activebackground="#2ea043", relief=tk.FLAT, padx=12, pady=4, command=self.start_patch)
+        self.patch_btn = tk.Button(btn_bar, text="Patch", bg="#238636", fg="#ffffff", font=("Segoe UI", 10, "bold"), activebackground="#2ea043", relief=tk.FLAT, padx=12, pady=4, command=self.start_patch)
         self.patch_btn.pack(side=tk.LEFT, padx=(0, 6))
 
         self.test_btn = tk.Button(btn_bar, text="🔍 Test Status & Ports", bg="#1f6feb", fg="#ffffff", font=("Segoe UI", 9, "bold"), activebackground="#388bfd", relief=tk.FLAT, padx=10, pady=4, command=self.start_status_check)
@@ -102,7 +102,7 @@ class PatchToolGUI:
         self.log_area.pack(fill=tk.BOTH, expand=True)
 
         self.log("[*] Tool initialized in standalone portable mode.")
-        self.log("[*] Select or enter target IP from the dropdown above, then click 'Apply Bypass Patch'.")
+        self.log("[*] Select or enter target IP from the dropdown above, then click 'Patch'.")
         self.log("[*] The tool automatically backs up the original DLL before applying the bypass.\n")
 
     def log(self, text):
@@ -253,7 +253,7 @@ for port in [5000, 5001]:
         threading.Thread(target=_worker, daemon=True).start()
 
     def _on_patch_done(self, out, err):
-        self.patch_btn.config(state=tk.NORMAL, text="🚀 Apply Bypass Patch")
+        self.patch_btn.config(state=tk.NORMAL, text="Patch")
         if out:
             self.log(out)
         if err:
@@ -261,7 +261,7 @@ for port in [5000, 5001]:
         self.log(f"[*] Patch deployment routine completed.\n")
 
     def _on_error(self, err_msg):
-        self.patch_btn.config(state=tk.NORMAL, text="🚀 Apply Bypass Patch")
+        self.patch_btn.config(state=tk.NORMAL, text="Patch")
         self.test_btn.config(state=tk.NORMAL, text="🔍 Test Status & Ports")
         self.restart_btn.config(state=tk.NORMAL, text="🔄 Restart Service")
         self.log(f"[-] ERROR: {err_msg}\n")
