@@ -46,8 +46,13 @@ namespace AbsolutDashboard.Web.Components.Pages
 			__builder.AddComponentParameter(6, "Roles", "Admin");
 			__builder.AddAttribute(7, "ChildContent", new RenderFragment<AuthenticationState>((AuthenticationState context) => delegate(RenderTreeBuilder __builder2)
 			{
-				__builder2.OpenComponent<ShutdownAll>(8);
+				__builder2.OpenElement(8, "div");
+				__builder2.AddAttribute(9, "class", "grid gap-4 lg:grid-cols-2");
+				__builder2.OpenComponent<ShutdownAll>(10);
 				__builder2.CloseComponent();
+				__builder2.OpenComponent<RebootSystem>(11);
+				__builder2.CloseComponent();
+				__builder2.CloseElement();
 			}));
 			__builder.CloseComponent();
 			if (this._rows == null)

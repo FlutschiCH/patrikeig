@@ -49,6 +49,14 @@ namespace AbsolutDashboard.Web.Services.Operations
 			}
 		}
 
+		public RebootOptions Reboot
+		{
+			get
+			{
+				return this._opts.Reboot;
+			}
+		}
+
 		// Token: 0x17000071 RID: 113
 		// (get) Token: 0x060000F0 RID: 240 RVA: 0x00005CCF File Offset: 0x00003ECF
 		public PrruPowerOptions PrruPower
@@ -98,6 +106,44 @@ namespace AbsolutDashboard.Web.Services.Operations
 				list = results;
 			}
 			return list;
+		}
+
+		public async Task<List<OperationResult>> RunRebootAsync(IReadOnlyCollection<int> selectedIndices, CancellationToken ct)
+		{
+			List<OperationResult> results = new List<OperationResult>();
+			if (!this.Reboot.Configured)
+			{
+				results.Add(new OperationResult("Reboot", "", false, "Not configured."));
+				return results;
+			}
+			for (int i = 0; i < this.Reboot.Steps.Count; i++)
+			{
+				if (!selectedIndices.Contains(i))
+				{
+					continue;
+				}
+				OperationStep step = this.Reboot.Steps[i];
+				List<OperationResult> list2 = await this.RunStepAsync(step, ct);
+				results.AddRange(list2);
+				foreach (OperationResult operationResult in list2)
+				{
+					this._log.Log(operationResult.Ok ? LogLevel.Information : LogLevel.Warning, "Reboot step {Label}: {Ok} {Detail}", new object[]
+					{
+						operationResult.Label,
+						operationResult.Ok ? "ok" : "FAILED",
+						operationResult.Detail
+					});
+				}
+				if (list2.Any<OperationResult>((OperationResult r) => !r.Ok) && !step.ContinueOnError)
+				{
+					break;
+				}
+				if (step.WaitSeconds > 0)
+				{
+					await Task.Delay(TimeSpan.FromSeconds((long)step.WaitSeconds), ct);
+				}
+			}
+			return results;
 		}
 
 		// Token: 0x060000F2 RID: 242 RVA: 0x00005D28 File Offset: 0x00003F28

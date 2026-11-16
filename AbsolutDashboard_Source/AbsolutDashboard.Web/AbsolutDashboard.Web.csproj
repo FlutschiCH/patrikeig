@@ -69,6 +69,7 @@
     <Compile Include="Components\PreviewBanner.cs" />
     <Compile Include="Components\Routes.cs" />
     <Compile Include="Components\ShutdownAll.cs" />
+    <Compile Include="Components\RebootSystem.cs" />
     <Compile Include="Components\Sparkline.cs" />
     <Compile Include="Components\StatusStrip.cs" />
     <Compile Include="Components\Users\CreateUser.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="Services\Operations\OperationStep.cs" />
     <Compile Include="Services\Operations\PrruPowerOptions.cs" />
     <Compile Include="Services\Operations\ShutdownAllOptions.cs" />
+    <Compile Include="Services\Operations\RebootOptions.cs" />
     <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\LoginWith2fa\TypeInference.cs" />
     <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\LoginWithRecoveryCode\TypeInference.cs" />
     <Compile Include="__Blazor\AbsolutDashboard\Web\Components\Account\Pages\Login\TypeInference.cs" />

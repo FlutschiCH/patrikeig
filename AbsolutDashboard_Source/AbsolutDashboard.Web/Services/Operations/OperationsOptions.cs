@@ -13,6 +13,8 @@ namespace AbsolutDashboard.Web.Services.Operations
 		// (set) Token: 0x060000FA RID: 250 RVA: 0x00006133 File Offset: 0x00004333
 		public ShutdownAllOptions ShutdownAll { get; set; } = new ShutdownAllOptions();
 
+		public RebootOptions Reboot { get; set; } = new RebootOptions();
+
 		// Token: 0x17000073 RID: 115
 		// (get) Token: 0x060000FB RID: 251 RVA: 0x0000613C File Offset: 0x0000433C
 		// (set) Token: 0x060000FC RID: 252 RVA: 0x00006144 File Offset: 0x00004344
