@@ -188,14 +188,14 @@ if os.path.exists(env_file):
         env_content = f.read()
     if 'Operations__Reboot__Steps__0__Label' not in env_content:
         reboot_cfg = (
-            "\n# System reboot steps\n"
-            "Operations__Reboot__Steps__0__Label=Reboot the base station\n"
-            "Operations__Reboot__Steps__0__IsMml=true\n"
-            "Operations__Reboot__Steps__0__Command=RST BTS:TYPE=PROCESS;\n"
-            "Operations__Reboot__Steps__1__Label=Reboot the 5G core containers (H3C Linux)\n"
-            "Operations__Reboot__Steps__1__IsMml=false\n"
-            "Operations__Reboot__Steps__1__Host=10.20.110.5\n"
-            "Operations__Reboot__Steps__1__Command=reboot\n"
+            "\\n# System reboot steps\\n"
+            "Operations__Reboot__Steps__0__Label=Reboot the base station\\n"
+            "Operations__Reboot__Steps__0__IsMml=true\\n"
+            "Operations__Reboot__Steps__0__Command=RST BTS:TYPE=PROCESS;\\n"
+            "Operations__Reboot__Steps__1__Label=Reboot the 5G core containers (H3C Linux)\\n"
+            "Operations__Reboot__Steps__1__IsMml=false\\n"
+            "Operations__Reboot__Steps__1__Host=10.20.110.5\\n"
+            "Operations__Reboot__Steps__1__Command=reboot\\n"
         )
         with open(env_file, 'a') as f:
             f.write(reboot_cfg)
