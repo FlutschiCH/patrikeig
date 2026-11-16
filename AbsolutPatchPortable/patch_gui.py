@@ -181,6 +181,28 @@ for target in possible_paths:
             f.write(dll)
         print(f'[+] Successfully patched {target} (IntegrityGate bypassed)')
 
+# Update /etc/absolutdashboard/absolut.env with Reboot steps if not present
+env_file = '/etc/absolutdashboard/absolut.env'
+if os.path.exists(env_file):
+    with open(env_file, 'r') as f:
+        env_content = f.read()
+    if 'Operations__Reboot__Steps__0__Label' not in env_content:
+        reboot_cfg = (
+            "\n# System reboot steps\n"
+            "Operations__Reboot__Steps__0__Label=Reboot the base station\n"
+            "Operations__Reboot__Steps__0__IsMml=true\n"
+            "Operations__Reboot__Steps__0__Command=RST BTS:TYPE=PROCESS;\n"
+            "Operations__Reboot__Steps__1__Label=Reboot the 5G core containers (H3C Linux)\n"
+            "Operations__Reboot__Steps__1__IsMml=false\n"
+            "Operations__Reboot__Steps__1__Host=10.20.110.5\n"
+            "Operations__Reboot__Steps__1__Command=reboot\n"
+        )
+        with open(env_file, 'a') as f:
+            f.write(reboot_cfg)
+        print(f'[+] Added Reboot configuration to {env_file}')
+    else:
+        print(f'[*] Reboot configuration already present in {env_file}')
+
 # Restart all absolutdashboard services
 svcs = ['absolutdashboard', 'absolutdashboard-test']
 for svc in svcs:
