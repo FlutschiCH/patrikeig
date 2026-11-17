@@ -245,7 +245,7 @@ for port in [5000, 5001]:
     print(f'Port {port}: {first_line}')
 
 print('\\n=== RECENT ERRORS (absolutdashboard) ===')
-logs = subprocess.run("journalctl -u absolutdashboard -n 200 --no-pager | grep -A 15 -E 'fail:|Exception' | tail -n 30", shell=True, capture_output=True, text=True)
+logs = subprocess.run("journalctl -u absolutdashboard --since '5 minutes ago' --no-pager | grep -i -A 15 -E 'unhandled exception|fail:|crit:' | tail -n 35", shell=True, capture_output=True, text=True)
 print(logs.stdout)
 """
                 b64 = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
