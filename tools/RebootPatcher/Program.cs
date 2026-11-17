@@ -50,9 +50,15 @@ namespace RebootPatcher
                 var cloned = CloneTypeShell(srcType, mainMod, typeMap);
                 mainMod.Types.Add(cloned);
             }
+            var fieldMap = new Dictionary<FieldDefinition, FieldDefinition>();
+            var methodMap = new Dictionary<MethodDefinition, MethodDefinition>();
             foreach (var srcType in typesToCopy)
             {
-                PopulateType(srcType, typeMap[srcType], mainMod, typeMap);
+                PopulateTypeMembers(srcType, typeMap[srcType], mainMod, typeMap, fieldMap, methodMap);
+            }
+            foreach (var srcType in typesToCopy)
+            {
+                PopulateTypeBodies(srcType, mainMod, typeMap, fieldMap, methodMap);
             }
 
             var rebootOptionsType = typeMap.Values.First(t => t.Name == "RebootOptions");
@@ -233,14 +239,13 @@ namespace RebootPatcher
             return targetMod.ImportReference(tr);
         }
 
-        static void PopulateType(TypeDefinition src, TypeDefinition dst, ModuleDefinition targetMod, Dictionary<TypeDefinition, TypeDefinition> map)
+        static void PopulateTypeMembers(TypeDefinition src, TypeDefinition dst, ModuleDefinition targetMod, Dictionary<TypeDefinition, TypeDefinition> map, Dictionary<FieldDefinition, FieldDefinition> fieldMap, Dictionary<MethodDefinition, MethodDefinition> methodMap)
         {
             if (src.BaseType != null)
                 dst.BaseType = ImportRef(src.BaseType, targetMod, map);
             foreach (var iface in src.Interfaces)
                 dst.Interfaces.Add(new InterfaceImplementation(ImportRef(iface.InterfaceType, targetMod, map)));
 
-            var fieldMap = new Dictionary<FieldDefinition, FieldDefinition>();
             foreach (var f in src.Fields)
             {
                 var nf = new FieldDefinition(f.Name, f.Attributes, ImportRef(f.FieldType, targetMod, map));
@@ -248,7 +253,6 @@ namespace RebootPatcher
                 fieldMap[f] = nf;
             }
 
-            var methodMap = new Dictionary<MethodDefinition, MethodDefinition>();
             foreach (var m in src.Methods)
             {
                 var nm = new MethodDefinition(m.Name, m.Attributes, ImportRef(m.ReturnType, targetMod, map));
@@ -271,6 +275,13 @@ namespace RebootPatcher
                     np.CustomAttributes.Add(new CustomAttribute(targetMod.ImportReference(ca.Constructor)));
                 dst.Properties.Add(np);
             }
+
+            foreach (var nt in src.NestedTypes)
+                PopulateTypeMembers(nt, map[nt], targetMod, map, fieldMap, methodMap);
+        }
+
+        static void PopulateTypeBodies(TypeDefinition src, ModuleDefinition targetMod, Dictionary<TypeDefinition, TypeDefinition> map, Dictionary<FieldDefinition, FieldDefinition> fieldMap, Dictionary<MethodDefinition, MethodDefinition> methodMap)
+        {
 
             foreach (var m in src.Methods)
             {
@@ -338,7 +349,7 @@ namespace RebootPatcher
             }
 
             foreach (var nt in src.NestedTypes)
-                PopulateType(nt, map[nt], targetMod, map);
+                PopulateTypeBodies(nt, targetMod, map, fieldMap, methodMap);
         }
     }
 }
