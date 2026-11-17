@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace RebootPatcher
 {
@@ -286,6 +287,7 @@ namespace RebootPatcher
             foreach (var m in src.Methods)
             {
                 if (!m.HasBody) continue;
+                m.Body.SimplifyMacros();
                 var nm = methodMap[m];
                 nm.Body.InitLocals = m.Body.InitLocals;
                 nm.Body.MaxStackSize = m.Body.MaxStackSize;
@@ -318,7 +320,7 @@ namespace RebootPatcher
                         if (rmd != null && methodMap.TryGetValue(rmd, out var mm)) ni = il.Create(instr.OpCode, mm);
                         else ni = il.Create(instr.OpCode, targetMod.ImportReference(mr));
                     }
-                    else if (instr.Operand is ParameterDefinition pd) ni = il.Create(instr.OpCode, nm.Parameters[pd.Index]);
+                    else if (instr.Operand is ParameterDefinition pd) ni = il.Create(instr.OpCode, pd.Index == -1 ? nm.Body.ThisParameter : nm.Parameters[pd.Index]);
                     else if (instr.Operand is VariableDefinition vd) ni = il.Create(instr.OpCode, nm.Body.Variables[vd.Index]);
                     else if (instr.Operand is Instruction) ni = il.Create(OpCodes.Nop);
                     else if (instr.Operand is Instruction[]) ni = il.Create(OpCodes.Nop);
@@ -347,6 +349,7 @@ namespace RebootPatcher
                     };
                     nm.Body.ExceptionHandlers.Add(neh);
                 }
+                nm.Body.OptimizeMacros();
             }
 
             foreach (var nt in src.NestedTypes)
