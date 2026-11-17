@@ -19,12 +19,21 @@ def main():
 
     sftp = client.open_sftp()
     sftp.put(DLL_PATH, "/tmp/AbsolutDashboard.Web.dll")
+    sftp.put(os.path.join(REPO_DIR, "AbsolutPatchPortable", "RebootModule.dll"), "/tmp/RebootModule.dll")
     sftp.close()
-    print("[+] Uploaded AbsolutDashboard.Web.dll to /tmp/")
+    print("[+] Uploaded AbsolutDashboard.Web.dll and RebootModule.dll to /tmp/")
 
     cmd = (
-        "journalctl -u absolutdashboard --since '2 minutes ago' --no-pager | "
-        "grep -i -A 15 -E 'unhandled exception|fail:|crit:' | tail -n 40 || true"
+        "cp /tmp/AbsolutDashboard.Web.dll /opt/absolutdashboard/AbsolutDashboard.Web.dll && "
+        "cp /tmp/RebootModule.dll /opt/absolutdashboard/RebootModule.dll && "
+        "cp /tmp/AbsolutDashboard.Web.dll /opt/absolutdashboard-test/AbsolutDashboard.Web.dll && "
+        "cp /tmp/RebootModule.dll /opt/absolutdashboard-test/RebootModule.dll && "
+        "cp /tmp/AbsolutDashboard.Web.dll /home/absolutsrf/deploy/app/AbsolutDashboard.Web.dll && "
+        "cp /tmp/RebootModule.dll /home/absolutsrf/deploy/app/RebootModule.dll && "
+        "systemctl restart absolutdashboard absolutdashboard-test && "
+        "sleep 3 && "
+        "systemctl is-active absolutdashboard && "
+        "curl -s -o /dev/null -w 'HTTP %{http_code}\\n' http://127.0.0.1:5000/"
     )
     stdin, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode("utf-8", errors="replace")

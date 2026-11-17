@@ -40,30 +40,10 @@ namespace RebootPatcher
             var runStep = opRunner.Methods.First(m => m.Name == "RunStepAsync");
             runStep.IsPublic = true;
 
-            // 2. Copy RebootOptions and RebootSystem (and nested types) into targetAsm
-            var typeMap = new Dictionary<TypeDefinition, TypeDefinition>();
-            var typesToCopy = modAsm.MainModule.Types
-                .Where(t => t.Namespace == "AbsolutDashboard.Web.Services.Operations" || t.Namespace == "AbsolutDashboard.Web.Components")
-                .ToList();
-
-            foreach (var srcType in typesToCopy)
-            {
-                var cloned = CloneTypeShell(srcType, mainMod, typeMap);
-                mainMod.Types.Add(cloned);
-            }
-            var fieldMap = new Dictionary<FieldDefinition, FieldDefinition>();
-            var methodMap = new Dictionary<MethodDefinition, MethodDefinition>();
-            foreach (var srcType in typesToCopy)
-            {
-                PopulateTypeMembers(srcType, typeMap[srcType], mainMod, typeMap, fieldMap, methodMap);
-            }
-            foreach (var srcType in typesToCopy)
-            {
-                PopulateTypeBodies(srcType, mainMod, typeMap, fieldMap, methodMap);
-            }
-
-            var rebootOptionsType = typeMap.Values.First(t => t.Name == "RebootOptions");
-            var rebootSystemType = typeMap.Values.First(t => t.Name == "RebootSystem");
+            // 2. Reference RebootOptions and RebootSystem directly from RebootModule.dll
+            var rebootOptionsType = mainMod.ImportReference(modAsm.MainModule.Types.First(t => t.Name == "RebootOptions"));
+            var rebootSystemType = mainMod.ImportReference(modAsm.MainModule.Types.First(t => t.Name == "RebootSystem"));
+            var rebootCtor = mainMod.ImportReference(modAsm.MainModule.Types.First(t => t.Name == "RebootOptions").Methods.First(m => m.IsConstructor && !m.IsStatic));
 
             // 3. Add Reboot property to OperationsOptions
             var opsOptions = mainMod.Types.First(t => t.FullName == "AbsolutDashboard.Web.Services.Operations.OperationsOptions");
@@ -94,7 +74,6 @@ namespace RebootPatcher
                 // Initialize in .ctor
                 var ctor = opsOptions.Methods.First(m => m.IsConstructor && !m.IsStatic);
                 var cIl = ctor.Body.GetILProcessor();
-                var rebootCtor = rebootOptionsType.Methods.First(m => m.IsConstructor && !m.IsStatic);
                 var ret = ctor.Body.Instructions.Last();
                 cIl.InsertBefore(ret, cIl.Create(OpCodes.Ldarg_0));
                 cIl.InsertBefore(ret, cIl.Create(OpCodes.Newobj, rebootCtor));
