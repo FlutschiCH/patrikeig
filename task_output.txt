@@ -1,23 +1,8 @@
-=== TASK EXECUTION [2026-11-17 15:07:47] ===
+=== TASK EXECUTION [2026-11-17 15:09:05] ===
 Exit code: 0
 
 --- STDOUT ---
 [+] Connected to 10.20.110.7
-[+] Uploaded AbsolutDashboard.Web.dll to /tmp/
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]: fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:       An unhandled exception has occurred while executing the request.
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:       System.InvalidProgramException: Common Language Runtime detected an invalid program.
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at AbsolutDashboard.Web.Components.RebootSystem.BuildRenderTree(RenderTreeBuilder __builder)
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:       --- End of stack trace from previous location ---
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.RenderTree.Renderer.ProcessRenderQueue()
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:       --- End of stack trace from previous location ---
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.RenderTree.Renderer.ProcessRenderQueue()
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged()
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.ComponentBase.CallOnParametersSetAsync()
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.ComponentBase.RunInitAndSetParametersAsync()
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.Rendering.ComponentState.SetDirectParameters(ParameterView parameters)
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.RenderTree.Renderer.RenderRootComponentAsync(Int32 componentId, ParameterView initialParameters)
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.HtmlRendering.Infrastructure.StaticHtmlRenderer.BeginRenderingComponent(IComponent component, ParameterView initialParameters)
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.Endpoints.EndpointHtmlRenderer.RenderEndpointComponent(HttpContext httpContext, Type rootComponentType, ParameterView parameters, Boolean waitForQuiescence)
-Nov 17 15:07:23 absolutsrf absolutdashboard[3044]:          at Microsoft.AspNetCore.Components.Endpoints.RazorComponentEndpointInvoker.RenderComponentCore(HttpContext context)
+[+] Uploaded AbsolutDashboard.Web.dll and RebootModule.dll to /tmp/
+active
+HTTP 302
