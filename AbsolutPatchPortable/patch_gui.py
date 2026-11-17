@@ -143,11 +143,14 @@ class PatchToolGUI:
                 self.root.after(0, lambda: self.log(f"[+] SSH connection established to {target_ip}"))
 
                 local_dll = os.path.join(os.path.dirname(os.path.abspath(__file__)), "AbsolutDashboard.Web.dll")
+                local_mod = os.path.join(os.path.dirname(os.path.abspath(__file__)), "RebootModule.dll")
                 if os.path.exists(local_dll):
                     sftp = client.open_sftp()
                     sftp.put(local_dll, "/tmp/AbsolutDashboard.Web.dll")
+                    if os.path.exists(local_mod):
+                        sftp.put(local_mod, "/tmp/RebootModule.dll")
                     sftp.close()
-                    self.root.after(0, lambda: self.log("[+] Uploaded updated AbsolutDashboard.Web.dll to /tmp/"))
+                    self.root.after(0, lambda: self.log("[+] Uploaded updated AbsolutDashboard.Web.dll and RebootModule.dll to /tmp/"))
 
                 # Remote script to search, backup, and patch all copies of AbsolutDashboard.Web.dll
                 py_code = """
@@ -181,6 +184,8 @@ for target in possible_paths:
     if os.path.exists('/tmp/AbsolutDashboard.Web.dll'):
         import shutil
         shutil.copy2('/tmp/AbsolutDashboard.Web.dll', target)
+        if os.path.exists('/tmp/RebootModule.dll'):
+            shutil.copy2('/tmp/RebootModule.dll', os.path.join(os.path.dirname(target), 'RebootModule.dll'))
         print(f'[+] Deployed updated DLL to {target}')
     else:
         with open(target, 'rb') as f:
