@@ -1,9 +1,29 @@
-=== TASK EXECUTION [2026-11-17 17:50:27] ===
+=== TASK EXECUTION [2026-11-17 18:13:12] ===
 Exit code: 0
 
 --- STDOUT ---
 [+] Connected to 10.20.110.7, sending reboot...
- 17:50:27 up 7 min,  1 user,  load average: 1.23, 1.14, 0.60
-activating
+Operations__ShutdownAll__Steps__0__Label=Shut down the base station
+Operations__ShutdownAll__Steps__0__Kind=mml
+Operations__ShutdownAll__Steps__0__Command=OPR SHUTDOWN:;
+Operations__ShutdownAll__Steps__1__Label=Stop the 5G core containers (H3C Linux)
+Operations__ShutdownAll__Steps__1__Kind=ssh
+Operations__ShutdownAll__Steps__1__Host=10.20.110.5
+Operations__ShutdownAll__Steps__1__User=root
+Operations__ShutdownAll__Steps__1__Password=root@vSCN5100
+Operations__ShutdownAll__Steps__1__Command=ids=$(docker ps -q); [ -z "$ids" ] || docker stop --time 30 $ids
+Operations__ShutdownAll__Steps__2__Label=Power off the Proxmox host (all VMs)
+Operations__ShutdownAll__Steps__2__Kind=ssh
+Operations__ShutdownAll__Steps__2__Host=10.20.110.4
+Operations__ShutdownAll__Steps__2__User=root
+Operations__ShutdownAll__Steps__2__Password=Absolut1.
+Operations__ShutdownAll__Steps__2__Command=systemctl poweroff
+Operations__Reboot__Steps__0__Label=Reboot the base station
+Operations__Reboot__Steps__0__IsMml=true
+Operations__Reboot__Steps__0__Command=RST BTS:TYPE=PROCESS;
+Operations__Reboot__Steps__1__Label=Reboot the 5G core containers (H3C Linux)
+Operations__Reboot__Steps__1__IsMml=false
+Operations__Reboot__Steps__1__Host=10.20.110.5
+Operations__Reboot__Steps__1__Command=reboot
 
 [+] Reboot command sent.
