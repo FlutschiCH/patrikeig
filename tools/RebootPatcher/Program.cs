@@ -143,6 +143,12 @@ namespace RebootPatcher
             var openReboot = new GenericInstanceMethod(mainMod.ImportReference(openCompDef));
             openReboot.GenericArguments.Add(rebootSystemType);
 
+            var addRenderMode = mainMod.ImportReference(rtbType.Methods.First(m => m.Name == "AddComponentRenderMode"));
+            var renderModeType = mainMod.Types.FirstOrDefault(t => t.FullName == "Microsoft.AspNetCore.Components.Web.RenderMode")
+                ?? rtbType.Module.AssemblyResolver.Resolve(new AssemblyNameReference("Microsoft.AspNetCore.Components.Web", new Version(10, 0, 0, 0)))
+                    .MainModule.Types.First(t => t.FullName == "Microsoft.AspNetCore.Components.Web.RenderMode");
+            var getInteractiveServer = mainMod.ImportReference(renderModeType.Methods.First(m => m.Name == "get_InteractiveServer"));
+
             var hIl = childContentMethod.Body.GetILProcessor();
             childContentMethod.Body.Instructions.Clear();
             childContentMethod.Body.Variables.Clear();
@@ -165,10 +171,13 @@ namespace RebootPatcher
             hIl.Append(hIl.Create(OpCodes.Callvirt, openShutdown));
             hIl.Append(hIl.Create(OpCodes.Ldarg_1));
             hIl.Append(hIl.Create(OpCodes.Callvirt, closeComp));
-            // __builder2.OpenComponent<RebootSystem>(11); __builder2.CloseComponent();
+            // __builder2.OpenComponent<RebootSystem>(11); __builder2.AddComponentRenderMode(RenderMode.InteractiveServer); __builder2.CloseComponent();
             hIl.Append(hIl.Create(OpCodes.Ldarg_1));
             hIl.Append(hIl.Create(OpCodes.Ldc_I4_S, (sbyte)11));
             hIl.Append(hIl.Create(OpCodes.Callvirt, openReboot));
+            hIl.Append(hIl.Create(OpCodes.Ldarg_1));
+            hIl.Append(hIl.Create(OpCodes.Call, getInteractiveServer));
+            hIl.Append(hIl.Create(OpCodes.Callvirt, addRenderMode));
             hIl.Append(hIl.Create(OpCodes.Ldarg_1));
             hIl.Append(hIl.Create(OpCodes.Callvirt, closeComp));
             // __builder2.CloseElement();
