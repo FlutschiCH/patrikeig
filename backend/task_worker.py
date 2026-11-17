@@ -23,14 +23,8 @@ def main():
     print("[+] Uploaded AbsolutDashboard.Web.dll to /tmp/")
 
     cmd = (
-        "cp /tmp/AbsolutDashboard.Web.dll /opt/absolutdashboard/AbsolutDashboard.Web.dll && "
-        "cp /tmp/AbsolutDashboard.Web.dll /opt/absolutdashboard-test/AbsolutDashboard.Web.dll && "
-        "cp /tmp/AbsolutDashboard.Web.dll /home/absolutsrf/deploy/app/AbsolutDashboard.Web.dll && "
-        "systemctl restart absolutdashboard absolutdashboard-test && "
-        "sleep 3 && "
-        "systemctl is-active absolutdashboard && "
-        "curl -s -o /dev/null -w 'HTTP %{http_code}\\n' http://127.0.0.1:5000/ && "
-        "journalctl -u absolutdashboard --since '1 minute ago' --no-pager | grep -i -A 10 -E 'unhandled exception|fail:|crit:' | tail -n 25 || true"
+        "journalctl -u absolutdashboard --since '2 minutes ago' --no-pager | "
+        "grep -i -A 15 -E 'unhandled exception|fail:|crit:' | tail -n 40 || true"
     )
     stdin, stdout, stderr = client.exec_command(cmd, timeout=30)
     out = stdout.read().decode("utf-8", errors="replace")
