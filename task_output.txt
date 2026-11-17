@@ -1,7 +1,6 @@
-=== TASK EXECUTION [2026-11-17 18:14:05] ===
+=== TASK EXECUTION [2026-11-17 18:15:04] ===
 Exit code: 0
 
 --- STDOUT ---
-[+] Connected to 10.20.110.7
-Updated /etc/absolutdashboard/absolut.env
-activating
+[+] Connected to 10.20.110.7, sending reboot...
+[+] Reboot command sent.
