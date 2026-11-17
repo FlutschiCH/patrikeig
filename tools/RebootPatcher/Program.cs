@@ -224,6 +224,9 @@ namespace RebootPatcher
         {
             if (tr is TypeDefinition td && map.TryGetValue(td, out var mapped))
                 return mapped;
+            var byName = map.FirstOrDefault(kv => kv.Key.FullName == tr.FullName).Value;
+            if (byName != null)
+                return byName;
             if (tr is GenericInstanceType git)
             {
                 var ngit = new GenericInstanceType(ImportRef(git.ElementType, targetMod, map));
