@@ -238,8 +238,8 @@ for port in [5000, 5001]:
     first_line = r.stdout.splitlines()[0] if r.stdout else 'Waiting for Kestrel initialization'
     print(f'Port {port}: {first_line}')
 
-print('\\n=== RECENT LOGS (absolutdashboard) ===')
-logs = subprocess.run(['journalctl', '-u', 'absolutdashboard', '-n', '25', '--no-pager'], capture_output=True, text=True)
+print('\\n=== RECENT ERRORS (absolutdashboard) ===')
+logs = subprocess.run("journalctl -u absolutdashboard -n 200 --no-pager | grep -A 15 -E 'fail:|Exception' | tail -n 30", shell=True, capture_output=True, text=True)
 print(logs.stdout)
 """
                 b64 = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
