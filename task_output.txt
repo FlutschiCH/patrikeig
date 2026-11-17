@@ -1,23 +1,10 @@
-=== TASK EXECUTION [2026-11-17 15:18:13] ===
+=== TASK EXECUTION [2026-11-17 15:19:33] ===
 Exit code: 0
 
 --- STDOUT ---
 [+] Connected to 10.20.110.7
-[+] Uploaded AbsolutDashboard.Web.dll and RebootModule.dll to /tmp/
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]: fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:       An unhandled exception has occurred while executing the request.
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:       System.IO.FileNotFoundException: Could not load file or assembly 'RebootModule, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'. The system cannot find the file specified.
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:       
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:       File name: 'RebootModule, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at AbsolutDashboard.Web.Components.Pages.Home.<>c.<BuildRenderTree>b__0_2(RenderTreeBuilder __builder2)
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.BuildRenderTree(RenderTreeBuilder builder)
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:       --- End of stack trace from previous location ---
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.RenderTree.Renderer.ProcessRenderQueue()
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:       --- End of stack trace from previous location ---
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.RenderTree.Renderer.ProcessRenderQueue()
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged()
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.ComponentBase.RunInitAndSetParametersAsync()
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.Rendering.ComponentState.SupplyCombinedParameters(ParameterView directAndCascadingParameters)
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.Rendering.ComponentState.SetDirectParameters(ParameterView parameters)
-Nov 17 15:17:44 absolutsrf absolutdashboard[3466]:          at Microsoft.AspNetCore.Components.RenderTree.Renderer.RenderRootComponentAsync(Int32 componentId, ParameterView initialParameters)
+Updated /opt/absolutdashboard/AbsolutDashboard.Web.deps.json
+Updated /opt/absolutdashboard-test/AbsolutDashboard.Web.deps.json
+Updated /home/absolutsrf/deploy/app/AbsolutDashboard.Web.deps.json
+active
+HTTP 302
