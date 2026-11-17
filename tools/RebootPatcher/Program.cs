@@ -288,6 +288,7 @@ namespace RebootPatcher
                 if (!m.HasBody) continue;
                 var nm = methodMap[m];
                 nm.Body.InitLocals = m.Body.InitLocals;
+                nm.Body.MaxStackSize = m.Body.MaxStackSize;
                 foreach (var v in m.Body.Variables)
                     nm.Body.Variables.Add(new VariableDefinition(ImportRef(v.VariableType, targetMod, map)));
 
