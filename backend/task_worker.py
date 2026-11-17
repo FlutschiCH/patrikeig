@@ -9,7 +9,7 @@ DLL_PATH = os.path.join(REPO_DIR, "AbsolutPatchPortable", "AbsolutDashboard.Web.
 HOST = "10.20.110.7"
 PORT = 22
 USER = "root"
-PASS = "Absolut5G!"
+PASS = "Absolut1."
 
 def main():
     client = paramiko.SSHClient()
