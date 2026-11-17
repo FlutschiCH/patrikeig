@@ -1,8 +1,22 @@
-=== TASK EXECUTION [2026-11-17 15:09:05] ===
+=== TASK EXECUTION [2026-11-17 15:10:15] ===
 Exit code: 0
 
 --- STDOUT ---
 [+] Connected to 10.20.110.7
 [+] Uploaded AbsolutDashboard.Web.dll and RebootModule.dll to /tmp/
-active
-HTTP 302
+Nov 17 15:09:02 absolutsrf absolutdashboard[3044]: Unhandled exception. System.BadImageFormatException: Index not found. (0x80131124)
+Nov 17 15:09:02 absolutsrf absolutdashboard[3044]:    at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecuteFromThreadPool(Thread threadPoolThread)
+Nov 17 15:09:02 absolutsrf absolutdashboard[3044]:    at System.Threading.ThreadPoolWorkQueue.Dispatch()
+Nov 17 15:09:02 absolutsrf absolutdashboard[3044]:    at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+Nov 17 15:09:02 absolutsrf absolutdashboard[3044]:    at System.Threading.Thread.StartCallback()
+Nov 17 15:09:02 absolutsrf systemd[1]: absolutdashboard.service: Main process exited, code=dumped, status=6/ABRT
+Nov 17 15:09:02 absolutsrf systemd[1]: absolutdashboard.service: Failed with result 'core-dump'.
+Nov 17 15:09:02 absolutsrf systemd[1]: Stopped absolutdashboard.service - AbsolutDashboard - 5G network monitoring dashboard.
+Nov 17 15:09:02 absolutsrf systemd[1]: absolutdashboard.service: Consumed 20.664s CPU time over 7min 46.340s wall clock time, 205.1M memory peak.
+Nov 17 15:09:03 absolutsrf systemd[1]: Started absolutdashboard.service - AbsolutDashboard - 5G network monitoring dashboard.
+Nov 17 15:09:03 absolutsrf absolutdashboard[3466]: info: AbsolutDashboard.Web[0]
+Nov 17 15:09:03 absolutsrf absolutdashboard[3466]:       AbsolutDashboard 0.1.0+a75ca8c starting.
+Nov 17 15:09:03 absolutsrf absolutdashboard[3466]: dbug: Microsoft.EntityFrameworkCore.Infrastructure[10401]
+Nov 17 15:09:03 absolutsrf absolutdashboard[3466]:       An 'IServiceProvider' was created for internal use by Entity Framework.
+Nov 17 15:09:03 absolutsrf absolutdashboard[3466]: dbug: Microsoft.EntityFrameworkCore.Model[10601]
+Nov 17 15:09:03 absolutsrf absolutdashboard[3466]:       The index {'DeviceId'} was not created on entity type 'DevicePollResult' as the properties are already covered by the index {'DeviceId', 'Timestamp'}.
