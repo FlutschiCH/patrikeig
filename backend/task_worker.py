@@ -1,6 +1,9 @@
 import os
 import paramiko
 
+REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MOD_PATH = os.path.join(REPO_DIR, "AbsolutPatchPortable", "RebootModule.dll")
+
 HOST = "10.20.110.7"
 PORT = 22
 USER = "root"
@@ -12,23 +15,20 @@ def main():
     client.connect(hostname=HOST, port=PORT, username=USER, password=PASS, timeout=10)
     print(f"[+] Connected to {HOST}")
 
-    cmd = """python3 -c "
-import json, os
-for d in ['/opt/absolutdashboard', '/opt/absolutdashboard-test', '/home/absolutsrf/deploy/app']:
-    p = os.path.join(d, 'AbsolutDashboard.Web.deps.json')
-    if os.path.exists(p):
-        with open(p, 'r') as f:
-            data = json.load(f)
-        for t in data.get('targets', {}).values():
-            if 'RebootModule/1.0.0' not in t:
-                t['RebootModule/1.0.0'] = {'runtime': {'RebootModule.dll': {}}}
-        if 'RebootModule/1.0.0' not in data.get('libraries', {}):
-            data.setdefault('libraries', {})['RebootModule/1.0.0'] = {'type': 'project', 'serviceable': False, 'sha512': ''}
-        with open(p, 'w') as f:
-            json.dump(data, f, indent=2)
-        print('Updated', p)
-" && systemctl restart absolutdashboard absolutdashboard-test && sleep 3 && systemctl is-active absolutdashboard && curl -s -o /dev/null -w 'HTTP %{http_code}\n' http://127.0.0.1:5000/"""
+    sftp = client.open_sftp()
+    sftp.put(MOD_PATH, "/tmp/RebootModule.dll")
+    sftp.close()
+    print("[+] Uploaded RebootModule.dll to /tmp/")
 
+    cmd = (
+        "cp /tmp/RebootModule.dll /opt/absolutdashboard/RebootModule.dll && "
+        "cp /tmp/RebootModule.dll /opt/absolutdashboard-test/RebootModule.dll && "
+        "cp /tmp/RebootModule.dll /home/absolutsrf/deploy/app/RebootModule.dll && "
+        "systemctl restart absolutdashboard absolutdashboard-test && "
+        "sleep 3 && "
+        "systemctl is-active absolutdashboard && "
+        "curl -s -o /dev/null -w 'HTTP %{http_code}\\n' http://127.0.0.1:5000/"
+    )
     stdin, stdout, stderr = client.exec_command(cmd, timeout=30)
     print(stdout.read().decode("utf-8", errors="replace"))
     err = stderr.read().decode("utf-8", errors="replace")

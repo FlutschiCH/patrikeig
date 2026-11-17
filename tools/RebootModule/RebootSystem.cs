@@ -189,15 +189,26 @@ namespace AbsolutDashboard.Web.Components
             await base.InvokeAsync(base.StateHasChanged);
             try
             {
-                var method = typeof(OperationRunner).GetMethod("RunRebootAsync");
-                if (method != null)
+                var steps = GetRebootSteps(this.Runner);
+                var runStep = typeof(OperationRunner).GetMethod("RunStepAsync");
+                var results = new List<OperationResult>();
+                for (int i = 0; i < steps.Count; i++)
                 {
-                    var task = (Task<List<OperationResult>>?)method.Invoke(this.Runner, new object[] { this._selected, CancellationToken.None });
-                    if (task != null)
+                    if (!this._selected.Contains(i)) continue;
+                    var step = steps[i];
+                    if (runStep != null)
                     {
-                        this._results = await task;
+                        var task = (Task<List<OperationResult>>?)runStep.Invoke(this.Runner, new object[] { step, CancellationToken.None });
+                        if (task != null)
+                        {
+                            var list2 = await task;
+                            results.AddRange(list2);
+                            if (list2.Any(r => !r.Ok) && !step.ContinueOnError) break;
+                            if (step.WaitSeconds > 0) await Task.Delay(TimeSpan.FromSeconds(step.WaitSeconds));
+                        }
                     }
                 }
+                this._results = results;
             }
             finally
             {

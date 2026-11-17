@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RebootModule")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37175e964a1151e315f0a2cfd5322531c5593a1b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a09a65ef653a678bf080bff905cfe134f564be3")]
 [assembly: System.Reflection.AssemblyProductAttribute("RebootModule")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RebootModule")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
