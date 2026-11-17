@@ -213,11 +213,11 @@ if os.path.exists(env_file):
     else:
         print(f'[*] Reboot configuration already present in {env_file}')
 
-print('\\n=== DISK & DB CHECK ===')
+print('\\n=== DISK CLEANUP ===')
+subprocess.run(['journalctl', '--vacuum-time=2d'], capture_output=True)
+subprocess.run(['apt-get', 'clean'], capture_output=True)
 df_res = subprocess.run(['df', '-h', '/var/lib/absolutdashboard'], capture_output=True, text=True)
 print(df_res.stdout.strip())
-ls_res = subprocess.run(['ls', '-la', '/var/lib/absolutdashboard'], capture_output=True, text=True)
-print(ls_res.stdout.strip())
 
 # Restart all absolutdashboard services
 svcs = ['absolutdashboard', 'absolutdashboard-test']
