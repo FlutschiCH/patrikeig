@@ -1,7 +1,7 @@
-=== TASK EXECUTION [2026-11-17 16:03:26] ===
+=== TASK EXECUTION [2026-11-17 16:08:22] ===
 Exit code: 0
 
 --- STDOUT ---
 [+] Connected to 10.20.110.7
-[+] Uploaded RebootModule.dll to /tmp/
+[+] Uploaded AbsolutDashboard.Web.dll to /tmp/
 activating
