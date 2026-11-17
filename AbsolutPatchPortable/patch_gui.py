@@ -237,6 +237,10 @@ for port in [5000, 5001]:
     r = subprocess.run(['curl', '-i', '-s', f'http://127.0.0.1:{port}/'], capture_output=True, text=True)
     first_line = r.stdout.splitlines()[0] if r.stdout else 'Waiting for Kestrel initialization'
     print(f'Port {port}: {first_line}')
+
+print('\\n=== RECENT LOGS (absolutdashboard) ===')
+logs = subprocess.run(['journalctl', '-u', 'absolutdashboard', '-n', '25', '--no-pager'], capture_output=True, text=True)
+print(logs.stdout)
 """
                 b64 = base64.b64encode(py_code.encode('utf-8')).decode('ascii')
                 cmd = f'python3 -c "import base64; exec(base64.b64decode(\'{b64}\').decode(\'utf-8\'))"'
