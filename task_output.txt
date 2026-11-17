@@ -1,6 +1,21 @@
-=== TASK EXECUTION [2026-11-02 14:51:43] ===
-Exit code: 0
+=== TASK EXECUTION [2026-11-17 15:00:09] ===
+Exit code: 1
 
---- STDOUT ---
-ThroughputSamples count now: 240
-Current Peak in last 1 hour: DL = 479.66 Mbps | UL = 109.97 Mbps
+--- STDERR ---
+Traceback (most recent call last):
+  File "C:\reader\patrikeig\backend\task_worker.py", line 44, in <module>
+    main()
+  File "C:\reader\patrikeig\backend\task_worker.py", line 17, in main
+    client.connect(hostname=HOST, port=PORT, username=USER, password=PASS, timeout=10)
+  File "C:\Users\Absolut.JUMPSERVER1\AppData\Roaming\Python\Python311\site-packages\paramiko\client.py", line 477, in connect
+    self._auth(
+  File "C:\Users\Absolut.JUMPSERVER1\AppData\Roaming\Python\Python311\site-packages\paramiko\client.py", line 779, in _auth
+    raise saved_exception
+  File "C:\Users\Absolut.JUMPSERVER1\AppData\Roaming\Python\Python311\site-packages\paramiko\client.py", line 766, in _auth
+    self._transport.auth_password(username, password)
+  File "C:\Users\Absolut.JUMPSERVER1\AppData\Roaming\Python\Python311\site-packages\paramiko\transport.py", line 1534, in auth_password
+    return self.auth_handler.wait_for_response(my_event)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Absolut.JUMPSERVER1\AppData\Roaming\Python\Python311\site-packages\paramiko\auth_handler.py", line 227, in wait_for_response
+    raise e
+paramiko.ssh_exception.AuthenticationException: Authentication failed.
