@@ -186,6 +186,19 @@ for target in possible_paths:
         shutil.copy2('/tmp/AbsolutDashboard.Web.dll', target)
         if os.path.exists('/tmp/RebootModule.dll'):
             shutil.copy2('/tmp/RebootModule.dll', os.path.join(os.path.dirname(target), 'RebootModule.dll'))
+        deps_path = os.path.join(os.path.dirname(target), 'AbsolutDashboard.Web.deps.json')
+        if os.path.exists(deps_path):
+            import json
+            with open(deps_path, 'r') as df:
+                deps_data = json.load(df)
+            for t in deps_data.get('targets', {}).values():
+                if 'RebootModule/1.0.0' not in t:
+                    t['RebootModule/1.0.0'] = {'runtime': {'RebootModule.dll': {}}}
+            if 'RebootModule/1.0.0' not in deps_data.get('libraries', {}):
+                deps_data.setdefault('libraries', {})['RebootModule/1.0.0'] = {'type': 'project', 'serviceable': False, 'sha512': ''}
+            with open(deps_path, 'w') as df:
+                json.dump(deps_data, df, indent=2)
+            print(f'[+] Registered RebootModule in {deps_path}')
         print(f'[+] Deployed updated DLL to {target}')
     else:
         with open(target, 'rb') as f:
