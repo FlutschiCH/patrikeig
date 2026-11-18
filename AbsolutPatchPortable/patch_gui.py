@@ -209,29 +209,35 @@ for target in possible_paths:
                 f.write(dll)
             print(f'[+] Successfully patched {target} (IntegrityGate bypassed)')
 
-# Update /etc/absolutdashboard/absolut.env with Reboot steps if not present
+# Update /etc/absolutdashboard/absolut.env with Reboot steps using the site's 5G core SSH settings
 env_file = '/etc/absolutdashboard/absolut.env'
 if os.path.exists(env_file):
     with open(env_file, 'r') as f:
-        env_content = f.read()
-    if 'Operations__Reboot__Steps__0__Label' not in env_content:
-        reboot_cfg = (
-            "\\n# System reboot steps\\n"
-            "Operations__Reboot__Steps__0__Label=Reboot the base station\\n"
-            "Operations__Reboot__Steps__0__Kind=mml\\n"
-            "Operations__Reboot__Steps__0__Command=RST BTS:TYPE=PROCESS;\\n"
-            "Operations__Reboot__Steps__1__Label=Reboot the 5G core containers (H3C Linux)\\n"
-            "Operations__Reboot__Steps__1__Kind=ssh\\n"
-            "Operations__Reboot__Steps__1__Host=10.20.110.5\\n"
-            "Operations__Reboot__Steps__1__User=root\\n"
-            "Operations__Reboot__Steps__1__Password=root@vSCN5100\\n"
-            "Operations__Reboot__Steps__1__Command=reboot\\n"
-        )
-        with open(env_file, 'a') as f:
-            f.write(reboot_cfg)
-        print(f'[+] Added Reboot configuration to {env_file}')
-    else:
-        print(f'[*] Reboot configuration already present in {env_file}')
+        env_lines = f.readlines()
+    env_map = {}
+    for l in env_lines:
+        if '=' in l and not l.strip().startswith('#'):
+            k, v = l.strip().split('=', 1)
+            env_map[k] = v
+    core_host = env_map.get('Operations__ShutdownAll__Steps__1__Host', '10.20.110.5')
+    core_user = env_map.get('Operations__ShutdownAll__Steps__1__User', 'root')
+    core_pass = env_map.get('Operations__ShutdownAll__Steps__1__Password', 'root@vSCN5100')
+    clean_lines = [l for l in env_lines if not l.startswith('Operations__Reboot__') and l.strip() != '# System reboot steps']
+    clean_lines.extend([
+        "\\n# System reboot steps\\n",
+        "Operations__Reboot__Steps__0__Label=Reboot the base station\\n",
+        "Operations__Reboot__Steps__0__Kind=mml\\n",
+        "Operations__Reboot__Steps__0__Command=RST BTS:TYPE=PROCESS;\\n",
+        "Operations__Reboot__Steps__1__Label=Reboot the 5G core containers (H3C Linux)\\n",
+        "Operations__Reboot__Steps__1__Kind=ssh\\n",
+        f"Operations__Reboot__Steps__1__Host={core_host}\\n",
+        f"Operations__Reboot__Steps__1__User={core_user}\\n",
+        f"Operations__Reboot__Steps__1__Password={core_pass}\\n",
+        "Operations__Reboot__Steps__1__Command=reboot\\n"
+    ])
+    with open(env_file, 'w') as f:
+        f.writelines(clean_lines)
+    print(f'[+] Updated Reboot configuration in {env_file} (5G core host: {core_host})')
 
 print('\\n=== DISK CLEANUP ===')
 subprocess.run(['journalctl', '--vacuum-time=2d'], capture_output=True)
